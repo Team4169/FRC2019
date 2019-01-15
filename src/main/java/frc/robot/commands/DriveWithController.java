@@ -28,7 +28,7 @@ public class DriveWithController extends Command {
   @Override
   protected void execute() {
     Robot.kDriveTrain.drive();
-
+    System.out.println("hello!");
   }
 
   // Make this return true when this Command no longer needs to run execute()

@@ -12,8 +12,8 @@ package frc.robot;
  */
 public class RobotMap {
 
-    public static final int leftFrontMotor = 1;
-    public static final int leftBackMotor = 2;
-    public static final int rightFrontMotor = 3;
-    public static final int rightBackMotor = 4;
+    public static final int leftFrontMotor = 0;
+    public static final int leftBackMotor = 1;
+  //  public static final int rightFrontMotor = 3;
+  //  public static final int rightBackMotor = 4;
 }

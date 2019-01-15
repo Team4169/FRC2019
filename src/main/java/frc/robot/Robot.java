@@ -8,8 +8,10 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.DriveWithController;
 import frc.robot.subsystems.DriveTrain;
 
 /**
@@ -76,15 +78,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
-    }
+    Scheduler.getInstance().run();
   }
 
   /**
@@ -92,6 +86,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    Scheduler.getInstance().run();
+  }
+
+  @Override
+  public void teleopInit() {
+    System.out.println("telop start");
   }
 
   /**
@@ -99,5 +99,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+
+  }
+
+  @Override
+  public void disabledPeriodic() {
+    Scheduler.getInstance().run();
   }
 }
