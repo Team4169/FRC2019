@@ -40,15 +40,15 @@ public class DriveTrain extends Subsystem {
   public void drive() {
     double leftX = Robot.m_oi.getController().getX(GenericHID.Hand.kLeft);
     double leftY = Robot.m_oi.getController().getY(GenericHID.Hand.kLeft);
-    
-    if(deadzone){
+    boolean isInDeadZone = DriveTrain.deadZone(leftX, leftY);
+    if(isInDeadZone) {
       drive.tankDrive(0, 0);
     } else {
       drive.tankDrive(leftX, leftY);
     }
   }
 
-  public boolean deadZone(double leftY, double rightY){
+  public static boolean deadZone(double leftY, double rightY){
     if(Math.hypot(leftY, rightY) < deadZoneConstant){
       return true;
     } else {
