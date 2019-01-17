@@ -38,16 +38,23 @@ public class DriveTrain extends Subsystem {
 
   // implement this to drive with a controller
   public void drive() {
+    double leftX = Robot.m_oi.getController().getX(GenericHID.Hand.kLeft);
     double leftY = Robot.m_oi.getController().getY(GenericHID.Hand.kLeft);
-    double rightY = Robot.m_oi.getController().getY(GenericHID.Hand.kRight);
     
-    if(Math.sqrt(Math.pow(leftY, 2) + Math.pow(rightY, 2)) < deadZoneConstant){
+    if(deadzone){
       drive.tankDrive(0, 0);
     } else {
-      drive.tankDrive(leftY, rightY);
+      drive.tankDrive(leftX, leftY);
     }
-
   }
+
+  public boolean deadZone(double leftY, double rightY){
+    if(Math.hypot(leftY, rightY) < deadZoneConstant){
+      return true;
+    } else {
+      return false;
+  }
+
   public void stop() {
     drive.tankDrive(0, 0);
   }
