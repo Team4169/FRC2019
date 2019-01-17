@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.commands.DriveWithController;
-import frc.robot.OI;
 import frc.robot.Robot;
 
 /**
@@ -25,14 +24,10 @@ public class DriveTrain extends Subsystem {
     public static final int TALON_ONE_PORT = 0;
     public static final int TALON_TWO_PORT = 1;
 
-    private static OI m_oi = new OI();
-
     private static final WPI_TalonSRX talon1 = new WPI_TalonSRX(TALON_ONE_PORT);
     private static final WPI_TalonSRX talon2 = new WPI_TalonSRX(TALON_TWO_PORT);
     public static DifferentialDrive drive = new DifferentialDrive(talon1, talon2);
     
-    double leftY = -Robot.m_oi.getController().getY(GenericHID.Hand.kLeft);
- 		double rightY = -Robot.m_oi.getController().getY(GenericHID.Hand.kRight);
     public static final double deadZoneConstant = 0.2;
 
   @Override
@@ -61,6 +56,9 @@ public class DriveTrain extends Subsystem {
   }
   // implement this to drive with a controller
   public void drive() {
+    double leftY = -Robot.m_oi.getController().getY(GenericHID.Hand.kLeft);
+    double rightY = -Robot.m_oi.getController().getY(GenericHID.Hand.kRight);
+    
     if (deadZoneLeft(leftY)) {
       leftY = 0;
     }
