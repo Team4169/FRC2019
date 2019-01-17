@@ -9,8 +9,11 @@ package frc.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.commands.DriveWithController;
+import frc.robot.Robot;
 
 /**
  * Add your docs here.
@@ -24,6 +27,13 @@ public class DriveTrain extends Subsystem {
     private static final WPI_TalonSRX talon1 = new WPI_TalonSRX(TALON_ONE_PORT);
     private static final WPI_TalonSRX talon2 = new WPI_TalonSRX(TALON_TWO_PORT);
 
+    public static double leftY = 0;
+    public static double rightY = 0;
+    public static final double DEAD_ZONE = 0.2;
+
+    static DifferentialDrive drive = new DifferentialDrive(talon1, talon2);
+
+
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
@@ -34,6 +44,20 @@ public class DriveTrain extends Subsystem {
 
   // implement this to drive with a controller
   public void drive() {
-    // TODO
+    leftY = Robot.m_oi.getController().getY(Hand.kLeft);
+      if  (Math.abs(leftY) < DEAD_ZONE) {
+        leftY = 0;
+      }
+
+    rightY = Robot.m_oi.getController().getY(Hand.kRight);
+    if  (Math.abs(rightY) < DEAD_ZONE) {
+      rightY = 0;
+    }
+
+    drive.tankDrive(leftY, rightY);
+  }
+
+  public void stop() {
+    drive.tankDrive(0, 0);
   }
 }
