@@ -26,9 +26,7 @@ public class DriveTrain extends Subsystem {
 
     private static final WPI_TalonSRX talon1 = new WPI_TalonSRX(TALON_ONE_PORT);
     private static final WPI_TalonSRX talon2 = new WPI_TalonSRX(TALON_TWO_PORT);
-
-    public static double leftY = 0;
-    public static double rightY = 0;
+    
     public static final double DEAD_ZONE = 0.2;
 
     static DifferentialDrive drive = new DifferentialDrive(talon1, talon2);
@@ -44,10 +42,13 @@ public class DriveTrain extends Subsystem {
 
   // implement this to drive with a controller
   public void drive() {
+    double leftY;
+    double rightY;
+
     leftY = Robot.m_oi.getController().getY(Hand.kLeft);
-      if  (Math.abs(leftY) < DEAD_ZONE) {
-        leftY = 0;
-      }
+    if  (Math.abs(leftY) < DEAD_ZONE) {
+      leftY = 0;
+    }
 
     rightY = Robot.m_oi.getController().getY(Hand.kRight);
     if  (Math.abs(rightY) < DEAD_ZONE) {
