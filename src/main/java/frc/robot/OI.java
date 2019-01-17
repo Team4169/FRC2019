@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.XboxController;
 public class OI {
 
     public static final int CONTROLLER_PORT = 0;
-    private static final XboxController controller1 = new XboxController(CONTROLLER_PORT);
+    public static final XboxController controller1 = new XboxController(CONTROLLER_PORT);
 
     public XboxController getController() {
         return controller1;

@@ -9,8 +9,12 @@ package frc.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.commands.DriveWithController;
+import frc.robot.OI;
+import frc.robot.Robot;
 
 /**
  * Add your docs here.
@@ -21,8 +25,15 @@ public class DriveTrain extends Subsystem {
     public static final int TALON_ONE_PORT = 0;
     public static final int TALON_TWO_PORT = 1;
 
+    private static OI m_oi = new OI();
+
     private static final WPI_TalonSRX talon1 = new WPI_TalonSRX(TALON_ONE_PORT);
     private static final WPI_TalonSRX talon2 = new WPI_TalonSRX(TALON_TWO_PORT);
+    public static DifferentialDrive drive = new DifferentialDrive(talon1, talon2);
+    
+    double leftY = -Robot.m_oi.getController().getY(GenericHID.Hand.kLeft);
+ 		double rightY = -Robot.m_oi.getController().getY(GenericHID.Hand.kRight);
+    public static final double deadZoneConstant = 0.2;
 
   @Override
   public void initDefaultCommand() {
@@ -31,9 +42,34 @@ public class DriveTrain extends Subsystem {
 
     setDefaultCommand(new DriveWithController());
   }
+  public static boolean deadZoneLeft(double leftY) {
+    if (Math.abs(leftY) < deadZoneConstant) {
+      return true;
+    }
+    else{
+      return false;
+    }
 
+  }
+  public static boolean deadZoneRight(double rightY) {
+    if (Math.abs(rightY) < deadZoneConstant) {
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
   // implement this to drive with a controller
   public void drive() {
-    // TODO
+    if (deadZoneLeft(leftY)) {
+      leftY = 0;
+    }
+    if (deadZoneLeft(rightY)) {
+      rightY = 0;
+    }
+    drive.tankDrive(leftY, rightY);
+  }
+  public void stop() {
+    drive.tankDrive(0, 0);
   }
 }
