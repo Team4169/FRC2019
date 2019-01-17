@@ -41,14 +41,13 @@ public class DriveWithController extends Command {
   @Override
   protected void end() {
     Robot.kDriveTrain.stop();
-
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Robot.kDriveTrain.stop();
+    end();
   }
 
 }
