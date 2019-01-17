@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.subsystems.DriveTrain;
 
-/**
+/** 
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
  * documentation. If you change the name of this class or the package after
@@ -26,7 +26,7 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   public static final DriveTrain kDriveTrain = new DriveTrain();
-
+  public static final OI m_oi = new OI();
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
@@ -99,3 +99,6 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {
   }
 }
+
+
+
