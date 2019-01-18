@@ -9,6 +9,7 @@ package frc.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -23,13 +24,20 @@ public class DriveTrain extends Subsystem {
   // here. Call these from Commands.
     public static final int TALON_ONE_PORT = 0;
     public static final int TALON_TWO_PORT = 1;
+    public static final int TALON_THREE_PORT = 2;
+    public static final int TALON_FOUR_PORT = 3;
 
-    private static final WPI_TalonSRX talon1 = new WPI_TalonSRX(TALON_ONE_PORT);
-    private static final WPI_TalonSRX talon2 = new WPI_TalonSRX(TALON_TWO_PORT);
-    
+    private static final WPI_TalonSRX leftFront = new WPI_TalonSRX(TALON_ONE_PORT);
+    private static final WPI_TalonSRX rightFront = new WPI_TalonSRX(TALON_TWO_PORT);
+    private static final WPI_TalonSRX leftBack = new WPI_TalonSRX(TALON_THREE_PORT);
+    private static final WPI_TalonSRX rightBack = new WPI_TalonSRX(TALON_FOUR_PORT);
+
+    public static SpeedControllerGroup left = new SpeedControllerGroup(leftFront, leftBack);
+    public static SpeedControllerGroup right = new SpeedControllerGroup(rightFront, rightBack);
+
     public static final double DEAD_ZONE = 0.2;
 
-    static DifferentialDrive drive = new DifferentialDrive(talon1, talon2);
+    static DifferentialDrive drive = new DifferentialDrive(left, right);
 
 
   @Override
@@ -46,9 +54,9 @@ public class DriveTrain extends Subsystem {
     double rightY;
 
     leftY = Robot.m_oi.getController().getY(Hand.kLeft);
-    if  (Math.abs(leftY) < DEAD_ZONE) {
-      leftY = 0;
-    }
+      if  (Math.abs(leftY) < DEAD_ZONE) {
+        leftY = 0;
+      }
 
     rightY = Robot.m_oi.getController().getY(Hand.kRight);
     if  (Math.abs(rightY) < DEAD_ZONE) {
