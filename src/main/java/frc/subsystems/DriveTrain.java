@@ -71,16 +71,7 @@ public class DriveTrain extends Subsystem {
     double RightTrig = Robot.m_oi.getController().getTriggerAxis(Hand.kRight);
     double LeftY = Robot.m_oi.getController().getY(Hand.kLeft);
     double Turn = LeftTrig - RightTrig;
-    if (Math.abs(LeftTrig)< 0.2) {
-
-      LeftTrig = 0;
-
-    }
-    if (Math.abs(RightTrig)< 0.2) {
-
-      RightTrig = 0;
-
-    }
+    
     if (RightTrig > 0.2) {
     RightTrig = RightTrig - 0.2;
     RightTrig = 1.125 * RightTrig;
@@ -89,10 +80,26 @@ public class DriveTrain extends Subsystem {
       }
 
     }
-    drive.arcadeDrive(LeftY, Turn);
+
+    else if (RightTrig < -0.2) {
+      RightTrig = RightTrig + 0.2;
+      RightTrig = 1.125 * RightTrig;
+        if (RightTrig < -1) {
+          RightTrig = -1;
+        }
+  
+      }
+
+    else {
+
+      RightTrig = 0;
+
+     }
+      drive.arcadeDrive(LeftY, Turn);
 
 
   }
+  
   public void stop() {
     drive.tankDrive (0,0);
 
