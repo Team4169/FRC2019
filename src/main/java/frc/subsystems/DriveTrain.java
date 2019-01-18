@@ -38,6 +38,9 @@ public class DriveTrain extends Subsystem {
     public static final SpeedControllerGroup Group2 = new SpeedControllerGroup(talon2, talon4);
     public static final DifferentialDrive drive = new DifferentialDrive(Group1, Group2);
     public static double RightY = 0;
+    boolean Slow = false;
+    int clock = 0;
+    
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
@@ -45,12 +48,17 @@ public class DriveTrain extends Subsystem {
 
     setDefaultCommand(new DriveWithController());
   }
+  public void setslowmode(boolean mode) {
 
+  }
   // implement this to drive with a controller
   public void tankDrive() {
     
     LeftY = Robot.m_oi.getController().getY(Hand.kLeft);
     RightY = Robot.m_oi.getController().getY(Hand.kRight);
+   
+   //deadzone
+
     if (Math.abs(LeftY)< 0.2) {
 
       LeftY = 0;
@@ -61,6 +69,32 @@ public class DriveTrain extends Subsystem {
       RightY = 0;
 
     }
+   
+   //Cheking for slowmode
+   
+   if (clock<50) {
+
+    clock += 1;
+
+   }
+    else {
+      clock = 0;
+      boolean CheckSlow = Robot.m_oi.getController().getYButtonPressed();
+    if (CheckSlow) {
+      Slow=!Slow;
+    }
+  }
+    //Exacuting slow mode
+  
+    while (Slow) {
+
+      LeftY = LeftY / 2;
+      RightY = RightY / 2;
+
+    }
+    
+    //Output
+   
     drive.tankDrive(LeftY, RightY);
 
 
@@ -95,10 +129,13 @@ public class DriveTrain extends Subsystem {
       RightTrig = 0;
 
      }
-      drive.arcadeDrive(LeftY, Turn);
 
-
+     drive.arcadeDrive(LeftY, RightTrig);
   }
+    
+
+
+  
   
   public void stop() {
     drive.tankDrive (0,0);
