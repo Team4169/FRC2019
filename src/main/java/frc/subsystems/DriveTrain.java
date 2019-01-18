@@ -95,7 +95,7 @@ public class DriveTrain extends Subsystem {
     drive.tankDrive(0, 0);
   }
 
-  public void switchSlowMode() {
-    slowMode = !slowMode;
+  public void setSlowMode(boolean b) {
+    slowMode = b;
   }
 }
