@@ -98,4 +98,8 @@ public class DriveTrain extends Subsystem {
   public void setSlowMode(boolean b) {
     slowMode = b;
   }
+  
+  public void switchSlowMode() {
+    slowMode = !slowMode;
+  }
 }
