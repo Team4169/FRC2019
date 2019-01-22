@@ -38,8 +38,9 @@ public class DriveTrain extends Subsystem {
     public static final double DEAD_ZONE = 0.2;
 
     public boolean SlowMode = false; 
-    public static double slowModeFalse = 1d;
+    public static final double slowModeFalse = 1d;
     public static final double slowModeTrue = 0.7;
+    public static double slowModeValue;
 
     public static double deadZone(double current) {
       if (Math.abs(current) < DEAD_ZONE) {
@@ -80,32 +81,15 @@ public class DriveTrain extends Subsystem {
     double rotation;
     rotation = rightTrigger - leftTrigger;
 
-    if (Math.abs(speed) < DEAD_ZONE) {
-      speed = 0;
-    } else if (speed > DEAD_ZONE){
-      speed = 4d * speed / 5 - DEAD_ZONE;
-    } else {
-      speed = 4d * speed / 5 + DEAD_ZONE;
-    }
-      
+    speed = deadZone(speed);
 
-    speed = (speed * slowModeFalse);
+    
+    speed = getSlowMode(speed);
+
     drive.arcadeDrive(speed, rotation);
   }
 
   public void stop() {
     drive.tankDrive(0,0); 
-  }
-
-  public void SlowMode() {
-    if (SlowMode = true) {
-      slowModeFalse = slowModeTrue;
-    } else {
-      slowModeFalse = 
-    }
-  }
-
-  public void setSlowMode() {
-    SlowMode = !SlowMode;
   }
 }

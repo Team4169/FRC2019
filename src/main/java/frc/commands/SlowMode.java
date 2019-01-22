@@ -15,6 +15,14 @@ public class SlowMode extends Command {
     // eg. requires(chassis);
   }
 
+  static final double slowModeConstant = 0.7;
+  
+  public void getSlowMode(double current) {
+    if (true) {//if the buttone is pressed return true
+      current *= slowModeConstant;
+    }
+  }
+
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
