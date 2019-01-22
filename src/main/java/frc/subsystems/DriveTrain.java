@@ -38,8 +38,17 @@ public class DriveTrain extends Subsystem {
     public static final SpeedControllerGroup Group2 = new SpeedControllerGroup(talon2, talon4);
     public static final DifferentialDrive drive = new DifferentialDrive(Group1, Group2);
     public static double RightY = 0;
+    //Stars program with slow mode off
     boolean Slow = false;
+    //Defines clock. Used to stop double registering of buttons. Currently set to update every half second.
     int clock = 0;
+    
+    // Change "zone" to whatever you  want the dead zone to be. "factor" will automaticly scale the code.
+    double zone = 0.2;
+    double factor = 1 + (1 / (10 * (1-zone)));
+
+    // "SlowFactor" times the speed = slow mode speed. Change SlowFactor to change how slow slowmode is. MAKE SURE THIS IS ALWAYS A DECMAL. 
+    double SlowFactor = 0.5;
     
   @Override
   public void initDefaultCommand() {
@@ -59,12 +68,12 @@ public class DriveTrain extends Subsystem {
    
    //deadzone
 
-    if (Math.abs(LeftY)< 0.2) {
+    if (Math.abs(LeftY)< zone) {
 
       LeftY = 0;
 
     }
-    if (Math.abs(RightY)< 0.2) {
+    if (Math.abs(RightY)< zone) {
 
       RightY = 0;
 
@@ -88,8 +97,8 @@ public class DriveTrain extends Subsystem {
   
     while (Slow) {
 
-      LeftY = LeftY / 2;
-      RightY = RightY / 2;
+      LeftY = LeftY * SlowFactor;
+      RightY = RightY * SlowFactor;
 
     }
     
@@ -105,38 +114,41 @@ public class DriveTrain extends Subsystem {
     double RightTrig = Robot.m_oi.getController().getTriggerAxis(Hand.kRight);
     double LeftY = Robot.m_oi.getController().getY(Hand.kLeft);
     double Turn = LeftTrig - RightTrig;
+    //Checks for deadzone. If not in dead zone, scales. Change deadzone at begining of class using the double "zone". DO NOT CHANGE FACTOR.
     
-    if (RightTrig > 0.2) {
-    RightTrig = RightTrig - 0.2;
-    RightTrig = 1.125 * RightTrig;
+    //Checks for positive value.
+    if (RightTrig > zone) {
+    RightTrig = RightTrig - zone;
+    RightTrig = factor * RightTrig;
       if (RightTrig > 1) {
         RightTrig = 1;
       }
 
     }
-
-    else if (RightTrig < -0.2) {
-      RightTrig = RightTrig + 0.2;
-      RightTrig = 1.125 * RightTrig;
+    //Checks for negitive value
+    else if (RightTrig < 0-zone) {
+      RightTrig = RightTrig + zone;
+      RightTrig = factor * RightTrig;
         if (RightTrig < -1) {
           RightTrig = -1;
         }
   
       }
-
+    //Concludes that value is in dead zone. Sets to 0.
     else {
 
       RightTrig = 0;
 
      }
-
+     //Output
      drive.arcadeDrive(LeftY, RightTrig);
+
   }
     
 
 
   
-  
+  //Stops robot when called.
   public void stop() {
     drive.tankDrive (0,0);
 
