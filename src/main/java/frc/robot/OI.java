@@ -9,6 +9,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import frc.commands.DriveStraight;
 import frc.commands.SlowMode;
 
 /**
@@ -17,13 +18,16 @@ import frc.commands.SlowMode;
 public class OI {
 
     public static final int CONTROLLER_PORT = 0;
+    public static final int B_ID = 1;
     public static final int X_ID = 3;
-
+    
     private static final XboxController controller1 = new XboxController(CONTROLLER_PORT);
     private static final JoystickButton X_BUTTON = new JoystickButton(controller1, X_ID);
-
+    private static final JoystickButton B_BUTTON = new JoystickButton(controller1, B_ID);
+    
     public OI() {
         X_BUTTON.whenPressed(new SlowMode());
+        B_BUTTON.whenPressed(new DriveStraight());
     }
 
     public XboxController getController() {
