@@ -8,6 +8,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import frc.commands.SlowMode;
 
 /**
  * Add your docs here.
@@ -15,7 +17,13 @@ import edu.wpi.first.wpilibj.XboxController;
 public class OI {
 
     public static final int CONTROLLER_PORT = 0;
+    public static final int Y_ID = 3;
     private static final XboxController controller1 = new XboxController(CONTROLLER_PORT);
+    private static final JoystickButton Y_BUTTON = new JoystickButton(controller1, Y_ID);
+
+    public OI() {
+        Y_BUTTON.whenPressed(new SlowMode());
+    }
 
     public XboxController getController() {
         return controller1;

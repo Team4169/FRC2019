@@ -37,8 +37,21 @@ public class DriveTrain extends Subsystem {
 
     public static final double DEAD_ZONE = 0.2;
 
-    static DifferentialDrive drive = new DifferentialDrive(left, right);
+    public boolean SlowMode = false; 
+    public static double slowModeFalse = 1d;
+    public static final double slowModeTrue = 0.7;
 
+    public static double deadZone(double current) {
+      if (Math.abs(current) < DEAD_ZONE) {
+        return 0;
+      } else if (current > 0) {
+        return (4 * current/5 + DEAD_ZONE);
+      } else {
+        return (4 * current / 5 + DEAD_ZONE);
+      }
+    }
+
+    static DifferentialDrive drive = new DifferentialDrive(left, right);
 
   @Override
   public void initDefaultCommand() {
@@ -49,24 +62,50 @@ public class DriveTrain extends Subsystem {
   }
 
   // implement this to drive with a controller
-  public void drive() {
-    double leftY;
-    double rightY;
+  public void tankDrive() {
+    double leftY = Robot.m_oi.getController().getY(Hand.kLeft);;
+    double rightY = Robot.m_oi.getController().getY(Hand.kRight);;
 
-    leftY = Robot.m_oi.getController().getY(Hand.kLeft);
-      if  (Math.abs(leftY) < DEAD_ZONE) {
-        leftY = 0;
-      }
-
-    rightY = Robot.m_oi.getController().getY(Hand.kRight);
-    if  (Math.abs(rightY) < DEAD_ZONE) {
-      rightY = 0;
-    }
+    leftY = deadZone(leftY);
+    rightY = deadZone(rightY);
 
     drive.tankDrive(leftY, rightY);
   }
 
+  public void arcadeDrive() {
+    double speed = Robot.m_oi.getController().getY(Hand.kLeft);
+    double leftTrigger = Robot.m_oi.getController().getTriggerAxis(Hand.kLeft);
+    double rightTrigger = Robot.m_oi.getController().getTriggerAxis(Hand.kRight);
+  
+    double rotation;
+    rotation = rightTrigger - leftTrigger;
+
+    if (Math.abs(speed) < DEAD_ZONE) {
+      speed = 0;
+    } else if (speed > DEAD_ZONE){
+      speed = 4d * speed / 5 - DEAD_ZONE;
+    } else {
+      speed = 4d * speed / 5 + DEAD_ZONE;
+    }
+      
+
+    speed = (speed * slowModeFalse);
+    drive.arcadeDrive(speed, rotation);
+  }
+
   public void stop() {
-    drive.tankDrive(0, 0);
+    drive.tankDrive(0,0); 
+  }
+
+  public void SlowMode() {
+    if (SlowMode = true) {
+      slowModeFalse = slowModeTrue;
+    } else {
+      slowModeFalse = 
+    }
+  }
+
+  public void setSlowMode() {
+    SlowMode = !SlowMode;
   }
 }
