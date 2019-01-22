@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -26,7 +27,7 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   public static final DriveTrain kDriveTrain = new DriveTrain();
-  public static OI m_oi = new OI();
+  public static final OI m_oi = new OI();
 
   /**
    * This function is run when the robot is first started up and should be
@@ -37,6 +38,7 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+
   }
 
   /**
@@ -47,6 +49,13 @@ public class Robot extends TimedRobot {
    * <p>This runs after the mode specific periodic functions, but before
    * LiveWindow and SmartDashboard integrated updating.
    */
+
+@Override
+	public void teleopInit(){
+		/* Disable all motor controllers */
+	
+	}
+
   @Override
   public void robotPeriodic() {
   }
@@ -84,6 +93,7 @@ public class Robot extends TimedRobot {
         break;
     }
   }
+
 
   /**
    * This function is called periodically during operator control.
