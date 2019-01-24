@@ -49,8 +49,8 @@ public class DriveTrain extends Subsystem {
   public static final double DEAD_ZONE = 0.2;
 
   // slows down the robot so that the robot is not too fast
-  public static final double JOYSTICK_CONSTANT = 0.7;
-  public static final double TRIGGERS_CONSTANT = 0.7;
+  public static final double JOYSTICK_CONSTANT = 1;
+  public static final double TRIGGERS_CONSTANT = 1;
 
   // these slow down the robot for precision driving
   static boolean slowMode = false;
@@ -79,6 +79,7 @@ public class DriveTrain extends Subsystem {
 	/* Set Neutral Mode */
 	leftFront.setNeutralMode(NeutralMode.Brake);
 	rightFront.setNeutralMode(NeutralMode.Brake);
+	leftBack.setNeutralMode(NeutralMode.Brake);
 	rightBack.setNeutralMode(NeutralMode.Brake);
 	
 	/** Closed loop configuration */
