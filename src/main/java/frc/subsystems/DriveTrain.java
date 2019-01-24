@@ -20,6 +20,8 @@ import frc.robot.Robot;
 /**
  * Add your docs here.
  */
+
+
 public class DriveTrain extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
@@ -38,6 +40,15 @@ public class DriveTrain extends Subsystem {
     public static final SpeedControllerGroup right = new SpeedControllerGroup(rightBack, rightFront);
     public static final DifferentialDrive drive = new DifferentialDrive(left, right);
     public static double RightY = 0;
+
+    @Override
+    public void initDefaultCommand() {
+    
+    
+    setDefaultCommand(new DriveWithController()); 
+  
+    }
+    
     //Stars program with slow mode off
     boolean Slow = false;
     //Defines clock. Used to stop double registering of buttons. Currently set to update every half second.
@@ -50,18 +61,11 @@ public class DriveTrain extends Subsystem {
     // "SlowFactor" times the speed = slow mode speed. Change SlowFactor to change how slow slowmode is. MAKE SURE THIS IS ALWAYS A DECMAL.
     double SlowFactor = 0.5;
 
-  @Override
-  public void initDefaultCommand() {
-     Set the default command for a subsystem here.
-     setDefaultCommand(new MySpecialCommand());
 
-    setDefaultCommand(new DriveWithController());
-  }
-   public void setslowmode(boolean mode) {
 
-   }
-   implement this to drive with a controller
+   //implement this to drive with a controller
   public void tankDrive() {
+    
 
     LeftY = Robot.m_oi.getController().getY(Hand.kLeft);
     RightY = Robot.m_oi.getController().getY(Hand.kRight);
