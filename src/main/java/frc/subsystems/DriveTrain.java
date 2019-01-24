@@ -48,7 +48,7 @@ public class DriveTrain extends Subsystem {
     setDefaultCommand(new DriveWithController()); 
   
     }
-    
+
     //Stars program with slow mode off
     boolean Slow = false;
     //Defines clock. Used to stop double registering of buttons. Currently set to update every half second.
@@ -147,9 +147,6 @@ public class DriveTrain extends Subsystem {
      drive.arcadeDrive(LeftY, RightTrig);
 
   }
-
-
-
 
   //Stops robot when called.
   public void stop() {
