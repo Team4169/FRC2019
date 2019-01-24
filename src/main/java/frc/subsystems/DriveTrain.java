@@ -23,49 +23,49 @@ import frc.robot.Robot;
 public class DriveTrain extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
-    public static final int TALON_ONE_PORT = 0;
-    public static final int TALON_TWO_PORT = 1;
-    public static final int TALON_THREE_PORT = 2;
-    public static final int TALON_FOUR_PORT = 3;
-    
+    public static final int LEFT_BACK = 1;
+    public static final int LEFT_FRONT = 4;
+    public static final int RIGHT_BACK = 5;
+    public static final int RIGHT_FRONT = 2;
 
-    private static final WPI_TalonSRX talon1 = new WPI_TalonSRX(TALON_ONE_PORT);
-    private static final WPI_TalonSRX talon2 = new WPI_TalonSRX(TALON_TWO_PORT);
-    private static final WPI_TalonSRX talon3 = new WPI_TalonSRX(TALON_THREE_PORT);
-    private static final WPI_TalonSRX talon4 = new WPI_TalonSRX(TALON_FOUR_PORT);
+
+    private static final WPI_TalonSRX leftBack = new WPI_TalonSRX(LEFT_BACK);
+    private static final WPI_TalonSRX leftFront = new WPI_TalonSRX(LEFT_FRONT);
+    private static final WPI_TalonSRX rightBack = new WPI_TalonSRX(RIGHT_BACK);
+    private static final WPI_TalonSRX rightFront = new WPI_TalonSRX(RIGHT_FRONT);
     public static double LeftY = 0;
-    public static final SpeedControllerGroup Group1 = new SpeedControllerGroup(talon1, talon3);
-    public static final SpeedControllerGroup Group2 = new SpeedControllerGroup(talon2, talon4);
-    public static final DifferentialDrive drive = new DifferentialDrive(Group1, Group2);
+    public static final SpeedControllerGroup left = new SpeedControllerGroup(leftBack, leftFront);
+    public static final SpeedControllerGroup right = new SpeedControllerGroup(rightBack, rightFront);
+    public static final DifferentialDrive drive = new DifferentialDrive(left, right);
     public static double RightY = 0;
     //Stars program with slow mode off
     boolean Slow = false;
     //Defines clock. Used to stop double registering of buttons. Currently set to update every half second.
     int clock = 0;
-    
+
     // Change "zone" to whatever you  want the dead zone to be. "factor" will automaticly scale the code.
     double zone = 0.2;
     double factor = 1 + (1 / (10 * (1-zone)));
 
-    // "SlowFactor" times the speed = slow mode speed. Change SlowFactor to change how slow slowmode is. MAKE SURE THIS IS ALWAYS A DECMAL. 
+    // "SlowFactor" times the speed = slow mode speed. Change SlowFactor to change how slow slowmode is. MAKE SURE THIS IS ALWAYS A DECMAL.
     double SlowFactor = 0.5;
-    
+
   @Override
   public void initDefaultCommand() {
-    // Set the default command for a subsystem here.
-    // setDefaultCommand(new MySpecialCommand());
+     Set the default command for a subsystem here.
+     setDefaultCommand(new MySpecialCommand());
 
     setDefaultCommand(new DriveWithController());
   }
-  public void setslowmode(boolean mode) {
+   public void setslowmode(boolean mode) {
 
-  }
-  // implement this to drive with a controller
+   }
+   implement this to drive with a controller
   public void tankDrive() {
-    
+
     LeftY = Robot.m_oi.getController().getY(Hand.kLeft);
     RightY = Robot.m_oi.getController().getY(Hand.kRight);
-   
+
    //deadzone
 
     if (Math.abs(LeftY)< zone) {
@@ -78,34 +78,33 @@ public class DriveTrain extends Subsystem {
       RightY = 0;
 
     }
-   
+
    //Cheking for slowmode
-   
-   if (clock<50) {
 
-    clock += 1;
+    if (clock<50) {
 
-   }
-    else {
-      clock = 0;
-      boolean CheckSlow = Robot.m_oi.getController().getYButtonPressed();
-    if (CheckSlow) {
-      Slow=!Slow;
+     clock += 1;
+
     }
-  }
-    //Exacuting slow mode
-  
-    while (Slow) {
+     else {
+       clock = 0;
+       boolean CheckSlow = Robot.m_oi.getController().getYButtonPressed();
+     if (CheckSlow) {
+       Slow=!Slow;
+     }
+   }
+     //Exacuting slow mode
+
+     while (Slow) {
 
       LeftY = LeftY * SlowFactor;
       RightY = RightY * SlowFactor;
 
-    }
-    
-    //Output
-   
-    drive.tankDrive(LeftY, RightY);
+     }
 
+    //Output
+
+    drive.tankDrive(LeftY, RightY);
 
   }
   public void arcadedrive() {
@@ -115,7 +114,7 @@ public class DriveTrain extends Subsystem {
     double LeftY = Robot.m_oi.getController().getY(Hand.kLeft);
     double Turn = LeftTrig - RightTrig;
     //Checks for deadzone. If not in dead zone, scales. Change deadzone at begining of class using the double "zone". DO NOT CHANGE FACTOR.
-    
+
     //Checks for positive value.
     if (RightTrig > zone) {
     RightTrig = RightTrig - zone;
@@ -132,7 +131,7 @@ public class DriveTrain extends Subsystem {
         if (RightTrig < -1) {
           RightTrig = -1;
         }
-  
+
       }
     //Concludes that value is in dead zone. Sets to 0.
     else {
@@ -144,10 +143,10 @@ public class DriveTrain extends Subsystem {
      drive.arcadeDrive(LeftY, RightTrig);
 
   }
-    
 
 
-  
+
+
   //Stops robot when called.
   public void stop() {
     drive.tankDrive (0,0);
