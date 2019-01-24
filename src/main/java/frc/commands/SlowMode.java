@@ -16,16 +16,18 @@ public class SlowMode extends Command {
   }
 
   static final double slowModeConstant = 0.7;
+  public boolean buttonPush = false;
   
-  public void getSlowMode(double current) {
-    if (true) {//if the buttone is pressed return true
-      current *= slowModeConstant;
+  public void slowMode(double speed) {
+    if (buttonPush = true) { //if the button is pressed return true
+      speed *= slowModeConstant;
     }
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    buttonPush = !buttonPush;
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -42,6 +44,7 @@ public class SlowMode extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    buttonPush = !buttonPush;
   }
 
   // Called when another command which requires one or more of the same

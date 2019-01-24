@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.commands.DriveWithController;
+import frc.commands.SlowMode;
 import frc.robot.Robot;
 
 /**
@@ -36,13 +37,10 @@ public class DriveTrain extends Subsystem {
     public static SpeedControllerGroup right = new SpeedControllerGroup(rightFront, rightBack);
 
     public static final double DEAD_ZONE = 0.2;
+    public static final double slowModeConstant = 0.7;
+    public static boolean buttonPush = false;
 
-    public boolean SlowMode = false; 
-    public static final double slowModeFalse = 1d;
-    public static final double slowModeTrue = 0.7;
-    public static double slowModeValue;
-
-    public static double deadZone(double current) {
+    private static double deadZone(double current) {
       if (Math.abs(current) < DEAD_ZONE) {
         return 0;
       } else if (current > 0) {
@@ -52,7 +50,15 @@ public class DriveTrain extends Subsystem {
       }
     }
 
+    private double slowMode(double number) {
+      if (buttonPush = true) { //if the button is pressed return true
+        number *= slowModeConstant;
+      }
+    return number;
+    }
+
     static DifferentialDrive drive = new DifferentialDrive(left, right);
+    static SlowMode slowMode = new SlowMode();
 
   @Override
   public void initDefaultCommand() {
@@ -82,14 +88,12 @@ public class DriveTrain extends Subsystem {
     rotation = rightTrigger - leftTrigger;
 
     speed = deadZone(speed);
-
-    
-    speed = getSlowMode(speed);
-
+    speed = slowMode(speed);
     drive.arcadeDrive(speed, rotation);
   }
 
-  public void stop() {
+
+public void stop() {
     drive.tankDrive(0,0); 
   }
 }
