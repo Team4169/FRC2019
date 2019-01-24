@@ -216,7 +216,7 @@ public class DriveTrain extends Subsystem {
   }
   
   public void driveStraight() {
-	  System.out.println("memes");
+	
     double forward = -1 * Robot.m_oi.getController().getY(Hand.kLeft);
 		double turn = (Robot.m_oi.getController().getTriggerAxis(Hand.kRight) - 
 		Robot.m_oi.getController().getTriggerAxis(Hand.kLeft)) *
@@ -257,6 +257,11 @@ public class DriveTrain extends Subsystem {
   
   public void switchSlowMode() {
     slowMode = !slowMode;
+  }
+
+  public void resetDriveStraight() {
+	  _firstCall = true;
+	  _state = !_state;
   }
 }
 
