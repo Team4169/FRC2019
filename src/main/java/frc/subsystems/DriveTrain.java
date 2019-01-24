@@ -33,10 +33,10 @@ public class DriveTrain extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
   
-  public static final int LEFT_FRONT = 0;
-  public static final int RIGHT_FRONT = 1;
-  public static final int LEFT_BACK = 2;
-  public static final int RIGHT_BACK = 3;
+  public static final int LEFT_FRONT = 4;
+  public static final int RIGHT_FRONT = 2;
+  public static final int LEFT_BACK = 1;
+  public static final int RIGHT_BACK = 5;
 
   private static final WPI_TalonSRX leftFront = new WPI_TalonSRX(LEFT_FRONT);
   private static final WPI_TalonSRX rightFront = new WPI_TalonSRX(RIGHT_FRONT);
@@ -79,6 +79,7 @@ public class DriveTrain extends Subsystem {
 	/* Set Neutral Mode */
 	leftFront.setNeutralMode(NeutralMode.Brake);
 	rightFront.setNeutralMode(NeutralMode.Brake);
+	rightBack.setNeutralMode(NeutralMode.Brake);
 	
 	/** Closed loop configuration */
 	
@@ -166,13 +167,14 @@ public class DriveTrain extends Subsystem {
 	_firstCall = true;
 	_state = false;
 	zeroSensors();
-  }
-
-  void zeroSensors() {
-	leftFront.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
-	rightFront.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
-	System.out.println("[Quadrature Encoders] All sensors are zeroed.\n");
 }
+
+	void zeroSensors() {
+		leftFront.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
+		rightFront.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
+		System.out.println("[Quadrature Encoders] All sensors are zeroed.\n");
+	}
+	
   /** Checks if the triggers are not being used at all, returns the current to use for driving */
   public static double deadZone(double current) {
     if (Math.abs(current) < DEAD_ZONE) return 0;
@@ -186,7 +188,7 @@ public class DriveTrain extends Subsystem {
     double rightY = -Robot.m_oi.getController().getY(Hand.kRight);
     
     leftY = deadZone(leftY);
-    rightY = deadZone(leftY);
+    rightY = deadZone(rightY);
 
     leftY = leftY * (slowMode ? SLOW_MODE_JOYSTICK : 1d) * JOYSTICK_CONSTANT;
     rightY = rightY * (slowMode ? SLOW_MODE_JOYSTICK : 1d) * JOYSTICK_CONSTANT;
@@ -200,17 +202,21 @@ public class DriveTrain extends Subsystem {
     double rightTrigger = Robot.m_oi.getController().getTriggerAxis(Hand.kRight);
 
     leftY = deadZone(leftY);
+	System.out.println(leftY);
 
 	leftY = leftY * (slowMode ? SLOW_MODE_JOYSTICK : 1d) * JOYSTICK_CONSTANT;
 	
     double rotation = (rightTrigger - leftTrigger) *
-  (slowMode ? SLOW_MODE_TRIGGERS : 1d) * TRIGGERS_CONSTANT;
+		(slowMode ? SLOW_MODE_TRIGGERS : 1d) * TRIGGERS_CONSTANT;
 
     drive.arcadeDrive(leftY, rotation);
-  }
 
+    System.out.println(leftFront.getMotorOutputPercent() + ", " + rightFront.getMotorOutputPercent());
+  }
+  
   public void driveStraight() {
-    double forward = -1 * Robot.m_oi.getController().getY();
+	  System.out.println("memes");
+    double forward = -1 * Robot.m_oi.getController().getY(Hand.kLeft);
 		double turn = (Robot.m_oi.getController().getTriggerAxis(Hand.kRight) - 
 		Robot.m_oi.getController().getTriggerAxis(Hand.kLeft)) *
 		 (slowMode ? SLOW_MODE_TRIGGERS : 1d) * TRIGGERS_CONSTANT;
