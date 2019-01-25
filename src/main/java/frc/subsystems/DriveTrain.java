@@ -233,7 +233,7 @@ public class DriveTrain extends Subsystem {
 	
 	public void driveStraight() {
 		
-		double forward = -1 * Robot.m_oi.getController().getY(Hand.kLeft);
+		double forward = -1 * Robot.m_oi.getController().getY(Hand.kLeft) * (slowMode ? SLOW_MODE_JOYSTICK : 1d) * JOYSTICK_CONSTANT;
 
 		if (_firstCall) {
 			System.out.println("This is Drive Straight using the auxiliary feature with" + 
