@@ -73,8 +73,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 public class Robot extends TimedRobot {
 	/** Hardware */
 	TalonSRX _leftMaster = new TalonSRX(2);
-  TalonSRX _rightMaster = new TalonSRX(1);
-  TalonSRX leftFront = new TalonSRX(2);
+  	TalonSRX _rightMaster = new TalonSRX(1);
+ 	TalonSRX leftFront = new TalonSRX(2);
 	TalonSRX rightFront = new TalonSRX(1);
 	XboxController _gamepad = new XboxController(0);
 	
@@ -140,9 +140,9 @@ public class Robot extends TimedRobot {
 		_leftMaster.setInverted(false);
 		_leftMaster.setSensorPhase(true);
 		_rightMaster.setInverted(true);
-    _rightMaster.setSensorPhase(true);
-    rightFront.setInverted(false);
-    leftFront.setInverted(false);
+    	_rightMaster.setSensorPhase(true);
+   		rightFront.setInverted(false);
+   	 	leftFront.setInverted(false);
 		
 		/* Set status frame periods */
 		_rightMaster.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kTimeoutMs);
@@ -184,8 +184,8 @@ public class Robot extends TimedRobot {
 		 * false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
 		 * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
 		 */
-    leftFront.follow(_leftMaster);
-    rightFront.follow(_rightMaster);
+ 	  	leftFront.follow(_leftMaster);
+  	   	rightFront.follow(_rightMaster);
 
 		_rightMaster.configAuxPIDPolarity(false, Constants.kTimeoutMs);
 
