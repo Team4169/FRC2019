@@ -59,7 +59,7 @@ public class DriveTrain extends Subsystem {
 
   boolean _firstCall = false;
   boolean _state = false;
-  double _targetAngle = 0;
+  double _targetAngle = 0;	
 
   private static final DifferentialDrive drive = new DifferentialDrive(left, right);
 
@@ -73,34 +73,34 @@ public class DriveTrain extends Subsystem {
   }
 
   public DriveTrain() {
-	rightFront.set(ControlMode.PercentOutput, 0);
-	leftFront.set(ControlMode.PercentOutput, 0);
+	rightBack.set(ControlMode.PercentOutput, 0);
+	leftBack.set(ControlMode.PercentOutput, 0);
 	
 	/* Set Neutral Mode */
 	leftFront.setNeutralMode(NeutralMode.Brake);
 	rightFront.setNeutralMode(NeutralMode.Brake);
 	leftBack.setNeutralMode(NeutralMode.Brake);
 	rightBack.setNeutralMode(NeutralMode.Brake);
-	
+
 	/** Closed loop configuration */
 	
 	/* Configure the drivetrain's left side Feedback Sensor as a Quadrature Encoder */
-	leftFront.configSelectedFeedbackSensor(	FeedbackDevice.QuadEncoder,			// Local Feedback Source
+	leftBack.configSelectedFeedbackSensor(	FeedbackDevice.QuadEncoder,			// Local Feedback Source
 												Constants.PID_PRIMARY,				// PID Slot for Source [0, 1]
 												Constants.kTimeoutMs);				// Configuration Timeout
 
 	/* Configure the left Talon's Selected Sensor to be a remote sensor for the right Talon */
-	rightFront.configRemoteFeedbackFilter(leftFront.getDeviceID(),					// Device ID of Source
+	rightBack.configRemoteFeedbackFilter(leftFront.getDeviceID(),					// Device ID of Source
 											RemoteSensorSource.TalonSRX_SelectedSensor,	// Remote Feedback Source
 											Constants.REMOTE_0,							// Source number [0, 1]
 											Constants.kTimeoutMs);						// Configuration Timeout
 	
 	/* Setup difference signal to be used for turn when performing Drive Straight with encoders */
-	rightFront.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.RemoteSensor0, Constants.kTimeoutMs);	// Feedback Device of Remote Talon
-	rightFront.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.QuadEncoder, Constants.kTimeoutMs);		// Quadrature Encoder of current Talon
+	rightBack.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.RemoteSensor0, Constants.kTimeoutMs);	// Feedback Device of Remote Talon
+	rightBack.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.QuadEncoder, Constants.kTimeoutMs);		// Quadrature Encoder of current Talon
 	
 	/* Difference term calculated by right Talon configured to be selected sensor of turn PID */
-	rightFront.configSelectedFeedbackSensor(	FeedbackDevice.SensorDifference, 
+	rightBack.configSelectedFeedbackSensor(	FeedbackDevice.SensorDifference, 
 												Constants.PID_TURN, 
 												Constants.kTimeoutMs);
 	
@@ -112,7 +112,7 @@ public class DriveTrain extends Subsystem {
 	 *  ... so at 3600 units per 360', that ensures 0.1 degree precision in firmware closed-loop
 	 *  and motion profile trajectory points can range +-2 rotations.
 	 */
-	rightFront.configSelectedFeedbackCoefficient(	Constants.kTurnTravelUnitsPerRotation / Constants.kEncoderUnitsPerRotation,	// Coefficient
+	rightBack.configSelectedFeedbackCoefficient(	Constants.kTurnTravelUnitsPerRotation / Constants.kEncoderUnitsPerRotation,	// Coefficient
 													Constants.PID_TURN, 														// PID Slot of Source
 													Constants.kTimeoutMs);														// Configuration Timeout
 	
@@ -123,30 +123,30 @@ public class DriveTrain extends Subsystem {
 	rightFront.setSensorPhase(true);
 	
 	/* Set status frame periods */
-	rightFront.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kTimeoutMs);
-	rightFront.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants.kTimeoutMs);
-	leftFront.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);		//Used remotely by right Talon, speed up
+	rightBack.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kTimeoutMs);
+	rightBack.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants.kTimeoutMs);
+	leftBack.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);		//Used remotely by right Talon, speed up
 
 	/* Configure neutral deadband */
-	rightFront.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
-	leftFront.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
+	rightBack.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
+	leftBack.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
 
 	/* max out the peak output (for all modes).  However you can
 	 * limit the output of a given PID object with configClosedLoopPeakOutput().
 	 */
-	leftFront.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
-	leftFront.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
-	rightFront.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
-	rightFront.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
+	leftBack.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
+	leftBack.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
+	rightBack.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
+	rightBack.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
 
 	/* FPID Gains for turn servo */
-	rightFront.config_kP(Constants.kSlot_Turning, Constants.kGains_Turning.kP, Constants.kTimeoutMs);
-	rightFront.config_kI(Constants.kSlot_Turning, Constants.kGains_Turning.kI, Constants.kTimeoutMs);
-	rightFront.config_kD(Constants.kSlot_Turning, Constants.kGains_Turning.kD, Constants.kTimeoutMs);
-	rightFront.config_kF(Constants.kSlot_Turning, Constants.kGains_Turning.kF, Constants.kTimeoutMs);
-	rightFront.config_IntegralZone(Constants.kSlot_Turning, Constants.kGains_Turning.kIzone, Constants.kTimeoutMs);
-	rightFront.configClosedLoopPeakOutput(Constants.kSlot_Turning, Constants.kGains_Turning.kPeakOutput, Constants.kTimeoutMs);
-	rightFront.configAllowableClosedloopError(Constants.kSlot_Turning, 0, Constants.kTimeoutMs);
+	rightBack.config_kP(Constants.kSlot_Turning, Constants.kGains_Turning.kP, Constants.kTimeoutMs);
+	rightBack.config_kI(Constants.kSlot_Turning, Constants.kGains_Turning.kI, Constants.kTimeoutMs);
+	rightBack.config_kD(Constants.kSlot_Turning, Constants.kGains_Turning.kD, Constants.kTimeoutMs);
+	rightBack.config_kF(Constants.kSlot_Turning, Constants.kGains_Turning.kF, Constants.kTimeoutMs);
+	rightBack.config_IntegralZone(Constants.kSlot_Turning, Constants.kGains_Turning.kIzone, Constants.kTimeoutMs);
+	rightBack.configClosedLoopPeakOutput(Constants.kSlot_Turning, Constants.kGains_Turning.kPeakOutput, Constants.kTimeoutMs);
+	rightBack.configAllowableClosedloopError(Constants.kSlot_Turning, 0, Constants.kTimeoutMs);
 		
 	/* 1ms per loop.  PID loop can be slowed down if need be.
 	 * For example,
@@ -155,14 +155,14 @@ public class DriveTrain extends Subsystem {
 	 * - sensor movement is very slow causing the derivative error to be near zero.
 	 */
 	int closedLoopTimeMs = 1;
-	rightFront.configClosedLoopPeriod(0, closedLoopTimeMs, Constants.kTimeoutMs);
-	rightFront.configClosedLoopPeriod(1, closedLoopTimeMs, Constants.kTimeoutMs);
+	rightBack.configClosedLoopPeriod(0, closedLoopTimeMs, Constants.kTimeoutMs);
+	rightBack.configClosedLoopPeriod(1, closedLoopTimeMs, Constants.kTimeoutMs);
 
 	/* configAuxPIDPolarity(boolean invert, int timeoutMs)
 	 * false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
 	 * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
 	 */
-	rightFront.configAuxPIDPolarity(false, Constants.kTimeoutMs);
+	rightBack.configAuxPIDPolarity(false, Constants.kTimeoutMs);
 
 	/* Initialize */
 	_firstCall = true;
@@ -171,8 +171,8 @@ public class DriveTrain extends Subsystem {
 }
 
 	void zeroSensors() {
-		leftFront.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
-		rightFront.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
+		leftBack.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
+		rightBack.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
 		System.out.println("[Quadrature Encoders] All sensors are zeroed.\n");
 	}
 	
@@ -215,9 +215,8 @@ public class DriveTrain extends Subsystem {
     System.out.println(leftFront.getMotorOutputPercent() + ", " + rightFront.getMotorOutputPercent());
   }
   
-  public void driveStraight() {
-	
-    double forward = -1 * Robot.m_oi.getController().getY(Hand.kLeft);
+  	public void driveStraight() {
+    	double forward = -1 * Robot.m_oi.getController().getY(Hand.kLeft);
 		double turn = (Robot.m_oi.getController().getTriggerAxis(Hand.kRight) - 
 		Robot.m_oi.getController().getTriggerAxis(Hand.kLeft)) *
 		 (slowMode ? SLOW_MODE_TRIGGERS : 1d) * TRIGGERS_CONSTANT;
@@ -227,8 +226,8 @@ public class DriveTrain extends Subsystem {
 			if (_firstCall)
 				System.out.println("This is Arcade Drive.\n");
 			
-			leftFront.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
-			rightFront.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
+			leftBack.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
+			rightBack.set(ControlMode.PercentOutput, -forward, DemandType.ArbitraryFeedForward, -turn);
 		}else{
 			if (_firstCall) {
 				System.out.println("This is Drive Straight using the auxiliary feature with" + 
@@ -239,12 +238,14 @@ public class DriveTrain extends Subsystem {
 			}
 			
 			/* Configured for percentOutput with Auxiliary PID on Quadrature Encoders' Difference */
-			rightFront.set(ControlMode.PercentOutput, forward, DemandType.AuxPID, _targetAngle);
-			rightBack.follow(rightFront, FollowerType.AuxOutput1);
-			leftFront.set(ControlMode.PercentOutput, forward, DemandType.AuxPID, _targetAngle);
-			leftBack.follow(rightFront, FollowerType.AuxOutput1);
+			rightBack.set(ControlMode.PercentOutput, forward, DemandType.AuxPID, _targetAngle);
+			rightFront.follow(rightFront, FollowerType.AuxOutput1);
+			leftBack.set(ControlMode.PercentOutput, forward, DemandType.AuxPID, _targetAngle);
+			leftFront.follow(rightFront, FollowerType.AuxOutput1);
 		}
 		_firstCall = false;
+
+		System.out.println(rightBack.getSelectedSensorPosition() + ", " + leftBack.getSelectedSensorPosition() + ", " + rightFront.getSelectedSensorPosition() + ", " + leftFront.getSelectedSensorPosition());
   }
   
   public void stop() {
@@ -257,11 +258,6 @@ public class DriveTrain extends Subsystem {
   
   public void switchSlowMode() {
     slowMode = !slowMode;
-  }
-
-  public void resetDriveStraight() {
-	  _firstCall = true;
-	  _state = !_state;
   }
 }
 
