@@ -46,7 +46,7 @@ public class DriveTrain extends Subsystem {
 	public static final double DEAD_ZONE = 0.2;
 
 	// slows down the robot so that the robot is not too fast
-	public static final double JOYSTICK_CONSTANT = 1d;
+	public static final double JOYSTICK_CONSTANT = 0.7;
 	public static final double TRIGGERS_CONSTANT = 1d;
 
 	// these slow down the robot for precision driving
@@ -89,22 +89,22 @@ public class DriveTrain extends Subsystem {
 		leftBack.setNeutralMode(NeutralMode.Brake);
 		rightBack.setNeutralMode(NeutralMode.Brake);
 		/* Configure the drivetrain's left side Feedback Sensor as a Quadrature Encoder */
-		leftFront.configSelectedFeedbackSensor(	FeedbackDevice.QuadEncoder,			// Local Feedback Source
+		leftBack.configSelectedFeedbackSensor(	FeedbackDevice.QuadEncoder,			// Local Feedback Source
 													Constants.PID_PRIMARY,				// PID Slot for Source [0, 1]
 													Constants.kTimeoutMs);				// Configuration Timeout
 
 		/* Configure the left Talon's Selected Sensor to be a remote sensor for the right Talon */
-		rightFront.configRemoteFeedbackFilter(leftFront.getDeviceID(),					// Device ID of Source
+		rightBack.configRemoteFeedbackFilter(leftFront.getDeviceID(),					// Device ID of Source
 												RemoteSensorSource.TalonSRX_SelectedSensor,	// Remote Feedback Source
 												Constants.REMOTE_0,							// Source number [0, 1]
 												Constants.kTimeoutMs);						// Configuration Timeout
 		
 		/* Setup difference signal to be used for turn when performing Drive Straight with encoders */
-		rightFront.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.RemoteSensor0, Constants.kTimeoutMs);	// Feedback Device of Remote Talon
-		rightFront.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.QuadEncoder, Constants.kTimeoutMs);		// Quadrature Encoder of current Talon
+		rightBack.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.RemoteSensor0, Constants.kTimeoutMs);	// Feedback Device of Remote Talon
+		rightBack.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.QuadEncoder, Constants.kTimeoutMs);		// Quadrature Encoder of current Talon
 		
 		/* Difference term calculated by right Talon configured to be selected sensor of turn PID */
-		rightFront.configSelectedFeedbackSensor(	FeedbackDevice.SensorDifference, 
+		rightBack.configSelectedFeedbackSensor(	FeedbackDevice.SensorDifference, 
 													Constants.PID_TURN, 
 													Constants.kTimeoutMs);
 		
@@ -116,41 +116,41 @@ public class DriveTrain extends Subsystem {
 		 *  ... so at 3600 units per 360', that ensures 0.1 degree precision in firmware closed-loop
 		 *  and motion profile trajectory points can range +-2 rotations.
 		 */
-		rightFront.configSelectedFeedbackCoefficient(	Constants.kTurnTravelUnitsPerRotation / Constants.kEncoderUnitsPerRotation,	// Coefficient
+		rightBack.configSelectedFeedbackCoefficient(	Constants.kTurnTravelUnitsPerRotation / Constants.kEncoderUnitsPerRotation,	// Coefficient
 														Constants.PID_TURN, 														// PID Slot of Source
 														Constants.kTimeoutMs);														// Configuration Timeout
 		
 		/* Configure output and sensor direction */
 		leftFront.setInverted(false);
-		leftFront.setSensorPhase(true);
+		leftBack.setSensorPhase(true);
 		rightFront.setInverted(true);
-		rightFront.setSensorPhase(true);
+		rightBack.setSensorPhase(true);
 		
 		/* Set status frame periods */
-		rightFront.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kTimeoutMs);
-		rightFront.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants.kTimeoutMs);
-		leftFront.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);		//Used remotely by right Talon, speed up
+		rightBack.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kTimeoutMs);
+		rightBack.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants.kTimeoutMs);
+		leftBack.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);		//Used remotely by right Talon, speed up
 
 		/* Configure neutral deadband */
-		rightFront.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
-		leftFront.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
+		rightBack.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
+		leftBack.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
 
 		/* max out the peak output (for all modes).  However you can
 		* limit the output of a given PID object with configClosedLoopPeakOutput().
 		*/
-		leftFront.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
-		leftFront.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
-		rightFront.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
-		rightFront.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
+		leftBack.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
+		leftBack.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
+		rightBack.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
+		rightBack.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
 
 		/* FPID Gains for turn servo */
-		rightFront.config_kP(Constants.kSlot_Turning, Constants.kGains_Turning.kP, Constants.kTimeoutMs);
-		rightFront.config_kI(Constants.kSlot_Turning, Constants.kGains_Turning.kI, Constants.kTimeoutMs);
-		rightFront.config_kD(Constants.kSlot_Turning, Constants.kGains_Turning.kD, Constants.kTimeoutMs);
-		rightFront.config_kF(Constants.kSlot_Turning, Constants.kGains_Turning.kF, Constants.kTimeoutMs);
-		rightFront.config_IntegralZone(Constants.kSlot_Turning, Constants.kGains_Turning.kIzone, Constants.kTimeoutMs);
-		rightFront.configClosedLoopPeakOutput(Constants.kSlot_Turning, Constants.kGains_Turning.kPeakOutput, Constants.kTimeoutMs);
-		rightFront.configAllowableClosedloopError(Constants.kSlot_Turning, 0, Constants.kTimeoutMs);
+		leftBack.config_kP(Constants.kSlot_Turning, Constants.kGains_Turning.kP, Constants.kTimeoutMs);
+		leftBack.config_kI(Constants.kSlot_Turning, Constants.kGains_Turning.kI, Constants.kTimeoutMs);
+		leftBack.config_kD(Constants.kSlot_Turning, Constants.kGains_Turning.kD, Constants.kTimeoutMs);
+		leftBack.config_kF(Constants.kSlot_Turning, Constants.kGains_Turning.kF, Constants.kTimeoutMs);
+		leftBack.config_IntegralZone(Constants.kSlot_Turning, Constants.kGains_Turning.kIzone, Constants.kTimeoutMs);
+		leftBack.configClosedLoopPeakOutput(Constants.kSlot_Turning, Constants.kGains_Turning.kPeakOutput, Constants.kTimeoutMs);
+		leftBack.configAllowableClosedloopError(Constants.kSlot_Turning, 0, Constants.kTimeoutMs);
 			
 		/* 1ms per loop.  PID loop can be slowed down if need be.
 		* For example,
@@ -159,14 +159,14 @@ public class DriveTrain extends Subsystem {
 		* - sensor movement is very slow causing the derivative error to be near zero.
 		*/
 		int closedLoopTimeMs = 1;
-		rightFront.configClosedLoopPeriod(0, closedLoopTimeMs, Constants.kTimeoutMs);
-		rightFront.configClosedLoopPeriod(1, closedLoopTimeMs, Constants.kTimeoutMs);
+		rightBack.configClosedLoopPeriod(0, closedLoopTimeMs, Constants.kTimeoutMs);
+		rightBack.configClosedLoopPeriod(1, closedLoopTimeMs, Constants.kTimeoutMs);
 
 		/* configAuxPIDPolarity(boolean invert, int timeoutMs)
 		* false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
 		* true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
 		*/
-		rightFront.configAuxPIDPolarity(false, Constants.kTimeoutMs);
+		rightBack.configAuxPIDPolarity(false, Constants.kTimeoutMs);
 
 		/* Initialize */
 		_firstCall = true;
@@ -246,16 +246,16 @@ public class DriveTrain extends Subsystem {
 				"the difference between two encoders to maintain current heading.\n");
 			
 			/* Determine which slot affects which PID */
-			leftFront.selectProfileSlot(Constants.kSlot_Turning, Constants.PID_TURN);
-			rightFront.selectProfileSlot(Constants.kSlot_Turning, Constants.PID_TURN);
+			leftBack.selectProfileSlot(Constants.kSlot_Turning, Constants.PID_TURN);
+			rightBack.selectProfileSlot(Constants.kSlot_Turning, Constants.PID_TURN);
 			_firstCall = false;
 		}
 		
 		/* Configured for percentOutput with Auxiliary PID on Quadrature Encoders' Difference */
-		rightFront.set(ControlMode.PercentOutput, forward, DemandType.AuxPID, _targetAngle);
-		rightBack.follow(rightFront, FollowerType.AuxOutput1);
-		leftFront.set(ControlMode.PercentOutput, forward, DemandType.AuxPID, _targetAngle);
-		leftBack.follow(rightFront, FollowerType.AuxOutput1);
+		rightBack.set(ControlMode.PercentOutput, -forward, DemandType.AuxPID, _targetAngle);
+		rightFront.follow(rightBack, FollowerType.AuxOutput1);
+		leftBack.set(ControlMode.PercentOutput, forward, DemandType.AuxPID, _targetAngle);
+		leftFront.follow(leftBack, FollowerType.AuxOutput1);
 	}
 	
 	public void stop() {
