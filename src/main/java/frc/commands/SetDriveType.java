@@ -9,17 +9,20 @@ package frc.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import frc.subsystems.DriveTrain.DriveType;;
 
-public class ResetDriveStraight extends Command {
-  public ResetDriveStraight() {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
+public class SetDriveType extends Command {
+  
+  DriveType type;
+
+  public SetDriveType(DriveType d) {
+    type = d;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.kDriveTrain.resetDriveStraight();
+    Robot.kDriveTrain.setDriveType(type);
   }
 
   // Called repeatedly when this Command is scheduled to run

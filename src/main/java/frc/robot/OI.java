@@ -9,9 +9,9 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import frc.commands.DriveStraight;
-import frc.commands.ResetDriveStraight;
+import frc.commands.SetDriveType;
 import frc.commands.SlowMode;
+import frc.subsystems.DriveTrain.DriveType;;
 
 /**
  * Add your docs here.
@@ -19,22 +19,23 @@ import frc.commands.SlowMode;
 public class OI {
 
     public static final int CONTROLLER_PORT = 0;
+
     public static final int A_ID = 1;
     public static final int B_ID = 2;
     public static final int X_ID = 3;
     
-    private static final XboxController controller1 = new XboxController(CONTROLLER_PORT);
-    private static final JoystickButton X_BUTTON = new JoystickButton(controller1, X_ID);
-    private static final JoystickButton B_BUTTON = new JoystickButton(controller1, B_ID);
-    private static final JoystickButton A_BUTTON = new JoystickButton(controller1, A_ID);
+    private static final XboxController controller = new XboxController(CONTROLLER_PORT);
+    private static final JoystickButton X_BUTTON = new JoystickButton(controller, X_ID);
+    private static final JoystickButton B_BUTTON = new JoystickButton(controller, B_ID);
+    private static final JoystickButton A_BUTTON = new JoystickButton(controller, A_ID);
     
     public OI() {
         X_BUTTON.whenPressed(new SlowMode());
-        B_BUTTON.whenPressed(new DriveStraight());
-        A_BUTTON.whenPressed(new ResetDriveStraight());
+        A_BUTTON.whenPressed(new SetDriveType(DriveType.kArcade));
+        B_BUTTON.whenPressed(new SetDriveType(DriveType.kStraight));
     }
 
     public XboxController getController() {
-        return controller1;
+        return controller;
     }
 }
