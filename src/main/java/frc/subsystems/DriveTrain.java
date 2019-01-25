@@ -187,7 +187,10 @@ public class DriveTrain extends Subsystem {
 		return (current - DEAD_ZONE * (current > 0d ? 1d : -1d)) / (1d - DEAD_ZONE);
 	}
 
-	/** Used to drive with a controller */
+	/** Used to drive with a controller - 
+	 * selects the correct drive type based on
+	 * the current drive type
+	 */
 	public void drive() {
 		switch(currentDriveType) {
 			case kTank:
@@ -203,6 +206,7 @@ public class DriveTrain extends Subsystem {
 		}
 	}
 
+	/** Drives the robot using a joystick for each side of the robot */
 	public void tankDrive() {
 		double leftY = -Robot.m_oi.getController().getY(Hand.kLeft);
 		double rightY = -Robot.m_oi.getController().getY(Hand.kRight);
@@ -216,6 +220,7 @@ public class DriveTrain extends Subsystem {
 		drive.tankDrive(leftY, rightY);
 	}
 	
+	/** Drives the robot with the left joystick as forward-back and the triggers as turning */
 	public void arcadeDrive() {
 		double leftY = -Robot.m_oi.getController().getY(Hand.kLeft);
 		double leftTrigger = Robot.m_oi.getController().getTriggerAxis(Hand.kLeft);
@@ -231,6 +236,7 @@ public class DriveTrain extends Subsystem {
 		drive.arcadeDrive(leftY, rotation);
 	}
 	
+	/** Drives the robot straight using PID control with the talons and encoders */
 	public void driveStraight() {
 		
 		double forward = -1 * Robot.m_oi.getController().getY(Hand.kLeft) * (slowMode ? SLOW_MODE_JOYSTICK : 1d) * JOYSTICK_CONSTANT;
