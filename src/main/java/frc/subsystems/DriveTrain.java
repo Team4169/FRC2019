@@ -33,10 +33,10 @@ public class DriveTrain extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
   
-  public static final int LEFT_FRONT = 0;
-  public static final int RIGHT_FRONT = 1;
-  public static final int LEFT_BACK = 2;
-  public static final int RIGHT_BACK = 3;
+  public static final int LEFT_FRONT = 4;
+  public static final int RIGHT_FRONT = 2;
+  public static final int LEFT_BACK = 1;
+  public static final int RIGHT_BACK = 5;
 
   private static final WPI_TalonSRX leftFront = new WPI_TalonSRX(LEFT_FRONT);
   private static final WPI_TalonSRX rightFront = new WPI_TalonSRX(RIGHT_FRONT);
@@ -49,8 +49,8 @@ public class DriveTrain extends Subsystem {
   public static final double DEAD_ZONE = 0.2;
 
   // slows down the robot so that the robot is not too fast
-  public static final double JOYSTICK_CONSTANT = 0.7;
-  public static final double TRIGGERS_CONSTANT = 0.7;
+  public static final double JOYSTICK_CONSTANT = 1;
+  public static final double TRIGGERS_CONSTANT = 1;
 
   // these slow down the robot for precision driving
   static boolean slowMode = false;
@@ -79,6 +79,8 @@ public class DriveTrain extends Subsystem {
 	/* Set Neutral Mode */
 	leftFront.setNeutralMode(NeutralMode.Brake);
 	rightFront.setNeutralMode(NeutralMode.Brake);
+	leftBack.setNeutralMode(NeutralMode.Brake);
+	rightBack.setNeutralMode(NeutralMode.Brake);
 	
 	/** Closed loop configuration */
 	
@@ -166,13 +168,14 @@ public class DriveTrain extends Subsystem {
 	_firstCall = true;
 	_state = false;
 	zeroSensors();
-  }
-
-  void zeroSensors() {
-	leftFront.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
-	rightFront.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
-	System.out.println("[Quadrature Encoders] All sensors are zeroed.\n");
 }
+
+	void zeroSensors() {
+		leftFront.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
+		rightFront.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
+		System.out.println("[Quadrature Encoders] All sensors are zeroed.\n");
+	}
+	
   /** Checks if the triggers are not being used at all, returns the current to use for driving */
   public static double deadZone(double current) {
     if (Math.abs(current) < DEAD_ZONE) return 0;
@@ -186,7 +189,7 @@ public class DriveTrain extends Subsystem {
     double rightY = -Robot.m_oi.getController().getY(Hand.kRight);
     
     leftY = deadZone(leftY);
-    rightY = deadZone(leftY);
+    rightY = deadZone(rightY);
 
     leftY = leftY * (slowMode ? SLOW_MODE_JOYSTICK : 1d) * JOYSTICK_CONSTANT;
     rightY = rightY * (slowMode ? SLOW_MODE_JOYSTICK : 1d) * JOYSTICK_CONSTANT;
@@ -200,45 +203,40 @@ public class DriveTrain extends Subsystem {
     double rightTrigger = Robot.m_oi.getController().getTriggerAxis(Hand.kRight);
 
     leftY = deadZone(leftY);
+	System.out.println(leftY);
 
 	leftY = leftY * (slowMode ? SLOW_MODE_JOYSTICK : 1d) * JOYSTICK_CONSTANT;
 	
     double rotation = (rightTrigger - leftTrigger) *
-  (slowMode ? SLOW_MODE_TRIGGERS : 1d) * TRIGGERS_CONSTANT;
+		(slowMode ? SLOW_MODE_TRIGGERS : 1d) * TRIGGERS_CONSTANT;
 
     drive.arcadeDrive(leftY, rotation);
-  }
 
+    System.out.println(leftFront.getMotorOutputPercent() + ", " + rightFront.getMotorOutputPercent());
+  }
+  
   public void driveStraight() {
-    double forward = -1 * Robot.m_oi.getController().getY();
-		double turn = (Robot.m_oi.getController().getTriggerAxis(Hand.kRight) - 
-		Robot.m_oi.getController().getTriggerAxis(Hand.kLeft)) *
-		 (slowMode ? SLOW_MODE_TRIGGERS : 1d) * TRIGGERS_CONSTANT;
-		forward = deadZone(forward);
+	
+    double forward = -1 * Robot.m_oi.getController().getY(Hand.kLeft);
+	                                             forward = deadZone(forward);
+
+		_targetAngle = rightFront.getSelectedSensorPosition(1);
 						
-		if(!_state){
-			if (_firstCall)
-				System.out.println("This is Arcade Drive.\n");
-			
-			leftFront.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
-			rightFront.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
-		}else{
-			if (_firstCall) {
-				System.out.println("This is Drive Straight using the auxiliary feature with" + 
-					"the difference between two encoders to maintain current heading.\n");
+		if (_firstCall) {
+			System.out.println("This is Drive Straight using the auxiliary feature with" + 
+				"the difference between two encoders to maintain current heading.\n");
 				
-				/* Determine which slot affects which PID */
-				rightFront.selectProfileSlot(Constants.kSlot_Turning, Constants.PID_TURN);
-			}
+			/* Determine which slot affects which PID */
+			rightFront.selectProfileSlot(Constants.kSlot_Turning, Constants.PID_TURN);
+		}
 			
 			/* Configured for percentOutput with Auxiliary PID on Quadrature Encoders' Difference */
 			rightFront.set(ControlMode.PercentOutput, forward, DemandType.AuxPID, _targetAngle);
 			rightBack.follow(rightFront, FollowerType.AuxOutput1);
 			leftFront.set(ControlMode.PercentOutput, forward, DemandType.AuxPID, _targetAngle);
 			leftBack.follow(rightFront, FollowerType.AuxOutput1);
+			_firstCall = false;
 		}
-		_firstCall = false;
-  }
   
   public void stop() {
     drive.tankDrive(0, 0);
@@ -250,6 +248,11 @@ public class DriveTrain extends Subsystem {
   
   public void switchSlowMode() {
     slowMode = !slowMode;
+  }
+
+  public void resetDriveStraight() {
+	  _firstCall = true;
+	  _state = !_state;
   }
 }
 
