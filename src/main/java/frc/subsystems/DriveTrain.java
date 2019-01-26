@@ -66,6 +66,7 @@ public class DriveTrain extends Subsystem {
     // setDefaultCommand(new MySpecialCommand());
 
     setDefaultCommand(new DriveWithController());
+
   }
 
   // implement this to drive with a controller
@@ -93,7 +94,7 @@ public class DriveTrain extends Subsystem {
   }
 
 
-public void stop() {
+  public void stop() {
     drive.tankDrive(0,0); 
   }
 }
