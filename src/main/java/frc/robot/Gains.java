@@ -1,7 +1,4 @@
-/**
- *  Class that organizes gains used when assigning values to slots
- */
-package frc.subsystems;
+package main.java.frc.robot;
 
 public class Gains {
 	public final double kP;
