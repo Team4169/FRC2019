@@ -25,6 +25,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
+import com.kauailabs.navx.frc.AHRS;
+
 /**
  * Add your docs here.
  */
@@ -56,8 +58,19 @@ public class DriveTrain extends Subsystem {
 	public static final double SLOW_MODE_JOYSTICK = 0.7;
 	public static final double SLOW_MODE_TRIGGERS = 0.8;
 
+	static final double leftkF = 1.02,
+			leftkP = 1.2,
+			leftkI = 0.004,
+			leftkD = 8.0,
+			rightkF = 1.02,
+			rightkP = 1.2,
+			rightkI = 0.004,
+			rightkD = 8.0;
+
 	double _targetAngle = 0;
 	DriveType curDriveType;
+
+	AHRS ahrs;
 
 	public enum DriveType {
 		kArcade, kDriveStraight, kTank
@@ -218,6 +231,15 @@ public class DriveTrain extends Subsystem {
 		*/
 		rightFront.configAuxPIDPolarity(false,  kTimeoutMs);
 		zeroSensors();
+
+		try {
+			/* Communicate w/navX-MXP via the MXP SPI Bus.                                     */
+			/* Alternatively:  I2C.Port.kMXP, SerialPort.Port.kMXP or SerialPort.Port.kUSB     */
+			/* See http://navx-mxp.kauailabs.com/guidance/selecting-an-interface/ for details. */
+			ahrs = new AHRS(SPI.Port.kMXP); 
+		} catch (RuntimeException ex ) {
+			DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
+		}
 	}
 
 	void zeroSensors() {
@@ -311,6 +333,10 @@ public class DriveTrain extends Subsystem {
 
 	public void arcadeDriveFirstCall() {
 		System.out.println("This is Arcade Drive.\n");
+	}
+
+	public void printAngle() {
+		System.out.println(ahrs.getAngle());
 	}
 
 	public void switchDriveType(DriveType d) {
