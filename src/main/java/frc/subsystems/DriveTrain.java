@@ -13,9 +13,11 @@ import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.commands.DriveWithController;
 import frc.robot.Gains;
 import frc.robot.Robot;
+import frc.robot.RobotMap;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
@@ -35,17 +37,11 @@ import com.kauailabs.navx.frc.AHRS;
 public class DriveTrain extends Subsystem {
 	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
-	
-	public static final int LEFT_FRONT = 4;
-	public static final int RIGHT_FRONT = 2;
-	public static final int LEFT_BACK = 1;
-	public static final int RIGHT_BACK = 5;
-	public static final int AHRS_PORT = 6;
 
-	private static final WPI_TalonSRX leftFront = new WPI_TalonSRX(LEFT_FRONT);
-	private static final WPI_TalonSRX rightFront = new WPI_TalonSRX(RIGHT_FRONT);
-	private static final WPI_TalonSRX leftBack = new WPI_TalonSRX(LEFT_BACK);
-	private static final WPI_TalonSRX rightBack = new WPI_TalonSRX(RIGHT_BACK);
+	private static final WPI_TalonSRX leftFront = new WPI_TalonSRX(RobotMap.LEFT_FRONT);
+	private static final WPI_TalonSRX rightFront = new WPI_TalonSRX(RobotMap.RIGHT_FRONT);
+	private static final WPI_TalonSRX leftBack = new WPI_TalonSRX(RobotMap.LEFT_BACK);
+	private static final WPI_TalonSRX rightBack = new WPI_TalonSRX(RobotMap.RIGHT_BACK);
 
 	public static final SpeedControllerGroup left = new SpeedControllerGroup(leftFront, leftBack);
 	public static final SpeedControllerGroup right = new SpeedControllerGroup(rightFront, rightBack);
@@ -57,7 +53,7 @@ public class DriveTrain extends Subsystem {
 	public static final double TRIGGERS_CONSTANT = 1;
 
 	// these slow down the robot for precision driving
-	static boolean slowMode = false;
+	boolean slowMode = false;
 	public static final double SLOW_MODE_JOYSTICK = 0.7;
 	public static final double SLOW_MODE_TRIGGERS = 0.8;
 
@@ -78,12 +74,6 @@ public class DriveTrain extends Subsystem {
 	public enum DriveType {
 		kArcade, kDriveStraight, kTank
 	}
-
-	/**
-	 * Number of joystick buttons to poll.
-	 * 10 means buttons[1,9] are polled, which is actually 9 buttons.
-	 */
-	public final static int kNumButtonsPlusOne = 10;
 
 	/**
 	 * Using the configSelectedFeedbackCoefficient() function, scale units to 3600 per rotation.
@@ -150,6 +140,11 @@ public class DriveTrain extends Subsystem {
 	}
 
 	public DriveTrain() {
+		SmartDashboard.putNumber("kP", 3.0);
+		SmartDashboard.putNumber("kI", 0.0);
+		SmartDashboard.putNumber("kD", 4.0);
+		SmartDashboard.putNumber("kF", 0.0);
+
 		curDriveType = DriveType.kArcade;
 
 		rightFront.set(ControlMode.PercentOutput, 0);
@@ -245,7 +240,7 @@ public class DriveTrain extends Subsystem {
 		}
 	}
 
-	void zeroSensors() {
+	public void zeroSensors() {
 		leftFront.getSensorCollection().setQuadraturePosition(0,  kTimeoutMs);
 		rightFront.getSensorCollection().setQuadraturePosition(0,  kTimeoutMs);
 		System.out.println("[Quadrature Encoders] All sensors are zeroed.\n");
