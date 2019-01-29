@@ -140,10 +140,6 @@ public class DriveTrain extends Subsystem {
 	}
 
 	public DriveTrain() {
-		SmartDashboard.putNumber("kP", 3.0);
-		SmartDashboard.putNumber("kI", 0.0);
-		SmartDashboard.putNumber("kD", 4.0);
-		SmartDashboard.putNumber("kF", 0.0);
 
 		curDriveType = DriveType.kArcade;
 
@@ -159,15 +155,15 @@ public class DriveTrain extends Subsystem {
 		/** Closed loop configuration */
 		
 		/* Configure the drivetrain's left side Feedback Sensor as a Quadrature Encoder */
-		leftFront.configSelectedFeedbackSensor(	FeedbackDevice.QuadEncoder,	PID_PRIMARY, kTimeoutMs);
+		leftBack.configSelectedFeedbackSensor(	FeedbackDevice.QuadEncoder,	PID_PRIMARY, kTimeoutMs);
 		/* Configure the left Talon's Selected Sensor to be a remote sensor for the right Talon */
-		rightFront.configRemoteFeedbackFilter(leftFront.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, REMOTE_0, kTimeoutMs);	
+		rightBack.configRemoteFeedbackFilter(leftBack.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, REMOTE_0, kTimeoutMs);	
 		/* Setup difference signal to be used for turn when performing Drive Straight with encoders */
-		rightFront.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.RemoteSensor0, kTimeoutMs);
-		rightFront.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.QuadEncoder, kTimeoutMs);
+		rightBack.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.RemoteSensor0, kTimeoutMs);
+		rightBack.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.QuadEncoder, kTimeoutMs);
 		
 		/* Difference term calculated by right Talon configured to be selected sensor of turn PID */
-		rightFront.configSelectedFeedbackSensor(FeedbackDevice.SensorDifference, PID_TURN, kTimeoutMs);
+		rightBack.configSelectedFeedbackSensor(FeedbackDevice.SensorDifference, PID_TURN, kTimeoutMs);
 		
 		/* Scale the Feedback Sensor using a coefficient */
 		/**
@@ -177,7 +173,7 @@ public class DriveTrain extends Subsystem {
 		 *  ... so at 3600 units per 360', that ensures 0.1 degree precision in firmware closed-loop
 		 *  and motion profile trajectory points can range +-2 rotations.
 		 */
-		rightFront.configSelectedFeedbackCoefficient(kTurnTravelUnitsPerRotation / kEncoderUnitsPerRotation, PID_TURN, kTimeoutMs);														// Configuration Timeout
+		rightBack.configSelectedFeedbackCoefficient(kTurnTravelUnitsPerRotation / kEncoderUnitsPerRotation, PID_TURN, kTimeoutMs);														// Configuration Timeout
 		
 		/* Configure output and sensor direction */
 		leftBack.setInverted(false);
@@ -188,30 +184,30 @@ public class DriveTrain extends Subsystem {
 		leftFront.setInverted(false);
 		
 		/* Set status frame periods */
-		rightFront.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, kTimeoutMs);
-		rightFront.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, kTimeoutMs);
-		leftFront.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5,  kTimeoutMs);		//Used remotely by right Talon, speed up
+		rightBack.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, kTimeoutMs);
+		rightBack.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, kTimeoutMs);
+		leftBack.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5,  kTimeoutMs);		//Used remotely by right Talon, speed up
 
 		/* Configure neutral deadband */
-		rightFront.configNeutralDeadband( kNeutralDeadband,  kTimeoutMs);
-		leftFront.configNeutralDeadband( kNeutralDeadband,  kTimeoutMs);
+		rightBack.configNeutralDeadband( kNeutralDeadband,  kTimeoutMs);
+		leftBack.configNeutralDeadband( kNeutralDeadband,  kTimeoutMs);
 
 		/* max out the peak output (for all modes).  However you can
 		* limit the output of a given PID object with configClosedLoopPeakOutput().
 		*/
-		leftFront.configPeakOutputForward(+1.0,  kTimeoutMs);
-		leftFront.configPeakOutputReverse(-1.0,  kTimeoutMs);
-		rightFront.configPeakOutputForward(+1.0,  kTimeoutMs);
-		rightFront.configPeakOutputReverse(-1.0,  kTimeoutMs);
+		leftBack.configPeakOutputForward(+1.0,  kTimeoutMs);
+		leftBack.configPeakOutputReverse(-1.0,  kTimeoutMs);
+		rightBack.configPeakOutputForward(+1.0,  kTimeoutMs);
+		rightBack.configPeakOutputReverse(-1.0,  kTimeoutMs);
 
 		/* FPID Gains for turn servo */
-		rightFront.config_kP( kSlot_Turning,  kGains_Turning.kP,  kTimeoutMs);
-		rightFront.config_kI( kSlot_Turning,  kGains_Turning.kI,  kTimeoutMs);
-		rightFront.config_kD( kSlot_Turning,  kGains_Turning.kD,  kTimeoutMs);
-		rightFront.config_kF( kSlot_Turning,  kGains_Turning.kF,  kTimeoutMs);
-		rightFront.config_IntegralZone( kSlot_Turning,  kGains_Turning.kIzone,  kTimeoutMs);
-		rightFront.configClosedLoopPeakOutput( kSlot_Turning,  kGains_Turning.kPeakOutput,  kTimeoutMs);
-		rightFront.configAllowableClosedloopError( kSlot_Turning, 0,  kTimeoutMs);
+		rightBack.config_kP( kSlot_Turning,  kGains_Turning.kP,  kTimeoutMs);
+		rightBack.config_kI( kSlot_Turning,  kGains_Turning.kI,  kTimeoutMs);
+		rightBack.config_kD( kSlot_Turning,  kGains_Turning.kD,  kTimeoutMs);
+		rightBack.config_kF( kSlot_Turning,  kGains_Turning.kF,  kTimeoutMs);
+		rightBack.config_IntegralZone( kSlot_Turning,  kGains_Turning.kIzone,  kTimeoutMs);
+		rightBack.configClosedLoopPeakOutput( kSlot_Turning,  kGains_Turning.kPeakOutput,  kTimeoutMs);
+		rightBack.configAllowableClosedloopError( kSlot_Turning, 0,  kTimeoutMs);
 			
 		/* 1ms per loop.  PID loop can be slowed down if need be.
 		* For example,
@@ -220,14 +216,14 @@ public class DriveTrain extends Subsystem {
 		* - sensor movement is very slow causing the derivative error to be near zero.
 		*/
 		int closedLoopTimeMs = 1;
-		rightFront.configClosedLoopPeriod(0, closedLoopTimeMs,  kTimeoutMs);
-		rightFront.configClosedLoopPeriod(1, closedLoopTimeMs,  kTimeoutMs);
+		rightBack.configClosedLoopPeriod(0, closedLoopTimeMs,  kTimeoutMs);
+		rightBack.configClosedLoopPeriod(1, closedLoopTimeMs,  kTimeoutMs);
 
 		/* configAuxPIDPolarity(boolean invert, int timeoutMs)
 		* false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
 		* true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
 		*/
-		rightFront.configAuxPIDPolarity(false,  kTimeoutMs);
+		rightBack.configAuxPIDPolarity(false,  kTimeoutMs);
 		zeroSensors();
 
 		try {
@@ -241,8 +237,8 @@ public class DriveTrain extends Subsystem {
 	}
 
 	public void zeroSensors() {
-		leftFront.getSensorCollection().setQuadraturePosition(0,  kTimeoutMs);
-		rightFront.getSensorCollection().setQuadraturePosition(0,  kTimeoutMs);
+		leftBack.getSensorCollection().setQuadraturePosition(0,  kTimeoutMs);
+		rightBack.getSensorCollection().setQuadraturePosition(0,  kTimeoutMs);
 		System.out.println("[Quadrature Encoders] All sensors are zeroed.\n");
 	}
 	
@@ -345,6 +341,8 @@ public class DriveTrain extends Subsystem {
 				break;
 			case kDriveStraight:
 				driveStraightFirstCall();
+				rightBack.config_kP( kSlot_Turning,  SmartDashboard.getNumber("kP", 3.0),  kTimeoutMs);
+				rightBack.config_kD( kSlot_Turning,  SmartDashboard.getNumber("kD", 4.0),  kTimeoutMs);
 				break;
 			default:
 				break;

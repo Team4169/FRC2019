@@ -35,6 +35,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    SmartDashboard.putNumber("kP", 3.0);
+		SmartDashboard.putNumber("kD", 4.0);
 
     SmartDashboard.putData("Drive Train", kDriveTrain);
     
