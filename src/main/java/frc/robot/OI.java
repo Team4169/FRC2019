@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.commands.SlowMode;
 import frc.commands.SwitchDriveType;
+import frc.commands.ZeroSensors;
 import frc.subsystems.DriveTrain;
 
 /**
@@ -18,23 +19,22 @@ import frc.subsystems.DriveTrain;
  */
 public class OI {
 
-    public static final int CONTROLLER_PORT = 0;
-    public static final int A_ID = 1;
-    public static final int B_ID = 2;
-    public static final int X_ID = 3;
     
-    private static final XboxController controller1 = new XboxController(CONTROLLER_PORT);
-    private static final JoystickButton X_BUTTON = new JoystickButton(controller1, X_ID);
-    private static final JoystickButton B_BUTTON = new JoystickButton(controller1, B_ID);
-    private static final JoystickButton A_BUTTON = new JoystickButton(controller1, A_ID);
     
-    public OI() {
-        X_BUTTON.whenPressed(new SlowMode());
-        B_BUTTON.whenPressed(new SwitchDriveType(DriveTrain.DriveType.kDriveStraight));
-        A_BUTTON.whenPressed(new SwitchDriveType(DriveTrain.DriveType.kArcade));
-    }
+  private static final XboxController controller1 = new XboxController(RobotMap.CONTROLLER_PORT);
+  private static final JoystickButton Y_BUTTON = new JoystickButton(controller1, RobotMap.Y_ID);
+  private static final JoystickButton X_BUTTON = new JoystickButton(controller1, RobotMap.X_ID);
+  private static final JoystickButton B_BUTTON = new JoystickButton(controller1, RobotMap.B_ID);
+  private static final JoystickButton A_BUTTON = new JoystickButton(controller1, RobotMap.A_ID);
 
-    public XboxController getController() {
-        return controller1;
-    }
+  public OI() {
+    Y_BUTTON.whenPressed(new ZeroSensors());
+    X_BUTTON.whenPressed(new SlowMode());
+    B_BUTTON.whenPressed(new SwitchDriveType(DriveTrain.DriveType.kDriveStraight));
+    A_BUTTON.whenPressed(new SwitchDriveType(DriveTrain.DriveType.kArcade));
+  }
+
+  public XboxController getController() {
+    return controller1;
+  }
 }
