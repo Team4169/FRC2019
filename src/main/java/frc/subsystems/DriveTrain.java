@@ -25,6 +25,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SPI;
 import com.kauailabs.navx.frc.AHRS;
 
 /**
@@ -38,6 +40,7 @@ public class DriveTrain extends Subsystem {
 	public static final int RIGHT_FRONT = 2;
 	public static final int LEFT_BACK = 1;
 	public static final int RIGHT_BACK = 5;
+	public static final int AHRS_PORT = 6;
 
 	private static final WPI_TalonSRX leftFront = new WPI_TalonSRX(LEFT_FRONT);
 	private static final WPI_TalonSRX rightFront = new WPI_TalonSRX(RIGHT_FRONT);
