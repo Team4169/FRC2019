@@ -9,9 +9,9 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import frc.commands.DriveStraight;
-import frc.commands.ResetDriveStraight;
 import frc.commands.SlowMode;
+import frc.commands.SwitchDriveType;
+import frc.subsystems.DriveTrain;
 
 /**
  * Add your docs here.
@@ -30,8 +30,8 @@ public class OI {
     
     public OI() {
         X_BUTTON.whenPressed(new SlowMode());
-        B_BUTTON.whenPressed(new DriveStraight());
-        A_BUTTON.whenPressed(new ResetDriveStraight());
+        B_BUTTON.whenPressed(new SwitchDriveType(DriveTrain.DriveType.kDriveStraight));
+        A_BUTTON.whenPressed(new SwitchDriveType(DriveTrain.DriveType.kArcade));
     }
 
     public XboxController getController() {
