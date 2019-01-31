@@ -180,9 +180,9 @@ public class DriveTrain extends Subsystem {
 		/* Configure output and sensor direction */
 		leftBack.setInverted(false);
 		leftBack.setSensorPhase(true);
-		rightBack.setInverted(false);
+		rightBack.setInverted(true);
 		rightBack.setSensorPhase(true);
-		rightFront.setInverted(true);
+		rightFront.setInverted(false);
 		leftFront.setInverted(false);
 		
 		/* Set status frame periods */
