@@ -19,12 +19,12 @@ public class ZeroSensors extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.kDriveTrain.zeroSensors();
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    Robot.kDriveTrain.zeroSensors();
   }
 
   // Make this return true when this Command no longer needs to run execute()

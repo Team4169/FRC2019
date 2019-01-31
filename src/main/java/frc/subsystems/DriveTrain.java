@@ -26,6 +26,7 @@ import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.FollowerType;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
@@ -225,11 +226,8 @@ public class DriveTrain extends Subsystem {
 		* false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
 		* true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
 		*/
-		rightBack.configAuxPIDPolarity(false,  kTimeoutMs);
-		zeroSensors();
 
-		rightFront.follow(rightBack);
-		leftFront.follow(leftBack);
+		rightBack.configAuxPIDPolarity(false,  kTimeoutMs);
 
 		try {
 			/* Communicate w/navX-MXP via the MXP SPI Bus.                                     */
@@ -239,9 +237,12 @@ public class DriveTrain extends Subsystem {
 		} catch (RuntimeException ex ) {
 			DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
 		}
+
+		zeroSensors();
 	}
 
 	public void zeroSensors() {
+		ahrs.resetDisplacement();
 		leftBack.getSensorCollection().setQuadraturePosition(0,  kTimeoutMs);
 		rightBack.getSensorCollection().setQuadraturePosition(0,  kTimeoutMs);
 		System.out.println("[Quadrature Encoders] All sensors are zeroed.\n");
@@ -301,13 +302,14 @@ public class DriveTrain extends Subsystem {
   
 	public void driveStraight() {
 		double forward = -1 * Robot.m_oi.getController().getY(Hand.kLeft);
+		//double forward = 0d;
 		forward = deadZone(forward) * (slowMode ? SLOW_MODE_JOYSTICK : 1d) * JOYSTICK_CONSTANT;
 		System.out.println("This is Drive Straight using the auxiliary feature with" + 
 			"the difference between two encoders to maintain current heading.\n");
-
+		System.out.println(forward);
 		/* Configured for percentOutput with Auxiliary PID on Quadrature Encoders' Difference */
 		rightBack.set(ControlMode.PercentOutput, forward, DemandType.AuxPID, _targetAngle);
-		leftBack.set(ControlMode.PercentOutput, forward, DemandType.AuxPID, _targetAngle);
+		leftBack.follow(rightBack, FollowerType.AuxOutput1);
 	}
   
   	public void stop() {
@@ -323,15 +325,24 @@ public class DriveTrain extends Subsystem {
   	}
 	  
 	public void driveStraightFirstCall() {
-		System.out.println("This is Drive Straight using the auxiliary feature with" + 
-					"the difference between two encoders to maintain current heading.\n");
+		System.out.println("This is Drive Straight first call");
 
 		/* Determine which slot affects which PID */
 		rightBack.selectProfileSlot( kSlot_Turning,  PID_TURN);
+		rightFront.follow(rightBack);
+		leftFront.follow(leftBack);
+		drive.setSafetyEnabled(false);
+		_targetAngle = rightBack.getSelectedSensorPosition();
 	}
 
 	public void arcadeDriveFirstCall() {
 		System.out.println("This is Arcade Drive.\n");
+		drive.setSafetyEnabled(true);
+	}
+
+	public void tankDriveFirstCall() {
+		System.out.println("This is Tank Drive");
+		drive.setSafetyEnabled(true);
 	}
 
 	public void printAngle() {
