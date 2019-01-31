@@ -228,6 +228,9 @@ public class DriveTrain extends Subsystem {
 		rightBack.configAuxPIDPolarity(false,  kTimeoutMs);
 		zeroSensors();
 
+		rightFront.follow(rightBack);
+		leftFront.follow(leftBack);
+
 		try {
 			/* Communicate w/navX-MXP via the MXP SPI Bus.                                     */
 			/* Alternatively:  I2C.Port.kMXP, SerialPort.Port.kMXP or SerialPort.Port.kUSB     */
@@ -304,9 +307,7 @@ public class DriveTrain extends Subsystem {
 
 		/* Configured for percentOutput with Auxiliary PID on Quadrature Encoders' Difference */
 		rightBack.set(ControlMode.PercentOutput, forward, DemandType.AuxPID, _targetAngle);
-		leftBack.set(ControlMode.PercentOutput, forward, DemandType.AuxPID, _targetAngle);	
-		rightFront.follow(rightBack);
-		leftFront.follow(leftBack);
+		leftBack.set(ControlMode.PercentOutput, forward, DemandType.AuxPID, _targetAngle);
 	}
   
   	public void stop() {
@@ -344,9 +345,9 @@ public class DriveTrain extends Subsystem {
 				arcadeDriveFirstCall();
 				break;
 			case kDriveStraight:
-				driveStraightFirstCall();
 				rightBack.config_kP( kSlot_Turning,  SmartDashboard.getNumber("kP", 3.0),  kTimeoutMs);
 				rightBack.config_kD( kSlot_Turning,  SmartDashboard.getNumber("kD", 4.0),  kTimeoutMs);
+				driveStraightFirstCall();
 				break;
 			default:
 				break;
