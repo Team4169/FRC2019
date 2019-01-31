@@ -145,6 +145,8 @@ public class DriveTrain extends Subsystem {
 
 		rightFront.set(ControlMode.PercentOutput, 0);
 		leftFront.set(ControlMode.PercentOutput, 0);
+		rightBack.set(ControlMode.PercentOutput, 0);
+		leftBack.set(ControlMode.PercentOutput, 0);
 		
 		/* Set Neutral Mode */
 		leftFront.setNeutralMode(NeutralMode.Brake);
