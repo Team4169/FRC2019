@@ -221,9 +221,6 @@ public class DriveTrain extends Subsystem {
 		rightBack.configClosedLoopPeriod(0, closedLoopTimeMs,  kTimeoutMs);
 		rightBack.configClosedLoopPeriod(1, closedLoopTimeMs,  kTimeoutMs);
 
-		rightFront.follow(rightBack);
-		leftFront.follow(leftBack);
-
 		/* configAuxPIDPolarity(boolean invert, int timeoutMs)
 		* false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
 		* true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
@@ -308,6 +305,8 @@ public class DriveTrain extends Subsystem {
 		/* Configured for percentOutput with Auxiliary PID on Quadrature Encoders' Difference */
 		rightBack.set(ControlMode.PercentOutput, forward, DemandType.AuxPID, _targetAngle);
 		leftBack.set(ControlMode.PercentOutput, forward, DemandType.AuxPID, _targetAngle);	
+		rightFront.follow(rightBack);
+		leftFront.follow(leftBack);
 	}
   
   	public void stop() {

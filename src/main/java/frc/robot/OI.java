@@ -22,14 +22,16 @@ public class OI {
     
     
   private static final XboxController controller1 = new XboxController(RobotMap.CONTROLLER_PORT);
+  private static final JoystickButton BACK_BUTTON = new JoystickButton(controller1, RobotMap.BACK_ID);
   private static final JoystickButton Y_BUTTON = new JoystickButton(controller1, RobotMap.Y_ID);
   private static final JoystickButton X_BUTTON = new JoystickButton(controller1, RobotMap.X_ID);
   private static final JoystickButton B_BUTTON = new JoystickButton(controller1, RobotMap.B_ID);
   private static final JoystickButton A_BUTTON = new JoystickButton(controller1, RobotMap.A_ID);
 
   public OI() {
-    Y_BUTTON.whenPressed(new ZeroSensors());
-    X_BUTTON.whenPressed(new SlowMode());
+    BACK_BUTTON.whenPressed(new ZeroSensors());
+    Y_BUTTON.whenPressed(new SlowMode(false));
+    X_BUTTON.whenPressed(new SlowMode(true));
     B_BUTTON.whenPressed(new SwitchDriveType(DriveTrain.DriveType.kDriveStraight));
     A_BUTTON.whenPressed(new SwitchDriveType(DriveTrain.DriveType.kArcade));
   }

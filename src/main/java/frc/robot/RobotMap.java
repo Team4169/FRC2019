@@ -23,4 +23,10 @@ public class RobotMap {
     public static final int B_ID = 2;
 		public static final int X_ID = 3;
 		public static final int Y_ID = 4;
+    public static final int LB_ID = 5;
+    public static final int RB_ID = 6;
+    public static final int BACK_ID = 7;
+    public static final int START_ID = 8;
+    public static final int LEFT_JOY_ID = 9;
+    public static final int RIGHT_JOY_ID = 10;
 }
