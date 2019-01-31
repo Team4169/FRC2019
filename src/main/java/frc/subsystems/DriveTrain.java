@@ -23,42 +23,43 @@ import frc.robot.Robot;
 public class DriveTrain extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
-    public static final int TALON_ONE_PORT = 0;
-    public static final int TALON_TWO_PORT = 1;
-    public static final int TALON_THREE_PORT = 2;
-    public static final int TALON_FOUR_PORT = 3;
+  public static final int TALON_ONE_PORT = 0;
+  public static final int TALON_TWO_PORT = 1;
+  public static final int TALON_THREE_PORT = 2;
+  public static final int TALON_FOUR_PORT = 3;
 
-    private static final WPI_TalonSRX leftFront = new WPI_TalonSRX(TALON_ONE_PORT);
-    private static final WPI_TalonSRX rightFront = new WPI_TalonSRX(TALON_TWO_PORT);
-    private static final WPI_TalonSRX leftBack = new WPI_TalonSRX(TALON_THREE_PORT);
-    private static final WPI_TalonSRX rightBack = new WPI_TalonSRX(TALON_FOUR_PORT);
+  private static final WPI_TalonSRX leftFront = new WPI_TalonSRX(TALON_ONE_PORT);
+  private static final WPI_TalonSRX rightFront = new WPI_TalonSRX(TALON_TWO_PORT);
+  private static final WPI_TalonSRX leftBack = new WPI_TalonSRX(TALON_THREE_PORT);
+  private static final WPI_TalonSRX rightBack = new WPI_TalonSRX(TALON_FOUR_PORT);
 
-    public static SpeedControllerGroup left = new SpeedControllerGroup(leftFront, leftBack);
-    public static SpeedControllerGroup right = new SpeedControllerGroup(rightFront, rightBack);
+  public static SpeedControllerGroup left = new SpeedControllerGroup(leftFront, leftBack);
+  public static SpeedControllerGroup right = new SpeedControllerGroup(rightFront, rightBack);
 
-    public static final double DEAD_ZONE = 0.2;
-    public static final double slowModeConstant = 0.7;
-    public static boolean buttonPush = false;
+  public static final double DEAD_ZONE = 0.2;
+  public static final double slowModeConstant = 0.7;
+  public static boolean buttonPush = false;
 
-    private static double deadZone(double current) {
-      if (Math.abs(current) < DEAD_ZONE) {
-        return 0;
-      } else if (current > 0) {
-        return (4 * current/5 + DEAD_ZONE);
-      } else {
-        return (4 * current / 5 + DEAD_ZONE);
-      }
+
+  private static double deadZone(double current) {
+    if (Math.abs(current) < DEAD_ZONE) {
+      return 0;
+    } else if (current > 0) {
+      return (4 * current/5 + DEAD_ZONE);
+    } else {
+      return (4 * current / 5 + DEAD_ZONE);
+    }
+  }
+
+  private double slowMode(double number) {
+    if (buttonPush = true) { //if the button is pressed return true
+      number *= slowModeConstant;
+    }
+      return number;
     }
 
-    private double slowMode(double number) {
-      if (buttonPush = true) { //if the button is pressed return true
-        number *= slowModeConstant;
-      }
-    return number;
-    }
-
-    static DifferentialDrive drive = new DifferentialDrive(left, right);
-    static SlowMode slowMode = new SlowMode();
+  static DifferentialDrive drive = new DifferentialDrive(left, right);
+  static SlowMode slowMode = new SlowMode();
 
   @Override
   public void initDefaultCommand() {
@@ -66,7 +67,6 @@ public class DriveTrain extends Subsystem {
     // setDefaultCommand(new MySpecialCommand());
 
     setDefaultCommand(new DriveWithController());
-
   }
 
   // implement this to drive with a controller

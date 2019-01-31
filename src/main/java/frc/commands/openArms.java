@@ -9,7 +9,7 @@ package frc.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class GetHatch extends Command {
+public class OpenArms extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
@@ -39,13 +39,4 @@ public class GetHatch extends Command {
   protected void interrupted() {
   }
 }
-/*  so this should check if the limit swith is pushed. If the limit switch is not 
-pushed: then the extend motor should run forward until the limit switch is pushed. 
-        then once the switch is pushed it should run the motors for the leftOut 
-        and rightOut, to grab the hatch, that will be it and the command will end. 
-If the limit switch is pushed then:
-        the leftOut and rightOut will retracht (hypothetically putting the hatch 
-        on the thing) then the extend will run backwards for (either a period of 
-        time or a distance, most likely the first one) then the command ends
 
-*/
