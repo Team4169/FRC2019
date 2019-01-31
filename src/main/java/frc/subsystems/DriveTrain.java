@@ -144,7 +144,9 @@ public class DriveTrain extends Subsystem {
 		curDriveType = DriveType.kArcade;
 
 		rightFront.set(ControlMode.PercentOutput, 0);
+		rightBack.set(ControlMode.PercentOutput, 0);
 		leftFront.set(ControlMode.PercentOutput, 0);
+		leftBack.set(ControlMode.PercentOutput, 0);
 		
 		/* Set Neutral Mode */
 		leftFront.setNeutralMode(NeutralMode.Brake);
@@ -182,6 +184,7 @@ public class DriveTrain extends Subsystem {
 		rightBack.setSensorPhase(true);
 		rightFront.setInverted(false);
 		leftFront.setInverted(false);
+		// TODO
 		
 		/* Set status frame periods */
 		rightBack.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, kTimeoutMs);
@@ -218,6 +221,9 @@ public class DriveTrain extends Subsystem {
 		int closedLoopTimeMs = 1;
 		rightBack.configClosedLoopPeriod(0, closedLoopTimeMs,  kTimeoutMs);
 		rightBack.configClosedLoopPeriod(1, closedLoopTimeMs,  kTimeoutMs);
+
+		rightFront.follow(rightBack);
+		leftFront.follow(leftBack);
 
 		/* configAuxPIDPolarity(boolean invert, int timeoutMs)
 		* false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
