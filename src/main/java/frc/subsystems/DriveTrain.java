@@ -135,6 +135,11 @@ public class DriveTrain extends Subsystem {
 
 		curDriveType = DriveType.kArcade;
 
+		rightBack.configFactoryDefault();
+		rightFront.configFactoryDefault();
+		leftBack.configFactoryDefault();
+		leftFront.configFactoryDefault();
+
 		rightFront.set(ControlMode.PercentOutput, 0);
 		rightBack.set(ControlMode.PercentOutput, 0);
 		leftFront.set(ControlMode.PercentOutput, 0);
@@ -294,9 +299,9 @@ public class DriveTrain extends Subsystem {
 		double forward = -1 * Robot.m_oi.getController().getY(Hand.kLeft);
 		//double forward = 0d;
 		forward = deadZone(forward) * (slowMode ? SLOW_MODE_JOYSTICK : 1d) * JOYSTICK_CONSTANT;
-		System.out.println("This is Drive Straight using the auxiliary feature with" + 
-			"the difference between two encoders to maintain current heading.\n");
-		System.out.println("Left: " + leftBack.getSelectedSensorPosition() + ", Right: " + rightBack.getSelectedSensorPosition());
+	//	System.out.println("This is Drive Straight using the auxiliary feature with" + 
+	//		"the difference between two encoders to maintain current heading.\n");
+	//	System.out.println("Left: " + leftBack.getSelectedSensorPosition() + ", Right: " + rightBack.getSelectedSensorPosition());
 		/* Configured for percentOutput with Auxiliary PID on Quadrature Encoders' Difference */
 		rightBack.set(ControlMode.PercentOutput, forward, DemandType.AuxPID, _targetAngle);
 		leftBack.follow(rightBack, FollowerType.AuxOutput1);
@@ -316,6 +321,7 @@ public class DriveTrain extends Subsystem {
 	  
 	public void driveStraightFirstCall() {
 		System.out.println("This is Drive Straight first call");
+		
 
 		/* Determine which slot affects which PID */
 		rightBack.selectProfileSlot( kSlot_Turning,  PID_TURN);
@@ -323,6 +329,7 @@ public class DriveTrain extends Subsystem {
 		leftFront.follow(leftBack);
 		drive.setSafetyEnabled(false);
 		_targetAngle = rightBack.getSelectedSensorPosition();
+		System.out.println(_targetAngle);
 	}
 
 	public void arcadeDriveFirstCall() {
