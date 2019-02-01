@@ -23,9 +23,11 @@ import frc.subsystems.DriveTrain;
 public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
+public static Object m_oi;
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   public static final DriveTrain kDriveTrain = new DriveTrain();
+  public static final OI m_oi = new OI();
 
   /**
    * This function is run when the robot is first started up and should be

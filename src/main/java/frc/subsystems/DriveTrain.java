@@ -9,8 +9,10 @@ package frc.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.commands.DriveWithController;
+import frc.robot.Robot;
 
 /**
  * Add your docs here.
@@ -24,6 +26,7 @@ public class DriveTrain extends Subsystem {
     private static final WPI_TalonSRX talon1 = new WPI_TalonSRX(TALON_ONE_PORT);
     private static final WPI_TalonSRX talon2 = new WPI_TalonSRX(TALON_TWO_PORT);
 
+   
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
@@ -34,6 +37,11 @@ public class DriveTrain extends Subsystem {
 
   // implement this to drive with a controller
   public void drive() {
-    // TODO
+    double leftY = Robot.m_oi.getController().getY(GenericHID.Hand.kLeft);
+    double rightY = Robot.m_oi.getController().getY(GenericHID.Hand.kRight);
   }
+  public void arcadeDrive() {
+
+  }
+
 }
