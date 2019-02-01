@@ -58,15 +58,6 @@ public class DriveTrain extends Subsystem {
 	public static final double SLOW_MODE_JOYSTICK = 0.7;
 	public static final double SLOW_MODE_TRIGGERS = 0.8;
 
-	static final double leftkF = 1.02,
-			leftkP = 1.2,
-			leftkI = 0.004,
-			leftkD = 8.0,
-			rightkF = 1.02,
-			rightkP = 1.2,
-			rightkI = 0.004,
-			rightkD = 8.0;
-
 	double _targetAngle = 0;
 	DriveType curDriveType;
 
@@ -290,7 +281,6 @@ public class DriveTrain extends Subsystem {
 		double rightTrigger = Robot.m_oi.getController().getTriggerAxis(Hand.kRight);
 
 		leftY = deadZone(leftY);
-		System.out.println(leftY);
 
 		leftY *= (slowMode ? SLOW_MODE_JOYSTICK : 1d) * JOYSTICK_CONSTANT;
 		
@@ -306,7 +296,7 @@ public class DriveTrain extends Subsystem {
 		forward = deadZone(forward) * (slowMode ? SLOW_MODE_JOYSTICK : 1d) * JOYSTICK_CONSTANT;
 		System.out.println("This is Drive Straight using the auxiliary feature with" + 
 			"the difference between two encoders to maintain current heading.\n");
-		System.out.println(forward);
+		System.out.println("Left: " + leftBack.getSelectedSensorPosition() + ", Right: " + rightBack.getSelectedSensorPosition());
 		/* Configured for percentOutput with Auxiliary PID on Quadrature Encoders' Difference */
 		rightBack.set(ControlMode.PercentOutput, forward, DemandType.AuxPID, _targetAngle);
 		leftBack.follow(rightBack, FollowerType.AuxOutput1);
