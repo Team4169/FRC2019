@@ -44,8 +44,8 @@ public class DriveTrain extends Subsystem {
 	private static final WPI_TalonSRX leftBack = new WPI_TalonSRX(RobotMap.LEFT_BACK);
 	private static final WPI_TalonSRX rightBack = new WPI_TalonSRX(RobotMap.RIGHT_BACK);
 
-	public static final SpeedControllerGroup left = new SpeedControllerGroup(leftFront, leftBack);
-	public static final SpeedControllerGroup right = new SpeedControllerGroup(rightFront, rightBack);
+	// public static final SpeedControllerGroup left = new SpeedControllerGroup(leftFront, leftBack);
+	// public static final SpeedControllerGroup right = new SpeedControllerGroup(rightFront, rightBack);
 
 	public static final double DEAD_ZONE = 0.2;
 
@@ -79,7 +79,7 @@ public class DriveTrain extends Subsystem {
 	 * Drive the robot in counter clockwise rotations and measure the units per rotation.
 	 * Take the average of the two.
 	 */
-	public final static int kEncoderUnitsPerRotation = 51711;
+	public final static int kEncoderUnitsPerRotation = 5500;
 
 	/**
 	 * Set to zero to skip waiting for confirmation.
@@ -121,7 +121,7 @@ public class DriveTrain extends Subsystem {
 	public final static int kSlot_Velocit = SLOT_2;
 	public final static int kSlot_MotProf = SLOT_3;
 
-	private static final DifferentialDrive drive = new DifferentialDrive(left, right);
+	//private static final DifferentialDrive drive = new DifferentialDrive(left, right);
   
 	@Override
   	public void initDefaultCommand() {
@@ -172,16 +172,19 @@ public class DriveTrain extends Subsystem {
 		 *  ... so at 3600 units per 360', that ensures 0.1 degree precision in firmware closed-loop
 		 *  and motion profile trajectory points can range +-2 rotations.
 		 *
-		rightBack.configSelectedFeedbackCoefficient(kTurnTravelUnitsPerRotation / kEncoderUnitsPerRotation, PID_TURN, kTimeoutMs);														// Configuration Timeout
+			// Configuration Timeout
 		
 		/* Configure output and sensor direction */
-		leftBack.setInverted(false);
+
+		rightBack.configSelectedFeedbackCoefficient(kTurnTravelUnitsPerRotation / kEncoderUnitsPerRotation, PID_TURN, kTimeoutMs);													
+
+		leftBack.setInverted(true);
 		leftBack.setSensorPhase(true);
 		rightBack.setInverted(false);
 		rightBack.setSensorPhase(false);
 		rightFront.setInverted(true);
-		leftFront.setInverted(false);
-		
+		leftFront.setInverted(true);
+	
 		/* Set status frame periods */
 		rightBack.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, kTimeoutMs);
 		rightBack.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, kTimeoutMs);
@@ -258,7 +261,7 @@ public class DriveTrain extends Subsystem {
 				arcadeDrive();
 				break;
 			case kTank:
-				tankDrive();
+				//tankDrive();
 				break;
 			case kDriveStraight:
 				driveStraight();
@@ -267,32 +270,50 @@ public class DriveTrain extends Subsystem {
 	}
 
   	// implement this to drive with a controller
-  	public void tankDrive() {
-		double leftY = -Robot.m_oi.getController().getY(Hand.kLeft);
-		double rightY = -Robot.m_oi.getController().getY(Hand.kRight);
+  	// public void tankDrive() {
+	// 	double leftY = -Robot.m_oi.getController().getY(Hand.kLeft);
+	// 	double rightY = -Robot.m_oi.getController().getY(Hand.kRight);
 		
-		leftY = deadZone(leftY);
-		rightY = deadZone(rightY);
+	// 	leftY = deadZone(leftY);
+	// 	rightY = deadZone(rightY);
 
-		leftY *= (slowMode ? SLOW_MODE_JOYSTICK : 1d) * JOYSTICK_CONSTANT;
-		rightY *= (slowMode ? SLOW_MODE_JOYSTICK : 1d) * JOYSTICK_CONSTANT;
+	// 	leftY *= (slowMode ? SLOW_MODE_JOYSTICK : 1d) * JOYSTICK_CONSTANT;
+	// 	rightY *= (slowMode ? SLOW_MODE_JOYSTICK : 1d) * JOYSTICK_CONSTANT;
 
-		drive.tankDrive(leftY, rightY);
-  	}
+	// 	drive.tankDrive(leftY, rightY);
+  	// }
   
 	public void arcadeDrive() {
-		double leftY = -Robot.m_oi.getController().getY(Hand.kLeft);
+		// double leftY = -Robot.m_oi.getController().getY(Hand.kLeft);
+		// double leftTrigger = Robot.m_oi.getController().getTriggerAxis(Hand.kLeft);
+		// double rightTrigger = Robot.m_oi.getController().getTriggerAxis(Hand.kRight);
+
+		// leftY = deadZone(leftY);
+
+		// leftY *= (slowMode ? SLOW_MODE_JOYSTICK : 1d) * JOYSTICK_CONSTANT;
+		
+		// double rotation = (rightTrigger - leftTrigger) *
+		// 	(slowMode ? SLOW_MODE_TRIGGERS : 1d) * TRIGGERS_CONSTANT;
+
+		// drive.arcadeDrive(leftY, rotation);
 		double leftTrigger = Robot.m_oi.getController().getTriggerAxis(Hand.kLeft);
 		double rightTrigger = Robot.m_oi.getController().getTriggerAxis(Hand.kRight);
 
-		leftY = deadZone(leftY);
+		double forward = 1 * Robot.m_oi.getController().getY(Hand.kLeft);
+		double turn = rightTrigger - leftTrigger;
 
-		leftY *= (slowMode ? SLOW_MODE_JOYSTICK : 1d) * JOYSTICK_CONSTANT;
-		
-		double rotation = (rightTrigger - leftTrigger) *
-			(slowMode ? SLOW_MODE_TRIGGERS : 1d) * TRIGGERS_CONSTANT;
+		forward = deadZone(forward);
+		turn = deadZone(turn);
 
-		drive.arcadeDrive(leftY, rotation);
+		rightFront.follow(rightBack);
+		leftFront.follow(leftBack);
+
+		rightBack.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
+		leftBack.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
+
+		SmartDashboard.putNumber("LeftEncoder: ", leftBack.getSelectedSensorPosition());
+		SmartDashboard.putNumber("RightEncoder: ", rightBack.getSelectedSensorPosition());
+
   	}
   
 	public void driveStraight() {
@@ -308,7 +329,13 @@ public class DriveTrain extends Subsystem {
 	}
   
   	public void stop() {
-    	drive.tankDrive(0, 0);
+		//drive.tankDrive(0, 0);
+		
+		rightFront.set(ControlMode.PercentOutput, 0);
+		rightBack.set(ControlMode.PercentOutput, 0);
+		leftFront.set(ControlMode.PercentOutput, 0);
+		leftBack.set(ControlMode.PercentOutput, 0);
+		
  	}
 
   	public void setSlowMode(boolean b) {
@@ -327,19 +354,19 @@ public class DriveTrain extends Subsystem {
 		rightBack.selectProfileSlot( kSlot_Turning,  PID_TURN);
 		rightFront.follow(rightBack);
 		leftFront.follow(leftBack);
-		drive.setSafetyEnabled(false);
+		//drive.setSafetyEnabled(false);
 		_targetAngle = rightBack.getSelectedSensorPosition();
 		System.out.println("Target Angle: "+ _targetAngle);
 	}
 
 	public void arcadeDriveFirstCall() {
 		System.out.println("This is Arcade Drive.\n");
-		drive.setSafetyEnabled(true);
+		//drive.setSafetyEnabled(true);
 	}
 
 	public void tankDriveFirstCall() {
 		System.out.println("This is Tank Drive");
-		drive.setSafetyEnabled(true);
+	//	drive.setSafetyEnabled(true);
 	}
 
 	public void printAngle() {
@@ -353,7 +380,7 @@ public class DriveTrain extends Subsystem {
 				arcadeDriveFirstCall();
 				break;
 			case kDriveStraight:
-				rightBack.config_kP( kSlot_Turning,  SmartDashboard.getNumber("kP", 1.5),  kTimeoutMs);
+				rightBack.config_kP( kSlot_Turning,  SmartDashboard.getNumber("kP", 1),  kTimeoutMs);
 				rightBack.config_kD( kSlot_Turning,  SmartDashboard.getNumber("kD", 4.0),  kTimeoutMs);
 				driveStraightFirstCall();
 				break;
