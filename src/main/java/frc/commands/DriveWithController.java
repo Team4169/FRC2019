@@ -14,7 +14,6 @@ public class DriveWithController extends Command {
   public DriveWithController() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    requires(Robot.kDriveTrain);
   }
 
   // Called just before this Command runs the first time
@@ -25,7 +24,7 @@ public class DriveWithController extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.kDriveTrain.tankDrive();
+    Robot.kDriveTrain.drive();
   }
 
   // Make this return true when this Command no longer needs to run execute()

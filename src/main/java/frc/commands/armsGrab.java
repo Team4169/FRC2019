@@ -7,36 +7,36 @@
 
 package frc.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
-import frc.robot.Robot;
 
-public class SlowMode extends Command {
-  public static final double value = 0.7;
-  public SlowMode() {
-
-  }
-
+public class armsGrab extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.kDriveTrain.setSlowMode(b);
+    
   }
-
+  public static double currentTime = Timer.getMatchTime();
+  public static double endTime = currentTime = 1000;
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    boolean slowMode = true;
+    
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
+      if (currentTime > endTime) {
+        return true;
+      }
     return false;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    
   }
 
   // Called when another command which requires one or more of the same
@@ -45,3 +45,4 @@ public class SlowMode extends Command {
   protected void interrupted() {
   }
 }
+
