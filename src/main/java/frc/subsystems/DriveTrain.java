@@ -171,14 +171,14 @@ public class DriveTrain extends Subsystem {
 		 * - Target for aux PID1 in motion profile is 14bits with a range of [-8192,+8192] units.
 		 *  ... so at 3600 units per 360', that ensures 0.1 degree precision in firmware closed-loop
 		 *  and motion profile trajectory points can range +-2 rotations.
-		 */
+		 *
 		rightBack.configSelectedFeedbackCoefficient(kTurnTravelUnitsPerRotation / kEncoderUnitsPerRotation, PID_TURN, kTimeoutMs);														// Configuration Timeout
 		
 		/* Configure output and sensor direction */
 		leftBack.setInverted(false);
 		leftBack.setSensorPhase(true);
 		rightBack.setInverted(false);
-		rightBack.setSensorPhase(true);
+		rightBack.setSensorPhase(false);
 		rightFront.setInverted(true);
 		leftFront.setInverted(false);
 		
@@ -296,12 +296,12 @@ public class DriveTrain extends Subsystem {
   	}
   
 	public void driveStraight() {
-		double forward = -1 * Robot.m_oi.getController().getY(Hand.kLeft);
+		double forward = 1 * Robot.m_oi.getController().getY(Hand.kLeft);
 		//double forward = 0d;
 		forward = deadZone(forward) * (slowMode ? SLOW_MODE_JOYSTICK : 1d) * JOYSTICK_CONSTANT;
 	//	System.out.println("This is Drive Straight using the auxiliary feature with" + 
 	//		"the difference between two encoders to maintain current heading.\n");
-	//	System.out.println("Left: " + leftBack.getSelectedSensorPosition() + ", Right: " + rightBack.getSelectedSensorPosition());
+		System.out.println("Target Angle: " + _targetAngle + ", Forward: " + forward + ", Left: " + leftBack.getSelectedSensorPosition() + ", Right: " + rightBack.getSelectedSensorPosition());
 		/* Configured for percentOutput with Auxiliary PID on Quadrature Encoders' Difference */
 		rightBack.set(ControlMode.PercentOutput, forward, DemandType.AuxPID, _targetAngle);
 		leftBack.follow(rightBack, FollowerType.AuxOutput1);
@@ -329,7 +329,7 @@ public class DriveTrain extends Subsystem {
 		leftFront.follow(leftBack);
 		drive.setSafetyEnabled(false);
 		_targetAngle = rightBack.getSelectedSensorPosition();
-		System.out.println(_targetAngle);
+		System.out.println("Target Angle: "+ _targetAngle);
 	}
 
 	public void arcadeDriveFirstCall() {
@@ -353,7 +353,7 @@ public class DriveTrain extends Subsystem {
 				arcadeDriveFirstCall();
 				break;
 			case kDriveStraight:
-				rightBack.config_kP( kSlot_Turning,  SmartDashboard.getNumber("kP", 3.0),  kTimeoutMs);
+				rightBack.config_kP( kSlot_Turning,  SmartDashboard.getNumber("kP", 1.5),  kTimeoutMs);
 				rightBack.config_kD( kSlot_Turning,  SmartDashboard.getNumber("kD", 4.0),  kTimeoutMs);
 				driveStraightFirstCall();
 				break;
