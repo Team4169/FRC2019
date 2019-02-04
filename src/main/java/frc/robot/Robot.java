@@ -86,7 +86,7 @@ public class Robot extends SampleRobot implements PIDOutput {
     public static final int BACK_ID = 7;
 
     public Robot() {
-    	  leftBack = new WPI_TalonSRX(LEFT_BACK);
+    	leftBack = new WPI_TalonSRX(LEFT_BACK);
         rightBack = new WPI_TalonSRX(RIGHT_BACK);
         leftFront = new WPI_TalonSRX(LEFT_FRONT);
         rightFront = new WPI_TalonSRX(RIGHT_FRONT);
