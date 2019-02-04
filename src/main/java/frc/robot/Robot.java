@@ -69,7 +69,7 @@ public class Robot extends SampleRobot implements PIDOutput {
     final static int LEFT_BACK	= 1;
     final static int RIGHT_BACK	= 5;
     final static int LEFT_FRONT	= 4;
-    final static int RIGHT_FRONT	= 2;
+    final static int RIGHT_FRONT = 2;
     
     WPI_TalonSRX leftBack;
     WPI_TalonSRX rightBack;
