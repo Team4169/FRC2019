@@ -1,113 +1,190 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.subsystems.DriveTrain;
+import edu.wpi.first.wpilibj.SampleRobot;
+
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDOutput;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 /**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the TimedRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the build.gradle file in the
- * project.
+ * This is a demo program showing the use of the navX MXP to implement
+ * the "rotate to angle", "zero yaw" and "drive straight" on a Tank
+ * drive system.
+ *
+ * If Left Joystick Button 0 is pressed, a "turn" PID controller will 
+ * set to point to a target angle, and while the button is held the drive
+ * system will rotate to that angle (NOTE:  tank drive systems cannot simultaneously
+ * move forward/reverse while rotating).
+ *
+ * This example also includes a feature allowing the driver to "reset"
+ * the "yaw" angle.  When the reset occurs, the new gyro angle will be
+ * 0 degrees.  This can be useful in cases when the gyro drifts, which
+ * doesn't typically happen during a FRC match, but can occur during
+ * long practice sessions.
+ *
+ * Finally, if Left Joystick button 2 is held, the "turn" PID controller will
+ * be set to point to the current heading, and while the button is held,
+ * the driver system will continue to point in the direction.  The robot 
+ * can drive forward and backward (the magnitude of motion is the average
+ * of the Y axis values on the left and right joysticks).
+ *
+ * Note that the PID Controller coefficients defined below will need to
+ * be tuned for your drive system.
  */
-public class Robot extends TimedRobot {
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
-  private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
-  public static final DriveTrain kDriveTrain = new DriveTrain();
-  public static final OI m_oi = new OI();
 
-  /**
-   * This function is run when the robot is first started up and should be
-   * used for any initialization code.
-   */
-  @Override
-  public void robotInit() {
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
+public class Robot extends SampleRobot implements PIDOutput {
+    DifferentialDrive myRobot;  // class that handles basic drive operations
 
-  }
+    AHRS ahrs;
 
-  /**
-   * This function is called every robot packet, no matter the mode. Use
-   * this for items like diagnostics that you want ran during disabled,
-   * autonomous, teleoperated and test.
-   *
-   * <p>This runs after the mode specific periodic functions, but before
-   * LiveWindow and SmartDashboard integrated updating.
-   */
-
-@Override
-	public void teleopInit(){
-		/* Disable all motor controllers */
-	
-	}
-
-  @Override
-  public void robotPeriodic() {
-  }
-
-  /**
-   * This autonomous (along with the chooser code above) shows how to select
-   * between different autonomous modes using the dashboard. The sendable
-   * chooser code works with the Java SmartDashboard. If you prefer the
-   * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-   * getString line to get the auto name from the text box below the Gyro
-   *
-   * <p>You can add additional auto modes by adding additional comparisons to
-   * the switch structure below with additional strings. If using the
-   * SendableChooser make sure to add them to the chooser code above as well.
-   */
-  @Override
-  public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
-  }
-
-  /**
-   * This function is called periodically during autonomous.
-   */
-  @Override
-  public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
-    }
-  }
-
-
-  /**
-   * This function is called periodically during operator control.
-   */
-  @Override
-  public void teleopPeriodic() {
-    Scheduler.getInstance().run();
-  }
-
-  /**
-   * This function is called periodically during test mode.
-   */
-  @Override
-  public void testPeriodic() {
+    PIDController turnController;
+    double rotateToAngleRate;
     
-  }
+    /* The following PID Controller coefficients will need to be tuned */
+    /* to match the dynamics of your drive system.  Note that the      */
+    /* SmartDashboard in Test mode has support for helping you tune    */
+    /* controllers by displaying a form where you can enter new P, I,  */
+    /* and D constants and test the mechanism.                         */
+    
+    static final double kP = 0.03;
+    static final double kI = 0.00;
+    static final double kD = 0.00;
+    static final double kF = 0.00;
+    
+    static final double kToleranceDegrees = 2.0f;    
+    
+    static final double kTargetAngleDegrees = 90.0f;
+    
+    // Channels for the wheels
+    final static int LEFT_BACK	= 1;
+    final static int RIGHT_BACK	= 5;
+    final static int LEFT_FRONT	= 4;
+    final static int RIGHT_FRONT	= 2;
+    
+    WPI_TalonSRX leftBack;
+    WPI_TalonSRX rightBack;
+    WPI_TalonSRX leftFront;
+    WPI_TalonSRX rightFront;
+
+    SpeedControllerGroup left;
+    SpeedControllerGroup right;
+
+    XboxController controller; 
+
+    public static final int A_ID = 1;
+    public static final int B_ID = 2;
+    public static final int BACK_ID = 7;
+
+    public Robot() {
+    	  leftBack = new WPI_TalonSRX(LEFT_BACK);
+        rightBack = new WPI_TalonSRX(RIGHT_BACK);
+        leftFront = new WPI_TalonSRX(LEFT_FRONT);
+        rightFront = new WPI_TalonSRX(RIGHT_FRONT);
+        
+        left = new SpeedControllerGroup(leftBack, leftFront);
+        right = new SpeedControllerGroup(rightBack, rightFront);
+
+        myRobot = new DifferentialDrive(left, right); 
+        myRobot.setExpiration(0.1);
+        controller = new XboxController(0);
+
+        try {
+			/***********************************************************************
+			 * navX-MXP:
+			 * - Communication via RoboRIO MXP (SPI, I2C, TTL UART) and USB.            
+			 * - See http://navx-mxp.kauailabs.com/guidance/selecting-an-interface.
+			 * 
+			 * navX-Micro:
+			 * - Communication via I2C (RoboRIO MXP or Onboard) and USB.
+			 * - See http://navx-micro.kauailabs.com/guidance/selecting-an-interface.
+			 * 
+			 * Multiple navX-model devices on a single robot are supported.
+			 ************************************************************************/
+            ahrs = new AHRS(SPI.Port.kMXP); 
+        } catch (RuntimeException ex ) {
+            DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
+        }
+        turnController = new PIDController(kP, kI, kD, kF, ahrs, this);
+        turnController.setInputRange(-180.0f,  180.0f);
+        turnController.setOutputRange(-1.0, 1.0);
+        turnController.setAbsoluteTolerance(kToleranceDegrees);
+        turnController.setContinuous(true);
+        turnController.disable();
+        
+        /* Add the PID Controller to the Test-mode dashboard, allowing manual  */
+        /* tuning of the Turn Controller's P, I and D coefficients.            */
+        /* Typically, only the P value needs to be modified.                   */
+        LiveWindow.addActuator("DriveSystem", "RotateController", turnController);        
+    }
+    
+    /**
+     * Runs the motors with tank steering.
+     */
+    public void operatorControl() {
+        myRobot.setSafetyEnabled(true);
+        while (isOperatorControl() && isEnabled()) {
+        	if (controller.getRawButton(A_ID)) {
+        		/* While this button is held down, rotate to target angle.  
+        		 * Since a Tank drive system cannot move forward simultaneously 
+        		 * while rotating, all joystick input is ignored until this
+        		 * button is released.
+        		 */
+        		if (!turnController.isEnabled()) {
+        			turnController.setSetpoint(kTargetAngleDegrees);
+        			rotateToAngleRate = 0; // This value will be updated in the pidWrite() method.
+        			turnController.enable();
+        		}
+        		double leftStickValue = rotateToAngleRate;
+        		double rightStickValue = rotateToAngleRate;
+        		myRobot.tankDrive(leftStickValue,  rightStickValue);
+        	} else if ( controller.getRawButton(BACK_ID)) {
+        		/* "Zero" the yaw (whatever direction the sensor is 
+        		 * pointing now will become the new "Zero" degrees.
+        		 */
+        		ahrs.zeroYaw();
+        	} else if ( controller.getRawButton(B_ID)) {
+        		/* While this button is held down, the robot is in
+        		 * "drive straight" mode.  Whatever direction the robot
+        		 * was heading when "drive straight" mode was entered
+        		 * will be maintained.  The average speed of both 
+        		 * joysticks is the magnitude of motion.
+        		 */
+        		if(!turnController.isEnabled()) {
+        			// Acquire current yaw angle, using this as the target angle.
+        			turnController.setSetpoint(ahrs.getYaw());
+        			rotateToAngleRate = 0; // This value will be updated in the pidWrite() method.
+        			turnController.enable();
+        		}
+        		double magnitude = (controller.getY(Hand.kLeft) + controller.getY(Hand.kRight)) / 2;
+        		double leftStickValue = magnitude + rotateToAngleRate;
+        		double rightStickValue = magnitude - rotateToAngleRate;
+        		myRobot.tankDrive(leftStickValue,  rightStickValue);
+        	} else {
+        		/* If the turn controller had been enabled, disable it now. */
+        		if(turnController.isEnabled()) {
+        			turnController.disable();
+        		}
+        		/* Standard tank drive, no driver assistance. */
+        		myRobot.tankDrive(controller.getY(Hand.kLeft), controller.getY(Hand.kRight));
+        	}
+            Timer.delay(0.005);		// wait for a motor update time
+        }
+    }
+
+	@Override
+    /* This function is invoked periodically by the PID Controller, */
+    /* based upon navX MXP yaw angle input and PID Coefficients.    */
+    public void pidWrite(double output) {
+        rotateToAngleRate = output;
+    }
 }
