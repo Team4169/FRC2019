@@ -19,15 +19,15 @@ public class RobotMap {
     
     // Xbox Controller
     public static final int CONTROLLER_PORT = 0;
-    public static final int A_ID = 1;
-    public static final int B_ID = 2;
-	public static final int X_ID = 3;
-	public static final int Y_ID = 4;
-    public static final int LB_ID = 5;
-    public static final int RB_ID = 6;
-    public static final int BACK_ID = 7;
-    public static final int START_ID = 8;
-    public static final int LEFT_JOY_ID = 9;
-    public static final int RIGHT_JOY_ID = 10;
-    public static final int hatchLimitSwitch = 0;
+    public static final int A_ID = 1; //Turn To Angle
+    public static final int B_ID = 2; //Drive Straight
+	public static final int X_ID = 3; //Slow Mode On
+	public static final int Y_ID = 4; //Slow Mode Off
+    public static final int LB_ID = 5; //Close Arms
+    public static final int RB_ID = 6; //Open Arms
+    public static final int BACK_ID = 7; //Reset Sensors
+    public static final int START_ID = 8; //
+    public static final int LEFT_JOY_ID = 9; //
+    public static final int RIGHT_JOY_ID = 10; //
+    public static final int hatchLimitSwitch = 0; // don't know port number
 }

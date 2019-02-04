@@ -9,7 +9,7 @@ package frc.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class armsDrop extends Command {
+public class ArmsDrop extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {

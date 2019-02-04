@@ -10,7 +10,7 @@ package frc.commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
-public class armsGrab extends Command {
+public class ArmsGrab extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {

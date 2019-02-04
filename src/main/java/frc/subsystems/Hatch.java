@@ -7,16 +7,17 @@
 
 package frc.subsystems;
 
-import java.sql.Time;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import frc.commands.HatchExtend;
 import frc.robot.RobotMap;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 public class Hatch extends Subsystem {
 
@@ -32,6 +33,7 @@ public class Hatch extends Subsystem {
     public static final double speed = 0.3;
 
     public static DigitalInput hatchLimitSwitch = new DigitalInput(RobotMap.hatchLimitSwitch);
+    public static boolean hatchLimitSwitchStatus = hatchLimitSwitch.get();
     
 
     @Override
@@ -40,5 +42,21 @@ public class Hatch extends Subsystem {
     }
 
 
-    
+    public static double matchTime = Timer.getMatchTime();
+    public static double startTime = matchTime + 100;
+    public static void checkForHatchExtension() {
+        if (matchTime < startTime) {
+            new HatchExtend();
+        }
+    }
+    public static int LeftBumper = RobotMap.LB_ID;
+    public static void dropHatch() {
+        getBumperPressed(GenericHID.Hand left) {
+
+        }
+    }
+
+    public static void grabHatch() {
+
+    }
 }

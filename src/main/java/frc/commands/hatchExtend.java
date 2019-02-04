@@ -8,26 +8,25 @@
 package frc.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.robot.Robot;
 import frc.subsystems.Hatch;
 
-public class hatchExtend extends Command {
+public class HatchExtend extends Command {
   // Called just before this Command runs the first time
   @Override
-  protected void initialize() {
+  public void initialize() {
     
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
-  protected void execute() {
+  public void execute() {
       Hatch.extend.set(Hatch.speed);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
-  protected boolean isFinished() {
-    if (){
+  public boolean isFinished() {
+    if (Hatch.hatchLimitSwitchStatus == true) {
         return true;
     } else {
         return false;
@@ -36,14 +35,14 @@ public class hatchExtend extends Command {
 
   // Called once after isFinished returns true
   @Override
-  protected void end() {
+  public void end() {
     
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
-  protected void interrupted() {
+  public void interrupted() {
   }
 }
 
