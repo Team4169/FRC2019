@@ -13,6 +13,8 @@ import frc.commands.SlowMode;
 import frc.commands.SwitchDriveType;
 import frc.commands.ZeroSensors;
 import frc.subsystems.DriveTrain;
+import frc.commands.GrabHatch;
+import frc.commands.ReleaseHatch;
 
 /**
  * Add your docs here.
@@ -27,6 +29,8 @@ public class OI {
   private static final JoystickButton X_BUTTON = new JoystickButton(controller1, RobotMap.X_ID);
   private static final JoystickButton B_BUTTON = new JoystickButton(controller1, RobotMap.B_ID);
   private static final JoystickButton A_BUTTON = new JoystickButton(controller1, RobotMap.A_ID);
+  private static final JoystickButton RB_BUTTON = new JoystickButton(controller1, RobotMap.RB_ID);
+  private static final JoystickButton LB_BUTTON = new JoystickButton(controller1, RobotMap.LB_ID);
 
   public OI() {
     BACK_BUTTON.whenPressed(new ZeroSensors());
@@ -34,6 +38,8 @@ public class OI {
     X_BUTTON.whenPressed(new SlowMode(true));
     B_BUTTON.whenPressed(new SwitchDriveType(DriveTrain.DriveType.kDriveStraight));
     A_BUTTON.whenPressed(new SwitchDriveType(DriveTrain.DriveType.kArcade));
+    RB_BUTTON.whenPressed(new GrabHatch());
+    LB_BUTTON.whenPressed(new ReleaseHatch());
   }
 
   public XboxController getController() {

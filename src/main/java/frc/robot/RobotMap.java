@@ -12,21 +12,28 @@ package frc.robot;
  */
 public class RobotMap {
     // motor controllers
-    public static final int LEFT_FRONT = 4;
-	  public static final int RIGHT_FRONT = 2;
-	  public static final int LEFT_BACK = 1;
-    public static final int RIGHT_BACK = 5;
-    
-    // Xbox Controller
-    public static final int CONTROLLER_PORT = 0;
-    public static final int A_ID = 1;
-    public static final int B_ID = 2;
-		public static final int X_ID = 3;
-		public static final int Y_ID = 4;
-    public static final int LB_ID = 5;
-    public static final int RB_ID = 6;
-    public static final int BACK_ID = 7;
-    public static final int START_ID = 8;
-    public static final int LEFT_JOY_ID = 9;
-    public static final int RIGHT_JOY_ID = 10;
+	public static final int
+			// drive train
+			LEFT_FRONT = 0,
+			RIGHT_FRONT = 1,
+			LEFT_BACK = 2,
+			RIGHT_BACK = 3,
+			
+			// hatch motors
+			LEFT_ARM = 4,
+			RIGHT_ARM = 5,
+			EXTENSION = 6,
+
+			// Xbox Controller
+			CONTROLLER_PORT = 0,
+			A_ID = 1,
+			B_ID = 2,
+			X_ID = 3,
+			Y_ID = 4,
+			LB_ID = 5,
+			RB_ID = 6,
+			BACK_ID = 7,
+			START_ID = 8,
+			LEFT_JOY_ID = 9,
+			RIGHT_JOY_ID = 10;
 }
