@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.subsystems.DriveTrain;
+// import frc.subsystems.DriveTrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -26,8 +26,9 @@ public class Robot extends TimedRobot {
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
-  public static final DriveTrain kDriveTrain = new DriveTrain();
-  public static final OI m_oi = new OI();
+  // public static final DriveTrain kDriveTrain = new DriveTrain();
+  // public static final OI m_oi = new OI();
+  public static final Limelight ll = new Limelight();
 
   /**
    * This function is run when the robot is first started up and should be
@@ -38,7 +39,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("kP", 3.0);
 		SmartDashboard.putNumber("kD", 4.0);
 
-    SmartDashboard.putData("Drive Train", kDriveTrain);
+    // SmartDashboard.putData("Drive Train", kDriveTrain);
     
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
@@ -113,6 +114,17 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
-    
+		// int tx;
+		// int ty;
+		// Vec2D robotVec2d = new Vec2D(0, 1);
+
+    // RouteToTarget route = new TargetCalc().getRouteToTarget();
+    ll.setLedMode(Limelight.LightMode.eOn);
+    System.out.println("tx: " + ll.getTx() + ", ty: " + ll.getTy());
+	}
+  
+  @Override
+  public void disabledPeriodic() {
+    ll.setLedMode(Limelight.LightMode.eOff);
   }
 }
