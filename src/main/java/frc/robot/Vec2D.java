@@ -4,7 +4,7 @@ public class Vec2D {
 
     // The x-coordinate
     private double xCoord;
-    
+
     // The y-coordinate
     private double yCoord;
      /**
@@ -104,7 +104,7 @@ public class Vec2D {
         if (vec.xCoord == xCoord && vec.yCoord == yCoord) {
             return true;
         }
-        return (Math.abs(Math.hypot(vec.xCoord, vec.yCoord) - Math.hypot(xCoord, yCoord)) <= epsilon);
+        return (Math.hypot(vec.xCoord - xCoord, vec.yCoord - yCoord) <= epsilon);
     }
     /**
      * Return true iff the specified vector is "near" this one.
