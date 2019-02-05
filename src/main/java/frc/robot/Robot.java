@@ -1,12 +1,13 @@
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
+import java.math.*;
 
 import edu.wpi.first.wpilibj.SampleRobot;
-
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
@@ -56,14 +57,14 @@ public class Robot extends SampleRobot implements PIDOutput {
     /* controllers by displaying a form where you can enter new P, I,  */
     /* and D constants and test the mechanism.                         */
     
-    static final double kP = 0.03;
+    static final double kP = 0.025;
     static final double kI = 0.00;
-    static final double kD = 0.00;
+    static final double kD = 0.1;
     static final double kF = 0.00;
     
     static final double kToleranceDegrees = 2.0f;    
     
-    static final double kTargetAngleDegrees = 90.0f;
+    static final double kTargetAngleDegrees = -180.0f;
     
     // Channels for the wheels
     final static int LEFT_BACK	= 1;
@@ -90,13 +91,25 @@ public class Robot extends SampleRobot implements PIDOutput {
         rightBack = new WPI_TalonSRX(RIGHT_BACK);
         leftFront = new WPI_TalonSRX(LEFT_FRONT);
         rightFront = new WPI_TalonSRX(RIGHT_FRONT);
+
+        leftBack.setInverted(false);
+        rightBack.setInverted(false);
+        rightFront.setInverted(true);
+        leftFront.setInverted(false);
+
+        leftBack.setNeutralMode(NeutralMode.Brake);
+        rightBack.setNeutralMode(NeutralMode.Brake);
+        rightFront.setNeutralMode(NeutralMode.Brake);
+        leftFront.setNeutralMode(NeutralMode.Brake);
+
+        
         
         left = new SpeedControllerGroup(leftBack, leftFront);
         right = new SpeedControllerGroup(rightBack, rightFront);
 
         myRobot = new DifferentialDrive(left, right); 
         myRobot.setExpiration(0.1);
-        controller = new XboxController(0);
+        controller = new XboxController(1);
 
         try {
 			/***********************************************************************
@@ -110,13 +123,13 @@ public class Robot extends SampleRobot implements PIDOutput {
 			 * 
 			 * Multiple navX-model devices on a single robot are supported.
 			 ************************************************************************/
-            ahrs = new AHRS(SPI.Port.kMXP); 
+            ahrs = new AHRS(SerialPort.Port.kUSB); 
         } catch (RuntimeException ex ) {
             DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
         }
         turnController = new PIDController(kP, kI, kD, kF, ahrs, this);
         turnController.setInputRange(-180.0f,  180.0f);
-        turnController.setOutputRange(-1.0, 1.0);
+        turnController.setOutputRange(-0.5, 0.5);
         turnController.setAbsoluteTolerance(kToleranceDegrees);
         turnController.setContinuous(true);
         turnController.disable();
@@ -145,13 +158,15 @@ public class Robot extends SampleRobot implements PIDOutput {
         			turnController.enable();
         		}
         		double leftStickValue = rotateToAngleRate;
-        		double rightStickValue = rotateToAngleRate;
+        		double rightStickValue = -rotateToAngleRate;
         		myRobot.tankDrive(leftStickValue,  rightStickValue);
         	} else if ( controller.getRawButton(BACK_ID)) {
         		/* "Zero" the yaw (whatever direction the sensor is 
         		 * pointing now will become the new "Zero" degrees.
         		 */
-        		ahrs.zeroYaw();
+                if(myRobot.isSafetyEnabled()) myRobot.setSafetyEnabled(false);
+                ahrs.zeroYaw();
+             
         	} else if ( controller.getRawButton(B_ID)) {
         		/* While this button is held down, the robot is in
         		 * "drive straight" mode.  Whatever direction the robot
@@ -164,7 +179,8 @@ public class Robot extends SampleRobot implements PIDOutput {
         			turnController.setSetpoint(ahrs.getYaw());
         			rotateToAngleRate = 0; // This value will be updated in the pidWrite() method.
         			turnController.enable();
-        		}
+                }
+                if(myRobot.isSafetyEnabled()) myRobot.setSafetyEnabled(false);
         		double magnitude = (controller.getY(Hand.kLeft) + controller.getY(Hand.kRight)) / 2;
         		double leftStickValue = magnitude + rotateToAngleRate;
         		double rightStickValue = magnitude - rotateToAngleRate;
@@ -174,8 +190,23 @@ public class Robot extends SampleRobot implements PIDOutput {
         		if(turnController.isEnabled()) {
         			turnController.disable();
         		}
-        		/* Standard tank drive, no driver assistance. */
-        		myRobot.tankDrive(controller.getY(Hand.kLeft), controller.getY(Hand.kRight));
+                /* Standard tank drive, no driver assistance. */
+                myRobot.setSafetyEnabled(true);
+                double left = -controller.getY(Hand.kLeft);
+                double right = -controller.getY(Hand.kRight);
+
+                if (Math.abs(left) < 0.2) {
+                    left = 0;
+                }
+
+                
+                if (Math.abs(right) < 0.2) {
+                    right = 0;
+                }
+
+                myRobot.tankDrive(left, right);
+                
+                System.out.println(ahrs.getYaw());
         	}
             Timer.delay(0.005);		// wait for a motor update time
         }
