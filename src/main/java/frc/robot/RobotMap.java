@@ -20,9 +20,8 @@ public class RobotMap {
 			RIGHT_BACK = 3,
 			
 			// hatch motors
-			LEFT_ARM = 4,
-			RIGHT_ARM = 5,
-			EXTENSION = 6,
+			ARMMOTOR = 4,
+			EXTENSION = 5,
 
 			// Xbox Controller
 			CONTROLLER_PORT = 0,

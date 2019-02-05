@@ -25,9 +25,8 @@ public class Hatch extends Subsystem {
 	public static final double EXTENSION_SPEED = 0.1;
 	public static final double INTERVAL = 1d;
 
-  static final WPI_TalonSRX leftArm = new WPI_TalonSRX(RobotMap.LEFT_ARM);
-  static final WPI_TalonSRX rightArm = new WPI_TalonSRX(RobotMap.LEFT_ARM);
-	static final Spark extensionMotor = new Spark(RobotMap.LEFT_ARM);
+  static final WPI_TalonSRX armMotor = new WPI_TalonSRX(RobotMap.ARMMOTOR);
+	static final Spark extensionMotor = new Spark(RobotMap.EXTENSION);
 	
 	@Override
   public void initDefaultCommand() {
@@ -36,13 +35,11 @@ public class Hatch extends Subsystem {
   }
 
 	public void grab() {
-		leftArm.set(ARM_SPEED);
-		rightArm.set(-ARM_SPEED);
+		armMotor.set(ARM_SPEED);
 	}
 
 	public void release() {
-		leftArm.set(-ARM_SPEED);
-		rightArm.set(ARM_SPEED);
+		armMotor.set(-ARM_SPEED);
 	}
 
 	public void extend() {
