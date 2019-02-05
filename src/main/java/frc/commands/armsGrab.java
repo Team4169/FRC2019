@@ -11,13 +11,17 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class ArmsGrab extends Command {
+  double currentTime;
+  double endTime;
+  static final double TIME_INTERVAL = 1000;
+      
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    
+    currentTime = Timer.getFPGATimestamp();  
+    endTime = currentTime + TIME_INTERVAL; 
   }
-  public static double currentTime = Timer.getMatchTime();
-  public static double endTime = currentTime = 1000;
+
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
@@ -27,7 +31,7 @@ public class ArmsGrab extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-      if (currentTime > endTime) {
+      if (Timer.getFPGATimestamp() > endTime) {
         return true;
       }
     return false;

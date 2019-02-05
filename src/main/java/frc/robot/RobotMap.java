@@ -13,8 +13,8 @@ package frc.robot;
 public class RobotMap {
     // motor controllers
     public static final int LEFT_FRONT = 4;
-	  public static final int RIGHT_FRONT = 2;
-	  public static final int LEFT_BACK = 1;
+	public static final int RIGHT_FRONT = 2;
+	public static final int LEFT_BACK = 1;
     public static final int RIGHT_BACK = 5;
     
     // Xbox Controller

@@ -8,6 +8,7 @@
 package frc.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.commands.ArmsDrop;
 import frc.commands.HatchExtend;
 import frc.robot.RobotMap;
 
@@ -41,22 +42,23 @@ public class Hatch extends Subsystem {
 
     }
 
-
+    public static final double gameTimeConstant = 100.0;
     public static double matchTime = Timer.getMatchTime();
-    public static double startTime = matchTime + 100;
+    public static double startTime = matchTime + gameTimeConstant;
     public static void checkForHatchExtension() {
         if (matchTime < startTime) {
             new HatchExtend();
         }
     }
     public static int LeftBumper = RobotMap.LB_ID;
+    public static boolean getBumperPressed(GenericHID.Hand Left) = leftBumperStatus;
     public static void dropHatch() {
-        getBumperPressed(GenericHID.Hand left) {
-
+        if (leftBumperStatus == true) {
+            new ArmsDrop();
         }
     }
 
     public static void grabHatch() {
-
+hog
     }
 }
