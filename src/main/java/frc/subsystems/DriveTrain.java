@@ -59,13 +59,8 @@ public class DriveTrain extends Subsystem {
 	public static final double SLOW_MODE_TRIGGERS = 0.8;
 
 	double _targetAngle = 0;
-	DriveType curDriveType;
 
 	AHRS ahrs;
-
-	public enum DriveType {
-		kArcade, kDriveStraight, kTank
-	}
 
 	/**
 	 * Using the configSelectedFeedbackCoefficient() function, scale units to 3600 per rotation.
@@ -132,9 +127,6 @@ public class DriveTrain extends Subsystem {
 	}
 
 	public DriveTrain() {
-
-		curDriveType = DriveType.kArcade;
-
 		rightBack.configFactoryDefault();
 		rightFront.configFactoryDefault();
 		leftBack.configFactoryDefault();
@@ -254,21 +246,6 @@ public class DriveTrain extends Subsystem {
     	return (current - DEAD_ZONE * (current > 0d ? 1d : -1d)) / (1d - DEAD_ZONE);
 	}
 
-	public void drive() {
-		switch(curDriveType) {
-			default:
-			case kArcade:
-				arcadeDrive();
-				break;
-			case kTank:
-				//tankDrive();
-				break;
-			case kDriveStraight:
-				driveStraight();
-				break;
-		}
-	}
-
   	// implement this to drive with a controller
   	// public void tankDrive() {
 	// 	double leftY = -Robot.m_oi.getController().getY(Hand.kLeft);
@@ -347,9 +324,10 @@ public class DriveTrain extends Subsystem {
   	}
 	  
 	public void driveStraightFirstCall() {
-		System.out.println("This is Drive Straight first call");
-		
+		rightBack.config_kP( kSlot_Turning,  SmartDashboard.getNumber("kP", 1),  kTimeoutMs);
+		rightBack.config_kD( kSlot_Turning,  SmartDashboard.getNumber("kD", 4.0),  kTimeoutMs);
 
+		System.out.println("This is Drive Straight first call");
 		/* Determine which slot affects which PID */
 		rightBack.selectProfileSlot( kSlot_Turning,  PID_TURN);
 		rightFront.follow(rightBack);
@@ -371,22 +349,6 @@ public class DriveTrain extends Subsystem {
 
 	public void printAngle() {
 		System.out.println(ahrs.getAngle());
-	}
-
-	public void switchDriveType(DriveType d) {
-		curDriveType = d;
-		switch(curDriveType) {
-			case kArcade:
-				arcadeDriveFirstCall();
-				break;
-			case kDriveStraight:
-				rightBack.config_kP( kSlot_Turning,  SmartDashboard.getNumber("kP", 1),  kTimeoutMs);
-				rightBack.config_kD( kSlot_Turning,  SmartDashboard.getNumber("kD", 4.0),  kTimeoutMs);
-				driveStraightFirstCall();
-				break;
-			default:
-				break;
-		}
 	}
 }
 
