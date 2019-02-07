@@ -18,7 +18,8 @@ public class RobotMap {
     public static final int RIGHT_BACK = 5;
     
     // Xbox Controller
-    public static final int CONTROLLER_PORT = 0;
+    public static final int CONTROLLER_PORT1 = 0;
+    public static final int CONTROLLER_PORT2 = 1;
     public static final int A_ID = 1;
     public static final int B_ID = 2;
 	public static final int X_ID = 3;

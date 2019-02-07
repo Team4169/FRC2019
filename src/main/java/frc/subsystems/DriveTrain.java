@@ -12,29 +12,28 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.commands.DriveWithController;
-import frc.robot.Gains;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
-import com.ctre.phoenix.motorcontrol.SensorTerm;
-import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.FollowerType;
+import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDOutput;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
-import com.kauailabs.navx.frc.AHRS;
 
 /**
  * Add your docs here.
  */
-public class DriveTrain extends Subsystem {
+public class DriveTrain extends Subsystem implements PIDOutput {
 	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
 
@@ -43,8 +42,11 @@ public class DriveTrain extends Subsystem {
 	private static final WPI_TalonSRX leftBack = new WPI_TalonSRX(RobotMap.LEFT_BACK);
 	private static final WPI_TalonSRX rightBack = new WPI_TalonSRX(RobotMap.RIGHT_BACK);
 
-	// public static final SpeedControllerGroup left = new SpeedControllerGroup(leftFront, leftBack);
-	// public static final SpeedControllerGroup right = new SpeedControllerGroup(rightFront, rightBack);
+	DifferentialDrive drive = new DifferentialDrive(leftBack, rightBack); 
+
+	AHRS ahrs;
+
+	PIDController turnController;
 
 	public static final double DEAD_ZONE = 0.2;
 
@@ -59,67 +61,27 @@ public class DriveTrain extends Subsystem {
 
 	double _targetAngle = 0;
 
-	AHRS ahrs;
-
 	public static final int kEncoderUnitsPerRevolution = 4096;
-	
-	// /**
-	//  * Using the configSelectedFeedbackCoefficient() function, scale units to 3600 per rotation.
-	//  * This is nice as it keeps 0.1 degrees of resolution, and is fairly intuitive.
-	//  */
-	// public final static double kTurnTravelUnitsPerRotation = 3600;
-
-	// /**
-	//  * Empirically measure what the difference between encoders per 360'
-	//  * Drive the robot in clockwise rotations and measure the units per rotation.
-	//  * Drive the robot in counter clockwise rotations and measure the units per rotation.
-	//  * Take the average of the two.
-	//  */
-	// public final static int kEncoderUnitsPerRotation = 5500;
-
-	// /**
-	//  * Set to zero to skip waiting for confirmation.
-	//  * Set to nonzero to wait and report to DS if action fails.
-	//  */
 	public final static int kTimeoutMs = 30;
 
-	// /**
-	//  * Motor neutral dead-band, set to the minimum 0.1%.
-	//  */
-	// public final static double kNeutralDeadband = 0.001;
+	    /* The following PID Controller coefficients will need to be tuned */
+    /* to match the dynamics of your drive system.  Note that the      */
+    /* SmartDashboard in Test mode has support for helping you tune    */
+    /* controllers by displaying a form where you can enter new P, I,  */
+    /* and D constants and test the mechanism.                         */
+    
+    static final double kP = 0.025;
+    static final double kI = 0.00;
+    static final double kD = 0.1;
+    static final double kF = 0.00;
+    
+	static final double kToleranceDegrees = 2.0f; 
+	static final double kToleranceSpeed = 200;   
 
-	// /**
-	//  * PID Gains may have to be adjusted based on the responsiveness of control loop.
-	//  * kF: 1023 represents output value to Talon at 100%, 6800 represents Velocity units at 100% output
-	//  * Not all set of Gains are used in this project and may be removed as desired.
-	//  * 
-	//  * 	                                    			  kP   kI   kD   kF               Iz    PeakOut */
-	// public final static Gains kGains_Distanc = new Gains( 0.1, 0.0,  0.0, 0.0,            100,  0.50 );
-	// public final static Gains kGains_Turning = new Gains( 3.0, 0.0,  4.0, 0.0,            200,  1.00 );
-	// public final static Gains kGains_Velocit = new Gains( 0.1, 0.0, 20.0, 1023.0/6800.0,  300,  0.50 );
-	// public final static Gains kGains_MotProf = new Gains( 1.0, 0.0,  0.0, 1023.0/6800.0,  400,  1.00 );
-
-	// /** ---- Flat constants, you should not need to change these ---- */
-	// /* We allow either a 0 or 1 when selecting an ordinal for remote devices [You can have up to 2 devices assigned remotely to a talon/victor] */
-	// public final static int REMOTE_0 = 0;
-	// public final static int REMOTE_1 = 1;
-	// /* We allow either a 0 or 1 when selecting a PID Index, where 0 is primary and 1 is auxiliary */
-	// public final static int PID_PRIMARY = 0;
-	// public final static int PID_TURN = 1;
-	// /* Firmware currently supports slots [0, 3] and can be used for either PID Set */
-	// public final static int SLOT_0 = 0;
-	// public final static int SLOT_1 = 1;
-	// public final static int SLOT_2 = 2;
-	// public final static int SLOT_3 = 3;
-	// /* ---- Named slots, used to clarify code ---- */
-	// public final static int kSlot_Distanc = SLOT_0;
-	// public final static int kSlot_Turning = SLOT_1;
-	// public final static int kSlot_Velocit = SLOT_2;
-	// public final static int kSlot_MotProf = SLOT_3;
+	static double kTargetAngleDegrees;
 	
+	double rotateToAngleRate;
 
-	//private static final DifferentialDrive drive = new DifferentialDrive(left, right);
-  
 	@Override
   	public void initDefaultCommand() {
     	// Set the default command for a subsystem here.
@@ -140,87 +102,23 @@ public class DriveTrain extends Subsystem {
 		leftBack.set(ControlMode.PercentOutput, 0);
 		
 		/* Set Neutral Mode */
-		leftFront.setNeutralMode(NeutralMode.Brake);
-		rightFront.setNeutralMode(NeutralMode.Brake);
-		leftBack.setNeutralMode(NeutralMode.Brake);
-		rightBack.setNeutralMode(NeutralMode.Brake);
+		leftBack.setInverted(false);
+        rightBack.setInverted(false);
+        rightFront.setInverted(true);
+		leftFront.setInverted(false);
 		
-		// /** Closed loop configuration */
-		
-		// /* Configure the drivetrain's left side Feedback Sensor as a Quadrature Encoder */
-		// leftBack.configSelectedFeedbackSensor(	FeedbackDevice.QuadEncoder,	PID_PRIMARY, kTimeoutMs);
-		// /* Configure the left Talon's Selected Sensor to be a remote sensor for the right Talon */
-		// rightBack.configRemoteFeedbackFilter(leftBack.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, REMOTE_0, kTimeoutMs);	
-		// /* Setup difference signal to be used for turn when performing Drive Straight with encoders */
-		// rightBack.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.RemoteSensor0, kTimeoutMs);
-		// rightBack.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.QuadEncoder, kTimeoutMs);
-		
-		// /* Difference term calculated by right Talon configured to be selected sensor of turn PID */
-		// rightBack.configSelectedFeedbackSensor(FeedbackDevice.SensorDifference, PID_TURN, kTimeoutMs);
-		
-		// /* Scale the Feedback Sensor using a coefficient */
-		// /**
-		//  * Heading units should be scaled to ~4000 per 360 deg, due to the following limitations...
-		//  * - Target param for aux PID1 is 18bits with a range of [-131072,+131072] units.
-		//  * - Target for aux PID1 in motion profile is 14bits with a range of [-8192,+8192] units.
-		//  *  ... so at 3600 units per 360', that ensures 0.1 degree precision in firmware closed-loop
-		//  *  and motion profile trajectory points can range +-2 rotations.
-		//  *
-		// 	// Configuration Timeout
-		
-		// /* Configure output and sensor direction */
+		leftFront.follow(leftBack);
+		rightFront.follow(rightBack);
 
-		// rightBack.configSelectedFeedbackCoefficient(kTurnTravelUnitsPerRotation / kEncoderUnitsPerRotation, PID_TURN, kTimeoutMs);													
-
-		leftBack.setInverted(true);
-		leftBack.setSensorPhase(true);
-		rightBack.setInverted(false);
-		rightBack.setSensorPhase(false);
-		rightFront.setInverted(true);
-		leftFront.setInverted(true);
+        leftBack.setNeutralMode(NeutralMode.Brake);
+        rightBack.setNeutralMode(NeutralMode.Brake);
+        rightFront.setNeutralMode(NeutralMode.Brake);
+        leftFront.setNeutralMode(NeutralMode.Brake);
 	
-		// /* Set status frame periods */
-		// rightBack.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, kTimeoutMs);
-		// rightBack.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, kTimeoutMs);
-		// leftBack.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5,  kTimeoutMs);		//Used remotely by right Talon, speed up
+		leftBack.setSensorPhase(true);
+		rightBack.setSensorPhase(false);
 
-		// /* Configure neutral deadband */
-		// rightBack.configNeutralDeadband( kNeutralDeadband,  kTimeoutMs);
-		// leftBack.configNeutralDeadband( kNeutralDeadband,  kTimeoutMs);
-
-		// /* max out the peak output (for all modes).  However you can
-		// * limit the output of a given PID object with configClosedLoopPeakOutput().
-		// */
-		// leftBack.configPeakOutputForward(+1.0,  kTimeoutMs);
-		// leftBack.configPeakOutputReverse(-1.0,  kTimeoutMs);
-		// rightBack.configPeakOutputForward(+1.0,  kTimeoutMs);
-		// rightBack.configPeakOutputReverse(-1.0,  kTimeoutMs);
-
-		// /* FPID Gains for turn servo */
-		// rightBack.config_kP( kSlot_Turning,  kGains_Turning.kP,  kTimeoutMs);
-		// rightBack.config_kI( kSlot_Turning,  kGains_Turning.kI,  kTimeoutMs);
-		// rightBack.config_kD( kSlot_Turning,  kGains_Turning.kD,  kTimeoutMs);
-		// rightBack.config_kF( kSlot_Turning,  kGains_Turning.kF,  kTimeoutMs);
-		// rightBack.config_IntegralZone( kSlot_Turning,  kGains_Turning.kIzone,  kTimeoutMs);
-		// rightBack.configClosedLoopPeakOutput( kSlot_Turning,  kGains_Turning.kPeakOutput,  kTimeoutMs);
-		// rightBack.configAllowableClosedloopError( kSlot_Turning, 0,  kTimeoutMs);
-			
-		// /* 1ms per loop.  PID loop can be slowed down if need be.
-		// * For example,
-		// * - if sensor updates are too slow
-		// * - sensor deltas are very small per update, so derivative error never gets large enough to be useful.
-		// * - sensor movement is very slow causing the derivative error to be near zero.
-		// */
-		// int closedLoopTimeMs = 1;
-		// rightBack.configClosedLoopPeriod(0, closedLoopTimeMs,  kTimeoutMs);
-		// rightBack.configClosedLoopPeriod(1, closedLoopTimeMs,  kTimeoutMs);
-
-		/* configAuxPIDPolarity(boolean invert, int timeoutMs)
-		* false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
-		* true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
-		*/
-
-		// rightBack.configAuxPIDPolarity(false,  kTimeoutMs);
+		drive.setExpiration(0.1);
 
 		try {
 			/* Communicate w/navX-MXP via the MXP SPI Bus.                                     */
@@ -231,14 +129,26 @@ public class DriveTrain extends Subsystem {
 			DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
 		}
 
-		zeroSensors();
+		turnController = new PIDController(kP, kI, kD, kF, ahrs, this);
+        turnController.setInputRange(-180.0f,  180.0f);
+        turnController.setOutputRange(-0.5, 0.5);
+        turnController.setAbsoluteTolerance(kToleranceDegrees);
+        turnController.setContinuous(true);
+        turnController.disable();
+        
+        /* Add the PID Controller to the Test-mode dashboard, allowing manual  */
+        /* tuning of the Turn Controller's P, I and D coefficients.            */
+        /* Typically, only the P value needs to be modified.                   */
+        LiveWindow.addActuator("DriveSystem", "RotateController", turnController);
 	}
 
 	public void zeroSensors() {
+		if(drive.isSafetyEnabled()) drive.setSafetyEnabled(false);
 		ahrs.resetDisplacement();
+		ahrs.zeroYaw();
 		leftBack.getSensorCollection().setQuadraturePosition(0,  kTimeoutMs);
 		rightBack.getSensorCollection().setQuadraturePosition(0,  kTimeoutMs);
-		System.out.println("[Quadrature Encoders] All sensors are zeroed.\n");
+		System.out.println("[Quadrature Encoders] All sensors are zeroed.\n");		
 	}
 	
   	/** Checks if the triggers are not being used at all, returns the current to use for driving */
@@ -247,38 +157,27 @@ public class DriveTrain extends Subsystem {
 		
     	return (current - DEAD_ZONE * (current > 0d ? 1d : -1d)) / (1d - DEAD_ZONE);
 	}
-
-  	// implement this to drive with a controller
-  	// public void tankDrive() {
-	// 	double leftY = -Robot.m_oi.getController().getY(Hand.kLeft);
-	// 	double rightY = -Robot.m_oi.getController().getY(Hand.kRight);
-		
-	// 	leftY = deadZone(leftY);
-	// 	rightY = deadZone(rightY);
-
-	// 	leftY *= (slowMode ? SLOW_MODE_JOYSTICK : 1d) * JOYSTICK_CONSTANT;
-	// 	rightY *= (slowMode ? SLOW_MODE_JOYSTICK : 1d) * JOYSTICK_CONSTANT;
-
-	// 	drive.tankDrive(leftY, rightY);
-  	// }
   
+	public void turnToAngle(double degrees) {
+		drive.setSafetyEnabled(true);
+		kTargetAngleDegrees = degrees;
+		if (!turnController.isEnabled()) {
+			turnController.setSetpoint(degrees);
+			rotateToAngleRate = 0; // This value will be updated in the pidWrite() method.
+			turnController.enable();
+		}
+		double leftStickValue = rotateToAngleRate;
+		double rightStickValue = -rotateToAngleRate;
+		drive.tankDrive(leftStickValue,  rightStickValue);
+	}
+
 	public void arcadeDrive() {
-		// double leftY = -Robot.m_oi.getController().getY(Hand.kLeft);
-		// double leftTrigger = Robot.m_oi.getController().getTriggerAxis(Hand.kLeft);
-		// double rightTrigger = Robot.m_oi.getController().getTriggerAxis(Hand.kRight);
+		drive.setSafetyEnabled(true);
 
-		// leftY = deadZone(leftY);
+		double leftTrigger = Robot.m_oi.getController(1).getTriggerAxis(Hand.kLeft);
+		double rightTrigger = Robot.m_oi.getController(1).getTriggerAxis(Hand.kRight);
 
-		// leftY *= (slowMode ? SLOW_MODE_JOYSTICK : 1d) * JOYSTICK_CONSTANT;
-		
-		// double rotation = (rightTrigger - leftTrigger) *
-		// 	(slowMode ? SLOW_MODE_TRIGGERS : 1d) * TRIGGERS_CONSTANT;
-
-		// drive.arcadeDrive(leftY, rotation);
-		double leftTrigger = Robot.m_oi.getController().getTriggerAxis(Hand.kLeft);
-		double rightTrigger = Robot.m_oi.getController().getTriggerAxis(Hand.kRight);
-
-		double forward = 1 * Robot.m_oi.getController().getY(Hand.kLeft);
+		double forward = 1 * Robot.m_oi.getController(1).getY(Hand.kLeft);
 		double turn = rightTrigger - leftTrigger;
 
 		forward = deadZone(forward);
@@ -292,26 +191,35 @@ public class DriveTrain extends Subsystem {
 
 		SmartDashboard.putNumber("LeftEncoder: ", leftBack.getSelectedSensorPosition());
 		SmartDashboard.putNumber("RightEncoder: ", rightBack.getSelectedSensorPosition());
-
   	}
   
 	public void driveStraight() {
-	// 	double forward = 1 * Robot.m_oi.getController().getY(Hand.kLeft);
-	// 	//double forward = 0d;
-	// 	forward = deadZone(forward) * (slowMode ? SLOW_MODE_JOYSTICK : 1d) * JOYSTICK_CONSTANT;
-	// //	System.out.println("This is Drive Straight using the auxiliary feature with" + 
-	// //		"the difference between two encoders to maintain current heading.\n");
-	// 	System.out.println("Target Angle: " + _targetAngle + ", Forward: " + forward + ", Left: " + leftBack.getSelectedSensorPosition() + ", Right: " + rightBack.getSelectedSensorPosition());
-	// 	/* Configured for percentOutput with Auxiliary PID on Quadrature Encoders' Difference */
-	// 	rightBack.set(ControlMode.PercentOutput, forward, DemandType.AuxPID, _targetAngle);
-	// 	leftBack.follow(rightBack, FollowerType.AuxOutput1);
+		if(!turnController.isEnabled()) {
+			// Acquire current yaw angle, using this as the target angle.
+			turnController.setSetpoint(ahrs.getYaw());
+			rotateToAngleRate = 0; // This value will be updated in the pidWrite() method.
+			turnController.enable();
+		}
+		if(drive.isSafetyEnabled()) drive.setSafetyEnabled(false);
+		double magnitude = (Robot.m_oi.getController(1).getY(Hand.kLeft) + Robot.m_oi.getController(1).getY(Hand.kRight)) / 2;
+		double leftStickValue = magnitude + rotateToAngleRate;
+		double rightStickValue = magnitude - rotateToAngleRate;
+		drive.tankDrive(leftStickValue,  rightStickValue);
+	}
 
+	public void disableTurnController() {
+		turnController.disable();
+	}
 
+	public boolean isTurnToAngleFinished() {
+		double angleDifference = Math.abs(ahrs.getYaw() - kTargetAngleDegrees);
+		double totalSpeed = Math.abs(leftBack.getSelectedSensorVelocity()) + Math.abs(rightBack.getSelectedSensorVelocity());
+
+		if(angleDifference < kToleranceDegrees && totalSpeed < kToleranceSpeed) return true;
+		else return false;
 	}
   
-  	public void stop() {
-		//drive.tankDrive(0, 0);
-		
+  	public void stop() {		
 		rightFront.set(ControlMode.PercentOutput, 0);
 		rightBack.set(ControlMode.PercentOutput, 0);
 		leftFront.set(ControlMode.PercentOutput, 0);
@@ -328,31 +236,24 @@ public class DriveTrain extends Subsystem {
   	}
 	  
 	public void driveStraightFirstCall() {
-		// rightBack.config_kP( kSlot_Turning,  SmartDashboard.getNumber("kP", 1),  kTimeoutMs);
-		// rightBack.config_kD( kSlot_Turning,  SmartDashboard.getNumber("kD", 4.0),  kTimeoutMs);
-
 		System.out.println("This is Drive Straight first call");
-		/* Determine which slot affects which PID */
-		// rightBack.selectProfileSlot( kSlot_Turning,  PID_TURN);
-		// rightFront.follow(rightBack);
-		// leftFront.follow(leftBack);
-		// //drive.setSafetyEnabled(false);
-		// _targetAngle = rightBack.getSelectedSensorPosition();
-		// System.out.println("Target Angle: "+ _targetAngle);
 	}
 
 	public void arcadeDriveFirstCall() {
 		System.out.println("This is Arcade Drive.\n");
-		//drive.setSafetyEnabled(true);
-	}
+		}
 
 	public void tankDriveFirstCall() {
 		System.out.println("This is Tank Drive");
-	//	drive.setSafetyEnabled(true);
 	}
 
 	public void printAngle() {
 		System.out.println(ahrs.getAngle());
+	}
+
+	@Override
+	public void pidWrite(double output) {
+		rotateToAngleRate = output;
 	}
 }
 

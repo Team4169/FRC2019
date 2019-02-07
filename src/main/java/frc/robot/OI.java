@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.commands.DriveStraight;
 import frc.commands.DriveWithController;
 import frc.commands.SlowMode;
+import frc.commands.TurnToAngle;
 import frc.commands.ZeroSensors;
 import frc.subsystems.DriveTrain;
 
@@ -22,21 +23,30 @@ public class OI {
 
     
     
-  private static final XboxController controller1 = new XboxController(RobotMap.CONTROLLER_PORT);
-  private static final JoystickButton BACK_BUTTON = new JoystickButton(controller1, RobotMap.BACK_ID);
-  private static final JoystickButton Y_BUTTON = new JoystickButton(controller1, RobotMap.Y_ID);
-  private static final JoystickButton X_BUTTON = new JoystickButton(controller1, RobotMap.X_ID);
-  private static final JoystickButton B_BUTTON = new JoystickButton(controller1, RobotMap.B_ID);
-  private static final JoystickButton A_BUTTON = new JoystickButton(controller1, RobotMap.A_ID);
+  private static final XboxController controller1 = new XboxController(RobotMap.CONTROLLER_PORT1);
+  private static final XboxController controller2 = new XboxController(RobotMap.CONTROLLER_PORT2);
+  private static final JoystickButton BACK_BUTTON1 = new JoystickButton(controller1, RobotMap.BACK_ID);
+  private static final JoystickButton Y_BUTTON1 = new JoystickButton(controller1, RobotMap.Y_ID);
+  private static final JoystickButton X_BUTTON1 = new JoystickButton(controller1, RobotMap.X_ID);
+  private static final JoystickButton B_BUTTON1 = new JoystickButton(controller1, RobotMap.B_ID);
+  private static final JoystickButton A_BUTTON1 = new JoystickButton(controller1, RobotMap.A_ID);
+  private static final JoystickButton BACK_BUTTON2 = new JoystickButton(controller2, RobotMap.BACK_ID);
+  private static final JoystickButton Y_BUTTON2 = new JoystickButton(controller2, RobotMap.Y_ID);
+  private static final JoystickButton X_BUTTON2 = new JoystickButton(controller2, RobotMap.X_ID);
+  private static final JoystickButton B_BUTTON2 = new JoystickButton(controller2, RobotMap.B_ID);
+  private static final JoystickButton A_BUTTON2 = new JoystickButton(controller2, RobotMap.A_ID);
 
   public OI() {
-    BACK_BUTTON.whenPressed(new ZeroSensors());
-    Y_BUTTON.whenPressed(new SlowMode(false));
-    X_BUTTON.whenPressed(new SlowMode(true));
-    B_BUTTON.whenPressed(new DriveStraight());
+    BACK_BUTTON2.whenPressed(new ZeroSensors());
+    Y_BUTTON1.whenPressed(new SlowMode(false));
+    X_BUTTON1.whenPressed(new SlowMode(true));
+    B_BUTTON1.whenPressed(new DriveStraight());
+    A_BUTTON2.whenPressed(new TurnToAngle());
   }
 
-  public XboxController getController() {
-    return controller1;
+  public XboxController getController(int controller) {
+    if(controller == 1) return controller1;
+    else return controller2;
+    
   }
 }
