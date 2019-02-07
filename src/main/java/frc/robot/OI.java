@@ -29,7 +29,8 @@ public class OI {
   private static final JoystickButton B_BUTTON = new JoystickButton(controller1, RobotMap.B_ID);
   private static final JoystickButton A_BUTTON = new JoystickButton(controller1, RobotMap.A_ID);
   private static final JoystickButton RB_BUTTON = new JoystickButton(controller1, RobotMap.RB_ID);
-  private static final JoystickButton LB_BUTTON = new JoystickButton(controller1, RobotMap.LB_ID);
+	private static final JoystickButton LB_BUTTON = new JoystickButton(controller1, RobotMap.LB_ID);
+	private static final JoystickButton START_BUTTON = new JoystickButton(controller1, RobotMap.START_ID);
 
   public OI() {
     BACK_BUTTON.whenPressed(new ZeroSensors());
@@ -39,6 +40,7 @@ public class OI {
     // A_BUTTON.whenPressed(new );
     RB_BUTTON.whenPressed(new GrabHatch());
     LB_BUTTON.whenPressed(new ReleaseHatch());
+    START_BUTTON.whenPressed(new Extend());
   }
 
   public XboxController getController() {
