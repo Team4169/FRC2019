@@ -60,7 +60,6 @@ public class Robot extends TimedRobot {
 
 @Override
 	public void teleopInit(){
-		/* Disable all motor controllers */
 	
 	}
 
