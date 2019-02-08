@@ -2,27 +2,6 @@ package frc.robot;
 
 public class TargetCalc{
 
-
-    /**
-     * The camera's horizontal field of view, in radians
-     */
-    private final double hFov;
-
-    /**
-     * The camera's vertical field of view, in radians
-     */
-    private final double vFov;
-
-    /**
-     * The camera's horizontal image resolution, in pixels
-     */
-    private final double hRes;
-
-    /**
-     * The camera's vertical image resolution, in pixels
-     */
-    private final double vRes;
-
     /**
      * The camera's lens height above the floor, in convenient units
      * (must be the same units as used in routeToTarget computations)
@@ -45,55 +24,13 @@ public class TargetCalc{
      * Constructor given the basic camera parameters
      * @param hFov Horizontal field of view (in degrees)
      * @param vFov Vertical field of view (in degrees)
-     * @param hRes Horizontal resolution (in pixels)
-     * @param vRes Vertical resolution (in pixels)
-     * @param camHeight Camera height above floor
-     * @param vAim Vertical aiming angle relative to horizon
-     * (in degrees)
+     * @param camHeight Camera height above floor (in inches)
+     * @param vAim Vertical aiming angle relative to horizon (in degrees)
      */
 
-    public TargetCalc (double hFov, double vFov, double hRes, double vRes, double cameraHeight, double vAimAngle) {
-        this.hFov = Math.toRadians(hFov);
-        this.vFov = Math.toRadians(vFov);
-        this.hRes = hRes;
-        this.vRes = vRes;
+    public TargetCalc (double cameraHeight, double vAimAngle) {
         this.cameraHeight = cameraHeight;
         this.vAimAngle = Math.toRadians(vAimAngle);
-    }
-
-    /**
-     * Given pixel coordinates in the camera's view plane, with (0, 0) in the
-     * upper left of the image and the plane resolution of m_hRes x m_vRes pixels
-     * horizontally and vertically: compute and return a normalized vector from
-     * the center of the image.  This is a simple coordinate transform to a new
-     * normalized coordinate system in which the origin is at the center of the
-     * camera's image, and the distance from the center to the edge of the image
-     * in each direction is 1.0 normalized units.
-     * @param px X-coordinate of pixel in view plane
-     * @param py Y-coordinate of pixel in view plane
-     * @return Normalized vector from origin at center of view plane to the pixel
-     */
-    public Vec2D getTargetPlaneVec(int px, int py) {
-
-        /* For each direction, normalized coord is original coord - center coord
-         * (to center the origin) divided by 1/2 width of view (to normalize).  For vertical
-         * width, must also negate (since pixel coords increase downward).
-         */
-        double ctrX = (hRes - 1) / 2;
-        System.out.println("ctrX = " + ctrX);
-        double ctrY = (vRes - 1) / 2;
-        System.out.println("ctrY = " + ctrY);
-        double nx = ((double)px - ctrX) / (hRes / 2.0);
-        double ny = (ctrY - (double)py) / (vRes / 2.0);
-        System.out.println("(nx, ny): (" + nx + "," + ny + ")");
-
-        /* Now, scale horiz and vertical coords to a common scale (pixels aren't
-         * necessarily square because horiz and vert fields of view are different)
-         */
-
-        double scaledX = Math.tan(hFov / 2.0) * nx;
-        double scaledY = Math.tan(vFov / 2.0) * ny;
-        return Vec2D.makeCart(scaledX, scaledY);
     }
 
     /**
@@ -109,19 +46,18 @@ public class TargetCalc{
      * of the target above the horizontal (from the target's pixel location plus the mounting
      * angle of the camera), and then using the arctan of that angle together with the 
      * target height above the camera mount to calculate the distance.
-     * @param px Camera x (horizontal) pixel coordinate of the target (0, 0 is upper left)
-     * @param py Camera y (vertical) pixel coordinate of the target (0, 0 is upper left)
+     * @param tx Camera x (horizontal) degrees off from target (-27 to 27 degrees)
+     * @param ty Camera y (vertical) degrees off from target (-20.5 to 20.5 degrees)
      * @param robotVec Unit vector (field-relative) in the robot's current direction
      * @param targHeight Height of target (in units) above the floor
      * @return Field-relative vector from camera lens to target
      */
-    public Vec2D getTargetVector(int px, int py, Vec2D robotVec, double targHeight) {
+    public Vec2D getTargetVector(double tx, double ty, Vec2D robotVec, double targHeight) {
         
         /* First, convert the (x,y) pixel coordinates to a normalized vector (from -1.0 to 1.0 in each
          * direction) on an imaginary view plane 1.0 unit in front of the camera.  This will allow us
          * to read off the horizontal and vertical angles from the camera to the target.
          */
-        Vec2D targetPlaneVec = getTargetPlaneVec(px, py);
 
         /* Now, the 2-d vector from the image center to the target in the (vertical, normalized) target
          * plane has accounted for the differences in horizontal and vertical pixel resolution and field
@@ -130,14 +66,11 @@ public class TargetCalc{
          * components of the vector.  Need those next.
          */
 
-        System.out.println("target plane x:" + targetPlaneVec.getXCoord());
-        System.out.println("target plane y:" + targetPlaneVec.getYCoord());
+        double centralXAngle = tx;
+        double centralYAngle = ty;
 
-        double centralXAngle = Math.atan2(targetPlaneVec.getXCoord(), 1);
-        double centralYAngle = Math.atan2(targetPlaneVec.getYCoord(), 1);
-
-        System.out.println("centralXAngle:" + centralXAngle);
-        System.out.println("centralYAngle:" + centralYAngle);
+        //System.out.println("centralXAngle:" + centralXAngle);
+        //System.out.println("centralYAngle:" + centralYAngle);
 
         /* Next, we can compute the distance to the target from the camera, based on the camera's height,
          * its aiming angle, and the central Y angle obtained above:
@@ -166,8 +99,8 @@ public class TargetCalc{
      *  - the desired "normal distance" -- i.e. the minimum distance we want the robot to be
      *    away from the target when it makes its final turn to drive perpendicular to the
      *    target to drop off its payload.
-     * @param px Camera x (horizontal) pixel coordinate of the target (0, 0 is upper left)
-     * @param py Camera y (vertical) pixel coordinate of the target (0, 0 is upper left)
+     * @param tx Camera x (horizontal) degrees off from target (-27 to 27 degrees)
+     * @param ty Camera y (vertical) degrees off from target (-20.5 to 20.5 degrees)
      * @param robotVec Unit vector (field-relative) in the robot's current direction
      * @param targNorm Unit vector (field-relative) pointing perpendicularly away from target
      * @param targHeight Height of target (in units) above the floor
@@ -177,8 +110,8 @@ public class TargetCalc{
      * current position
      */
 
-     public RouteToTarget getRouteToTarget(int px, int py, Vec2D robotVec, Vec2D targNorm, double targHeight, double normDist) {
-         Vec2D targetVec = getTargetVector(px, py, robotVec, targHeight);
+     public RouteToTarget getRouteToTarget(double tx, double ty, Vec2D robotVec, Vec2D targNorm, double targHeight, double normDist) {
+         Vec2D targetVec = getTargetVector(tx, ty, robotVec, targHeight);
          Vec2D normalVec = targNorm.scale(-normDist);
          Vec2D interceptVec = targetVec.subtract(normalVec);
 

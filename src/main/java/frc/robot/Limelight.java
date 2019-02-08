@@ -10,10 +10,12 @@ import edu.wpi.first.networktables.NetworkTableInstance;
  */
 public class Limelight {
 	private static NetworkTableInstance table = null;
-	static final double mountingAngle = 0;
-	static final double mountingHeight = 3;
-	static final double targetHeight = 5.5;
-	static final double turnAmount = Math.PI/36;
+	public static final double targetHeight = 27.5;
+	public static final int H_FOV = 54;
+	public static final int V_FOV = 41;
+	public static final double HEIGHT = 10.5;
+	public static final double ANGLE_FROM_HORIZONTAL = 0d;
+
 	/**
 	 * Light modes for Limelight.
 	 * 
@@ -87,7 +89,7 @@ public class Limelight {
 	}
 	
 	public double getDist() {
-		return (targetHeight-mountingHeight)/Math.tan(getTy()+mountingAngle);
+		return (targetHeight-HEIGHT)/Math.tan(getTy() + ANGLE_FROM_HORIZONTAL);
 	}
 	/**
 	 * Sets LED mode of Limelight.

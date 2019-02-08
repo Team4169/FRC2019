@@ -9,6 +9,7 @@ package frc.robot;
 
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -29,6 +30,7 @@ public class Robot extends TimedRobot {
   // public static final DriveTrain kDriveTrain = new DriveTrain();
   // public static final OI m_oi = new OI();
   public static final Limelight ll = new Limelight();
+  final XboxController xboxController =  new XboxController(1);
 
   /**
    * This function is run when the robot is first started up and should be
@@ -121,7 +123,20 @@ public class Robot extends TimedRobot {
     // RouteToTarget route = new TargetCalc().getRouteToTarget();
     ll.setLedMode(Limelight.LightMode.eOn);
     System.out.println("tx: " + ll.getTx() + ", ty: " + ll.getTy());
-	}
+
+    TargetCalc targetCalc = new TargetCalc(Limelight.HEIGHT, Limelight.ANGLE_FROM_HORIZONTAL);
+    Vec2D robotVec = Vec2D.makePolar(1, 90);
+    Vec2D normalVec = Vec2D.makePolar(1, 270);
+    double normalDist = 12;
+    RouteToTarget route = targetCalc.getRouteToTarget(ll.getTx(), ll.getTy(),
+        robotVec, normalVec, Limelight.targetHeight, normalDist);
+    
+    if (xboxController.getAButtonPressed()) {
+      System.out.println("Target Vector: <" + route.getTargetDirectVec().getXCoord() + ", " + route.getNormalVec() + ">");
+      System.out.println("Intecept Vector: <" + route.getInterceptVec().getXCoord() + ", " + route.getInterceptVec() + ">");
+      System.out.println("Normal Vector: <" + route.getNormalVec().getXCoord() + ", " + route.getNormalVec().getYCoord() + ">");
+    }
+  }
   
   @Override
   public void disabledPeriodic() {
