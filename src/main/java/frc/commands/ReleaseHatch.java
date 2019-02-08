@@ -7,14 +7,10 @@
 
 package frc.commands;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.subsystems.Hatch;
 
 public class ReleaseHatch extends Command {
-
-  double startTime;
 
   public ReleaseHatch() {
     // Use requires() here to declare subsystem dependencies
@@ -25,7 +21,6 @@ public class ReleaseHatch extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    startTime = Timer.getFPGATimestamp();
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -37,17 +32,19 @@ public class ReleaseHatch extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return (Timer.getFPGATimestamp() > (startTime + Hatch.INTERVAL));
+    return Robot.kHatch.isReleased();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    Robot.kHatch.stop();
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    end();
   }
 }

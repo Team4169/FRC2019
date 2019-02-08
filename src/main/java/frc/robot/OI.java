@@ -14,8 +14,7 @@ import frc.commands.DriveWithController;
 import frc.commands.SlowMode;
 import frc.commands.TurnToAngle;
 import frc.commands.ZeroSensors;
-import frc.commands.GrabHatch;
-import frc.commands.ReleaseHatch;
+
 
 /**
  * Add your docs here.
