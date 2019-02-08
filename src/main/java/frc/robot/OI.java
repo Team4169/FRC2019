@@ -47,6 +47,5 @@ public class OI {
   public XboxController getController(int controller) {
     if(controller == 1) return controller1;
     else return controller2;
-    
   }
 }

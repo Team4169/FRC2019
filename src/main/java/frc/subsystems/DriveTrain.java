@@ -201,7 +201,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 			turnController.enable();
 		}
 		if(drive.isSafetyEnabled()) drive.setSafetyEnabled(false);
-		double magnitude = (Robot.m_oi.getController(1).getY(Hand.kLeft) + Robot.m_oi.getController(1).getY(Hand.kRight)) / 2;
+		double magnitude = Robot.m_oi.getController(1).getY(Hand.kLeft);
 		double leftStickValue = magnitude + rotateToAngleRate;
 		double rightStickValue = magnitude - rotateToAngleRate;
 		drive.tankDrive(leftStickValue,  rightStickValue);

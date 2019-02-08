@@ -16,6 +16,8 @@ public class RobotMap {
 	public static final int RIGHT_FRONT = 2;
 	public static final int LEFT_BACK = 1;
     public static final int RIGHT_BACK = 5;
+    public static final int CLIMBER1 = 7;
+    public static final int CLIMBER2 = 8;
     
     // Xbox Controller
     public static final int CONTROLLER_PORT1 = 0;
