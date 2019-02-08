@@ -7,33 +7,37 @@
 
 package frc.commands;
 
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class DriveStraight extends Command {
-  public DriveStraight() {
+public class TurnToAngle extends Command {
+
+  double degrees; //placeholder value that will be updated in the future
+  
+  public TurnToAngle() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
     requires(Robot.kDriveTrain);
+
+    
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.kDriveTrain.driveStraightFirstCall();
+
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.kDriveTrain.driveStraight();
+    Robot.kDriveTrain.turnToAngle(degrees);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return Robot.m_oi.getController(1).getAButton();
+    return Robot.kDriveTrain.isTurnToAngleFinished();
   }
 
   // Called once after isFinished returns true

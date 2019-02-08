@@ -23,8 +23,13 @@ public class RobotMap {
 			ARMMOTOR = 4,
 			EXTENSION = 5,
 
+			//climber motors
+			CLIMBER1 = 7,
+			CLIMBER2 = 8,
+
 			// Xbox Controller
-			CONTROLLER_PORT = 0,
+			CONTROLLER_PORT1 = 0,
+			CONTROLLER_PORT2 = 1,
 			A_ID = 1,
 			B_ID = 2,
 			X_ID = 3,
