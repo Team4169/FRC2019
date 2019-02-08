@@ -10,6 +10,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.commands.DriveStraight;
+import frc.commands.Extend;
 import frc.commands.SlowMode;
 import frc.commands.ZeroSensors;
 import frc.commands.GrabHatch;
