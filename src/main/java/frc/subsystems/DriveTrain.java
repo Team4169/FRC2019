@@ -59,6 +59,9 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	public static final double SLOW_MODE_JOYSTICK = 0.7;
 	public static final double SLOW_MODE_TRIGGERS = 0.8;
 
+	// speed at which the robot turns during findTarget
+	double TURN_CONSTANT = 0.3;
+
 	double _targetAngle = 0;
 
 	public static final int kEncoderUnitsPerRevolution = 4096;
@@ -192,7 +195,17 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		SmartDashboard.putNumber("LeftEncoder: ", leftBack.getSelectedSensorPosition());
 		SmartDashboard.putNumber("RightEncoder: ", rightBack.getSelectedSensorPosition());
   	}
-  
+	
+	public void findTarget() {
+		double forward = 0;
+		double turn = TURN_CONSTANT;
+
+		rightFront.follow(rightBack);
+		leftFront.follow(leftBack);
+
+		rightBack.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
+		leftBack.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
+	}
 	public void driveStraight() {
 		if(!turnController.isEnabled()) {
 			// Acquire current yaw angle, using this as the target angle.
