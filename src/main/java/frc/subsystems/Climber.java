@@ -26,7 +26,12 @@ public class Climber extends Subsystem {
   WPI_TalonSRX climber1 = new WPI_TalonSRX(RobotMap.CLIMBER1);
   WPI_TalonSRX climber2 = new WPI_TalonSRX(RobotMap.CLIMBER2);
 
-  private static final double totalClicks = 9000; //This is a placeholder value that will have to be calculated later. We want the motor to rotate 132 degrees.
+  private static final double GEARBOX_RATIO = 100d/1d;
+  private static final double COUNTS_PER_REVOLUTION = 4096;
+  private static final double TURNING_ANGLE = 132;
+  private static final double ENCODER_THRESHOLD = 200;
+
+  private static final double TOTAL_CLICKS = GEARBOX_RATIO * COUNTS_PER_REVOLUTION * TURNING_ANGLE / 360d; //This is a placeholder value that will have to be calculated later. We want the motor to rotate 132 degrees.
 
   @Override
   public void initDefaultCommand() {
@@ -58,8 +63,7 @@ public class Climber extends Subsystem {
   }
 
   public boolean done() {
-    if (climber1.getSelectedSensorPosition() > totalClicks) return true;
-    else return false;
+    return climber1.getSelectedSensorPosition() >= TOTAL_CLICKS - ENCODER_THRESHOLD;
   }
 
   public void stop() {
