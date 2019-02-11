@@ -14,10 +14,11 @@ public class TurnToAngle extends Command {
 
   double degrees; //placeholder value that will be updated in the future
   
-  public TurnToAngle() {
+  public TurnToAngle(double angle) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
     requires(Robot.kDriveTrain);
+    degrees = angle;
 
     
   }

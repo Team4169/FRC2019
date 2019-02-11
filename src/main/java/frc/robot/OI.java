@@ -41,7 +41,6 @@ public class OI {
     Y_BUTTON1.whenPressed(new SlowMode(false));
     X_BUTTON1.whenPressed(new SlowMode(true));
     B_BUTTON1.whenPressed(new DriveStraight());
-    A_BUTTON2.whenPressed(new TurnToAngle());
   }
 
   public XboxController getController(int port) {

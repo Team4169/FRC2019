@@ -84,7 +84,7 @@ public class Vec2D {
 
     //returns the angle of the vector (in radians)
     public double getTheta() {
-        return Math.atan2(this.yCoord, this.xCoord);
+        return Math.atan2(this.yCoord, this.xCoord) * 180 / Math.PI;
     }
 
     /**
