@@ -7,14 +7,11 @@
 
 package frc.commands;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
 public class Extend extends Command {
   
-  double startTime;
-  double INTERVAL = 1d;
   
   public Extend() {
     // Use requires() here to declare subsystem dependencies
@@ -25,7 +22,6 @@ public class Extend extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    startTime = Timer.getFPGATimestamp();
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -37,7 +33,7 @@ public class Extend extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return Timer.getFPGATimestamp() > (startTime + INTERVAL);
+    return Robot.kHatch.getLimitSwitch();
   }
 
   // Called once after isFinished returns true

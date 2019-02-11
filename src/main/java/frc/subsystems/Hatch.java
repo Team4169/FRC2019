@@ -9,6 +9,7 @@ package frc.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
@@ -32,12 +33,20 @@ public class Hatch extends Subsystem {
 
   static final WPI_TalonSRX armMotor = new WPI_TalonSRX(RobotMap.ARMMOTOR);
 	static final Spark extensionMotor = new Spark(RobotMap.EXTENSION);
-	
+
+	boolean normalSwitchMode;
+	DigitalInput extensionLimitSwitch;
+
+	public Hatch() {
+		extensionLimitSwitch = new DigitalInput(RobotMap.LIMIT_SWITCH_PORT);
+		normalSwitchMode = extensionLimitSwitch.get();
+	}
+
 	@Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
     // setDefaultCommand(new MySpecialCommand());
-  }
+	}
 
 	public void grab() {
 		armMotor.set(ARM_SPEED);
@@ -62,5 +71,9 @@ public class Hatch extends Subsystem {
 	public boolean isReleased() {
 		return armMotor.getSelectedSensorPosition() >=
 				GEARBOX_RATIO * COUNTS_PER_REVOLUTION * TURNING_ANGLE / 360d - ENCODER_THRESHOLD;
+	}
+
+	public boolean getLimitSwitch() {
+		return extensionLimitSwitch.get() != normalSwitchMode;
 	}
 }
