@@ -34,6 +34,7 @@ public class AutoHatch extends CommandGroup {
     addSequential(new TurnToAngle(route.getNormalVec().getTheta()));
     addSequential(new DriveStraightForDistance(route.getNormalVec().getR()));
     addSequential(new ReleaseHatch());
+    addSequential(new DriveStraightForDistance(-route.getNormalVec().getR()));
 
 
     // addSequential(new Command2());
