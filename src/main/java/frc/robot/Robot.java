@@ -31,6 +31,7 @@ public class Robot extends TimedRobot {
   public static final Hatch kHatch = new Hatch();
   public static final Climber kClimber = new Climber();
   public static final OI m_oi = new OI();
+  public static final Limelight ll = new Limelight();
 
   /**
    * This function is run when the robot is first started up and should be
@@ -115,6 +116,21 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+    ll.setLedMode(Limelight.LightMode.eOn);
+    // System.out.println("tx: " + ll.getTx() + ", ty: " + ll.getTy());
+
+    TargetCalc targetCalc = new TargetCalc(Limelight.HEIGHT, Limelight.ANGLE_FROM_HORIZONTAL);
+    Vec2D robotVec = Vec2D.makePolar(1, 90);
+    Vec2D normalVec = Vec2D.makePolar(1, 270);
+    double normalDist = 12;
+    RouteToTarget route = targetCalc.getRouteToTarget(ll.getTx(), ll.getTy(),
+        robotVec, normalVec, Limelight.targetHeight, normalDist);
     
+    if (m_oi.getController(0).getAButtonPressed()) {
+      System.out.println("tx: " + ll.getTx() + ", ty: " + ll.getTy());
+      System.out.println("Target Vector: <" + route.getTargetDirectVec().getXCoord() + ", " + route.getNormalVec() + ">");
+      System.out.println("Intecept Vector: <" + route.getInterceptVec().getXCoord() + ", " + route.getInterceptVec() + ">");
+      System.out.println("Normal Vector: <" + route.getNormalVec().getXCoord() + ", " + route.getNormalVec().getYCoord() + ">");
+    }
   }
 }
