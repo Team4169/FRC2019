@@ -23,15 +23,17 @@ public class Hatch extends Subsystem {
 	
 	// 20:1 gearbox, 12 counts per revolution, 70 degrees
 
-	public static final double ARM_SPEED = 0.1;
-	public static final double EXTENSION_SPEED = 0.1;
+	public static final double ARM_SPEED = 0.05;
+	public static final double EXTENSION_SPEED = 0.15;
 	public static final double INTERVAL = 1d;
 	public static final double GEARBOX_RATIO = 20d/1d;
 	public static final int COUNTS_PER_REVOLUTION = 12;
 	public static final int TURNING_ANGLE = 70;
 	public static final int ENCODER_THRESHOLD = 20;
 
-  static final WPI_TalonSRX armMotor = new WPI_TalonSRX(RobotMap.ARMMOTOR);
+	int kTimeoutMs = 30;
+
+  	static final WPI_TalonSRX armMotor = new WPI_TalonSRX(RobotMap.ARMMOTOR);
 	static final Spark extensionMotor = new Spark(RobotMap.EXTENSION);
 
 	boolean normalSwitchMode;
@@ -75,5 +77,9 @@ public class Hatch extends Subsystem {
 
 	public boolean getLimitSwitch() {
 		return extensionLimitSwitch.get() != normalSwitchMode;
+	}
+
+	public void zeroSensors() {
+		armMotor.getSensorCollection().setQuadraturePosition(0, kTimeoutMs);
 	}
 }

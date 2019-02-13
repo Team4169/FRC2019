@@ -11,9 +11,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
 public class GrabHatch extends Command {
-
-  double startTime;
-
+  
   public GrabHatch() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);

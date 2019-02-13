@@ -8,34 +8,17 @@
 package frc.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.robot.Limelight;
-import frc.robot.Robot;
-import frc.robot.RouteToTarget;
-import frc.robot.TargetCalc;
-import frc.robot.Vec2D;
-import frc.subsystems.DriveTrain;
 
-public class AutoHatch extends CommandGroup {
+public class ExtendAndZero extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public AutoHatch() {
-    addSequential(new FindTarget());
+  public ExtendAndZero() {
+    addSequential(new Extend());
+    addParallel(new GrabHatch());
 
-    TargetCalc calc = new TargetCalc(Limelight.HEIGHT, Limelight.ANGLE_FROM_HORIZONTAL);
-    Vec2D robotVec = new Vec2D(0, 1);
-    Vec2D targNorm = new Vec2D(0, -1);
-    RouteToTarget route = calc.getRouteToTarget(Robot.ll.getTx(), Robot.ll.getTy(), robotVec, targNorm, Limelight.targetHeight, 12);
-
-    addSequential(new ZeroSensors());
-    addSequential(new TurnToAngle(route.getInterceptVec().getTheta()));
-    addSequential(new DriveStraightForDistance(route.getInterceptVec().getR()));
-    addSequential(new TurnToAngle(route.getNormalVec().getTheta()));
-    addSequential(new DriveStraightForDistance(route.getNormalVec().getR()));
-    addSequential(new ReleaseHatch());
-    addSequential(new DriveStraightForDistance(-route.getNormalVec().getR()));
-    // TODO possible recursion ^^^^
-
+    // Add Commands here:
+    // e.g. addSequential(new Command1());
     // addSequential(new Command2());
     // these will run in order.
 
