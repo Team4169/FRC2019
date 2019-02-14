@@ -9,14 +9,13 @@ package frc.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class ExtendAndZero extends CommandGroup {
+public class FindAndHatch extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public ExtendAndZero() {
-    addSequential(new Extend());
-    addParallel(new GrabHatch(0.1));
-    addSequential(new ZeroSensors());
+  public FindAndHatch() {
+    addSequential(new FindTarget());
+    addSequential(new AutoHatch());
 
     // Add Commands here:
     // e.g. addSequential(new Command1());

@@ -18,17 +18,17 @@ import frc.robot.RobotMap;
  * Add your docs here.
  */
 public class Hatch extends Subsystem {
-  // Put methods for controlling this subsystem
+	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
 	
 	// 20:1 gearbox, 12 counts per revolution, 70 degrees
 
-	public static final double ARM_SPEED = 0.05;
+	public static final double ARM_SPEED = 0.15;
 	public static final double EXTENSION_SPEED = 0.15;
 	public static final double INTERVAL = 1d;
 	public static final double GEARBOX_RATIO = 20d/1d;
 	public static final int COUNTS_PER_REVOLUTION = 12;
-	public static final int TURNING_ANGLE = 70;
+	public static final double TURNING_ANGLE = 70d;
 	public static final int ENCODER_THRESHOLD = 20;
 
 	int kTimeoutMs = 30;
@@ -72,7 +72,7 @@ public class Hatch extends Subsystem {
 
 	public boolean isReleased() {
 		return armMotor.getSelectedSensorPosition() >=
-				GEARBOX_RATIO * COUNTS_PER_REVOLUTION * TURNING_ANGLE / 360d - ENCODER_THRESHOLD;
+				Math.floor(GEARBOX_RATIO * COUNTS_PER_REVOLUTION * TURNING_ANGLE / 360d) - ENCODER_THRESHOLD;
 	}
 
 	public boolean getLimitSwitch() {

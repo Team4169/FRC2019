@@ -22,19 +22,23 @@ public class AutoHatch extends CommandGroup {
   public AutoHatch() {
     addSequential(new FindTarget());
 
-    TargetCalc calc = new TargetCalc(Limelight.HEIGHT, Limelight.ANGLE_FROM_HORIZONTAL);
-    Vec2D robotVec = new Vec2D(0, 1);
-    Vec2D targNorm = new Vec2D(0, -1);
-    RouteToTarget route = calc.getRouteToTarget(Robot.ll.getTx(), Robot.ll.getTy(), robotVec, targNorm, Limelight.targetHeight, 12);
+    RouteToTarget route = Robot.getCurrentRoute();
 
     addSequential(new ZeroSensors());
     addSequential(new TurnToAngle(route.getInterceptVec().getTheta()));
+
+    addSequential(new ZeroDrive());
     addSequential(new DriveStraightForDistance(route.getInterceptVec().getR()));
+    
     addSequential(new TurnToAngle(route.getNormalVec().getTheta()));
+
+    addSequential(new ZeroDrive());
     addSequential(new DriveStraightForDistance(route.getNormalVec().getR()));
     addSequential(new ReleaseHatch());
+
+    addSequential(new ZeroDrive());
     addSequential(new DriveStraightForDistance(-route.getNormalVec().getR()));
-    // TODO possible recursion ^^^^
+    // TODO possible recursion? ^^^^
 
     // addSequential(new Command2());
     // these will run in order.

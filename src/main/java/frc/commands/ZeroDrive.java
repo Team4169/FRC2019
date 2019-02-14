@@ -7,27 +7,14 @@
 
 package frc.commands;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class GrabHatch extends Command {
-  
-  Double startTime = null;
-  double interval;
-
-  public GrabHatch() {
+public class ZeroDrive extends Command {
+  public ZeroDrive() {
+    
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    requires(Robot.kHatch);
-  }
-
-  public GrabHatch(double seconds) {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
-    startTime = Timer.getFPGATimestamp();
-    interval = seconds;
-    requires(Robot.kHatch);
   }
 
   // Called just before this Command runs the first time
@@ -38,29 +25,23 @@ public class GrabHatch extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.kHatch.grab();
+    Robot.kDriveTrain.zeroDriveEncoders();
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if (startTime == null) {
-      return Robot.kHatch.isGrabbed();
-    } else {
-      return Timer.getFPGATimestamp() > startTime + interval;
-    }
+    return true;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.kHatch.stop();
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    end();
   }
 }

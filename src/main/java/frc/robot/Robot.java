@@ -133,4 +133,15 @@ public class Robot extends TimedRobot {
       System.out.println("Normal Vector: <" + route.getNormalVec().getXCoord() + ", " + route.getNormalVec().getYCoord() + ">");
     }
   }
+
+  public static RouteToTarget getCurrentRoute() {
+    if (ll.isTarget()) {
+      TargetCalc calc = new TargetCalc(Limelight.HEIGHT, Limelight.ANGLE_FROM_HORIZONTAL);
+      Vec2D robotVec = new Vec2D(0, 1); // TODO
+      Vec2D targNorm = new Vec2D(0, -1); // TODO
+      return calc.getRouteToTarget(Robot.ll.getTx(), Robot.ll.getTy(), robotVec, targNorm, Limelight.targetHeight, 12);
+    } else {
+      return null;
+    }
+  }
 }
