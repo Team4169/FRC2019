@@ -12,9 +12,9 @@ import frc.robot.Robot;
 import frc.robot.RouteToTarget;
 
 public class AutoHatch extends CommandGroup {
-  /**
-   * Add your docs here.
-   */
+
+  public static final double VELOCITY = 12;
+
   public AutoHatch() {
     RouteToTarget route = Robot.getCurrentRoute();
 
@@ -22,16 +22,16 @@ public class AutoHatch extends CommandGroup {
     addSequential(new TurnToAngle(route.getInterceptVec().getTheta()));
 
     addSequential(new ZeroDrive());
-    addSequential(new DriveStraightForDistance(route.getInterceptVec().getR()));
+    addSequential(new DriveStraightForDistance(route.getInterceptVec().getR(), VELOCITY));
     
     addSequential(new TurnToAngle(route.getNormalVec().getTheta()));
 
     addSequential(new ZeroDrive());
-    addSequential(new DriveStraightForDistance(route.getNormalVec().getR()));
+    addSequential(new DriveStraightForDistance(route.getNormalVec().getR(), VELOCITY));
     addSequential(new ReleaseHatch());
 
     addSequential(new ZeroDrive());
-    addSequential(new DriveStraightForDistance(-route.getNormalVec().getR()));
+    addSequential(new DriveStraightForDistance(-route.getNormalVec().getR(), VELOCITY));
     // TODO possible recursion? ^^^^
 
     // addSequential(new Command2());

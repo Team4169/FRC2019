@@ -349,11 +349,11 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		return (kV * velocity) + startVoltage;
 	}
 
-	public double powerToVelocity(double power) throws Exception{
+	public double powerToVelocity(double power) throws Exception {
 		return voltageToVelocity(powerToVoltage(power));
 	}
 
-	public double velocityToPower(double velocity) throws Exception{
+	public double velocityToPower(double velocity) throws Exception {
 		return voltageToPower(velocityToVoltage(velocity));
 	}
 
@@ -362,7 +362,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	But as long as delta-v and delta-t are constants they can be
     pulled outside the summation; SUM[i=0 to n](i) = (n)(n-1)/2 */
 
-	public double calculateAccelDistance(double n, double deltaV, double deltaT){
+	public double calculateAccelDistance(double n, double deltaV, double deltaT) {
 		return (deltaV * deltaT * n * (n -1)) / 2.0;
 	}
 

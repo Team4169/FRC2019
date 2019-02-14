@@ -9,23 +9,68 @@ package frc.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import frc.subsystems.DriveTrain;
 
 public class DriveStraightForDistance extends Command {
+
+  double distance;
+  boolean finished;
+  int accelSteps;
+  int runSteps, nSteps, nAccelSteps, nRunSteps, nDecelSteps;
+
+  boolean triangularAccel;
 
   enum RunState {
     eAccel, eRun, eDecel, eDone
   }
 
-  public DriveStraightForDistance(double distance) {
+  RunState runState;
+
+  public DriveStraightForDistance(double distance, double velocity) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
     requires(Robot.kDriveTrain);
+    this.distance = distance;
+    finished = (velocity <= 0 || velocity > DriveTrain.maxVelocity);
+
+    // assume trapezoid
+    accelSteps = (int) Math.ceil(velocity / DriveTrain.velocityPerStep);
+
+    double accelDistance = Robot.kDriveTrain.calculateAccelDistance(accelSteps, DriveTrain.velocityPerStep, DriveTrain.secPerStep);
+
+    if (2d * accelDistance < distance) {
+      triangularAccel = false;
+    } else {
+      triangularAccel = true;
+      
+      accelDistance = Math.floor(distance / 2d);
+      accelSteps = (int) Robot.kDriveTrain.calculateAccelSteps(accelDistance, DriveTrain.velocityPerStep, DriveTrain.secPerStep);
+      accelDistance = Robot.kDriveTrain.calculateAccelDistance(accelSteps, DriveTrain.velocityPerStep, DriveTrain.secPerStep);
+    }
+
+    double runVelocity = accelSteps * DriveTrain.velocityPerStep;
+    double runDistance = distance - (2 * accelDistance);
+    double runTime = runDistance / runVelocity;
+    runSteps = (int) Math.floor(runTime / DriveTrain.secPerStep);
+    System.out.println("Triangular acceleration: " + Boolean.toString(triangularAccel));
+    System.out.println("rdist " + runDistance + " rtime " + runTime + " rsteps " + runSteps);
+    System.out.println("accSteps " + accelSteps + " accDist " + accelDistance);
+    nSteps = 0;
+    nAccelSteps = 0;
+    nRunSteps = 0;
+    nDecelSteps = 0;
+    runState = RunState.eAccel;
+    // TODO
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.kDriveTrain.driveStraightFirstCall();
+    if (finished) {
+      System.out.println("Drive straight for distance failed - velocity not legitimate");
+    } else {
+      Robot.kDriveTrain.driveStraightFirstCall();
+    }
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -41,7 +86,7 @@ public class DriveStraightForDistance extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return finished;
   }
 
   // Called once after isFinished returns true
