@@ -8,16 +8,24 @@
 package frc.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.Robot;
 
 public class DriveStraightForDistance extends Command {
+
+  enum RunState {
+    eAccel, eRun, eDecel, eDone
+  }
+
   public DriveStraightForDistance(double distance) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
+    requires(Robot.kDriveTrain);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    Robot.kDriveTrain.driveStraightFirstCall();
   }
 
   // Called repeatedly when this Command is scheduled to run
