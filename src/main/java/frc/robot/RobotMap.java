@@ -14,18 +14,18 @@ public class RobotMap {
     // motor controllers
 	public static final int
 			// drive train
-			LEFT_FRONT = 0,
-			RIGHT_FRONT = 1,
-			LEFT_BACK = 2,
-			RIGHT_BACK = 3,
+			LEFT_FRONT = 8,
+			RIGHT_FRONT = 7,
+			LEFT_BACK = 3,
+			RIGHT_BACK = 1,
 			
 			// hatch motors
 			ARMMOTOR = 4,
-			EXTENSION = 5,
+			EXTENSION = 5, //dont know yet
 
 			//climber motors
-			CLIMBER1 = 7,
-			CLIMBER2 = 8,
+			CLIMBER1 = 5,
+			CLIMBER2 = 6,
 
 			// Xbox Controller
 			CONTROLLER_PORT1 = 0,
