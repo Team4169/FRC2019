@@ -9,6 +9,7 @@ package frc.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
@@ -17,27 +18,37 @@ import frc.robot.RobotMap;
  * Add your docs here.
  */
 public class Hatch extends Subsystem {
-  // Put methods for controlling this subsystem
+	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
 	
 	// 20:1 gearbox, 12 counts per revolution, 70 degrees
 
-	public static final double ARM_SPEED = 0.1;
-	public static final double EXTENSION_SPEED = 0.1;
+	public static final double ARM_SPEED = 0.15;
+	public static final double EXTENSION_SPEED = 0.15;
 	public static final double INTERVAL = 1d;
 	public static final double GEARBOX_RATIO = 20d/1d;
 	public static final int COUNTS_PER_REVOLUTION = 12;
-	public static final int TURNING_ANGLE = 70;
+	public static final double TURNING_ANGLE = 70d;
 	public static final int ENCODER_THRESHOLD = 20;
 
-  static final WPI_TalonSRX armMotor = new WPI_TalonSRX(RobotMap.ARMMOTOR);
+	int kTimeoutMs = 30;
+
+  	static final WPI_TalonSRX armMotor = new WPI_TalonSRX(RobotMap.ARMMOTOR);
 	static final Spark extensionMotor = new Spark(RobotMap.EXTENSION);
-	
+
+	boolean normalSwitchMode;
+	DigitalInput extensionLimitSwitch;
+
+	public Hatch() {
+		extensionLimitSwitch = new DigitalInput(RobotMap.LIMIT_SWITCH_PORT);
+		normalSwitchMode = extensionLimitSwitch.get();
+	}
+
 	@Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
     // setDefaultCommand(new MySpecialCommand());
-  }
+	}
 
 	public void grab() {
 		armMotor.set(ARM_SPEED);
@@ -61,6 +72,14 @@ public class Hatch extends Subsystem {
 
 	public boolean isReleased() {
 		return armMotor.getSelectedSensorPosition() >=
-				GEARBOX_RATIO * COUNTS_PER_REVOLUTION * TURNING_ANGLE / 360d - ENCODER_THRESHOLD;
+				Math.floor(GEARBOX_RATIO * COUNTS_PER_REVOLUTION * TURNING_ANGLE / 360d) - ENCODER_THRESHOLD;
+	}
+
+	public boolean getLimitSwitch() {
+		return extensionLimitSwitch.get() != normalSwitchMode;
+	}
+
+	public void zeroSensors() {
+		armMotor.getSensorCollection().setQuadraturePosition(0, kTimeoutMs);
 	}
 }

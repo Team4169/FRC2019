@@ -10,13 +10,11 @@ package frc.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class Extend extends Command {
-  
-  
-  public Extend() {
+public class ZeroDrive extends Command {
+  public ZeroDrive() {
+    
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    requires(Robot.kHatch);
   }
 
   // Called just before this Command runs the first time
@@ -27,13 +25,13 @@ public class Extend extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.kHatch.extend();
+    Robot.kDriveTrain.zeroDriveEncoders();
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return Robot.kHatch.getLimitSwitch();
+    return true;
   }
 
   // Called once after isFinished returns true

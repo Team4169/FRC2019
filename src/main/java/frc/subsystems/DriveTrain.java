@@ -18,7 +18,6 @@ import frc.commands.DriveWithController;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 
-
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
@@ -217,7 +216,20 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		ahrs.zeroYaw();
 		leftBack.getSensorCollection().setQuadraturePosition(0,  kTimeoutMs);
 		rightBack.getSensorCollection().setQuadraturePosition(0,  kTimeoutMs);
-		System.out.println("[Quadrature Encoders] All sensors are zeroed.\n");		
+		System.out.println("[Quadrature Encoders] and AHRS sensors are zeroed.\n");		
+	}
+
+	public void zeroGyro() {
+		ahrs.zeroYaw();
+	}
+
+	public void zeroAccelerometer() {
+		ahrs.resetDisplacement();
+	}
+	
+	public void zeroDriveEncoders() {
+		leftBack.getSensorCollection().setQuadraturePosition(0, kTimeoutMs);
+		rightBack.getSensorCollection().setQuadraturePosition(0, kTimeoutMs);
 	}
 	
   	/** Checks if the triggers are not being used at all, returns the current to use for driving */

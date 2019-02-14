@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.commands.DriveStraight;
 import frc.commands.DriveWithController;
 import frc.commands.SlowMode;
-import frc.commands.TurnToAngle;
 import frc.commands.ZeroSensors;
 
 
@@ -41,7 +40,7 @@ public class OI {
     Y_BUTTON1.whenPressed(new SlowMode(false));
     X_BUTTON1.whenPressed(new SlowMode(true));
     B_BUTTON1.whenPressed(new DriveStraight());
-    A_BUTTON2.whenPressed(new TurnToAngle());
+    A_BUTTON1.whenPressed(new DriveWithController()); // Interrupts other commands.
   }
 
   public XboxController getController(int port) {

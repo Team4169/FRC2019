@@ -2,6 +2,7 @@ package frc.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import frc.robot.Limelight.CameraMode;
 
 public class FindTarget extends Command {
   public FindTarget() {
@@ -13,6 +14,7 @@ public class FindTarget extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    Robot.ll.setCameraMode(CameraMode.eVision);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -30,6 +32,7 @@ public class FindTarget extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    Robot.ll.setCameraMode(CameraMode.eDriver);
     Robot.kDriveTrain.stop();
   }
 

@@ -12,6 +12,7 @@ import frc.robot.Robot;
 
 public class ZeroSensors extends Command {
   public ZeroSensors() {
+    
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -25,6 +26,7 @@ public class ZeroSensors extends Command {
   @Override
   protected void execute() {
     Robot.kDriveTrain.zeroSensors();
+    Robot.kHatch.zeroSensors();
   }
 
   // Make this return true when this Command no longer needs to run execute()
