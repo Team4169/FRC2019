@@ -208,16 +208,14 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		SmartDashboard.putNumber("RightEncoder: ", rightBack.getSelectedSensorPosition());
   	}
 	
-	public void findTarget() {
-		double forward = 0;
-		double turn = TURN_CONSTANT;
-
+	public void findTarget() {;
 		rightFront.follow(rightBack);
 		leftFront.follow(leftBack);
 
-		rightBack.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
-		leftBack.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
+		rightBack.set(ControlMode.PercentOutput, TURN_CONSTANT);
+		leftBack.set(ControlMode.PercentOutput, -TURN_CONSTANT);
 	}
+
 	public void driveStraight() {
 		if(!turnController.isEnabled()) {
 			// Acquire current yaw angle, using this as the target angle.
@@ -226,7 +224,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 			turnController.enable();
 		}
 		if(drive.isSafetyEnabled()) drive.setSafetyEnabled(false);
-		double magnitude = Robot.m_oi.getController(1).getY(Hand.kLeft);
+		double magnitude = -Robot.m_oi.getController(1).getY(Hand.kLeft);
 		double leftStickValue = magnitude + rotateToAngleRate;
 		double rightStickValue = magnitude - rotateToAngleRate;
 		drive.tankDrive(leftStickValue,  rightStickValue);
@@ -261,12 +259,12 @@ public class DriveTrain extends Subsystem implements PIDOutput {
   	}
 	  
 	public void driveStraightFirstCall() {
-		System.out.println("This is Drive Straight first call");
+		System.out.println("This is Drive Straight");
 	}
 
 	public void arcadeDriveFirstCall() {
 		System.out.println("This is Arcade Drive.\n");
-		}
+	}
 
 	public void tankDriveFirstCall() {
 		System.out.println("This is Tank Drive");
