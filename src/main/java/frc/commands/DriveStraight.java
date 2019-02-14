@@ -7,7 +7,6 @@
 
 package frc.commands;
 
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
@@ -33,7 +32,7 @@ public class DriveStraight extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return Robot.m_oi.getController(1).getAButton();
+    return false; // waits for interrupt only (drive with controller is a button currently)
   }
 
   // Called once after isFinished returns true

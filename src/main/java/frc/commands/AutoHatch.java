@@ -8,20 +8,14 @@
 package frc.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.robot.Limelight;
 import frc.robot.Robot;
 import frc.robot.RouteToTarget;
-import frc.robot.TargetCalc;
-import frc.robot.Vec2D;
-import frc.subsystems.DriveTrain;
 
 public class AutoHatch extends CommandGroup {
   /**
    * Add your docs here.
    */
   public AutoHatch() {
-    addSequential(new FindTarget());
-
     RouteToTarget route = Robot.getCurrentRoute();
 
     addSequential(new ZeroSensors());
