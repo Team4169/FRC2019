@@ -296,6 +296,19 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		drive.tankDrive(leftStickValue,  rightStickValue);
 	}
 
+	public void driveStraight(double magnitude) {
+		if(!turnController.isEnabled()) {
+			// Acquire current yaw angle, using this as the target angle.
+			turnController.setSetpoint(ahrs.getYaw());
+			rotateToAngleRate = 0; // This value will be updated in the pidWrite() method.
+			turnController.enable();
+		}
+		if(drive.isSafetyEnabled()) drive.setSafetyEnabled(false);
+		double leftStickValue = magnitude + rotateToAngleRate;
+		double rightStickValue = magnitude - rotateToAngleRate;
+		drive.tankDrive(leftStickValue,  rightStickValue);
+	}
+
 	public void disableTurnController() {
 		turnController.disable();
 	}
@@ -392,22 +405,24 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		}
 		double dist = vel * secPerStep;
 		curDistance = curDistance + dist;
-		curTime = curTime + secPerStep;		
+		curTime = curTime + secPerStep;
+		
+		driveStraight(power);
 	}
 
-	public static void resetCurrentDistance() {
+	public void resetCurrentDistance() {
 		curDistance = 0.0;
 	}
 
-	public static double getCurrentDistance() {
+	public double getCurrentDistance() {
 		return curDistance;
 	}
 
-	public static double getCurrentPower() {
+	public double getCurrentPower() {
 		return curPower;
 	}
 
-	public static double getCurrentTime(){
+	public double getCurrentTime(){
 		return curTime;
 	}
 

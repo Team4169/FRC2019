@@ -33,7 +33,7 @@ public class Hatch extends Subsystem {
 
 	int kTimeoutMs = 30;
 
-  	static final WPI_TalonSRX armMotor = new WPI_TalonSRX(RobotMap.ARMMOTOR);
+  static final WPI_TalonSRX armMotor = new WPI_TalonSRX(RobotMap.ARMMOTOR);
 	static final Spark extensionMotor = new Spark(RobotMap.EXTENSION);
 
 	boolean normalSwitchMode;
