@@ -18,21 +18,23 @@ public class AutoHatch extends CommandGroup {
   public AutoHatch() {
     RouteToTarget route = Robot.getCurrentRoute();
 
-    addSequential(new ZeroSensors());
-    addSequential(new TurnToAngle(route.getInterceptVec().getTheta()));
+    if (route != null) {
+      addSequential(new ZeroSensors());
+      addSequential(new TurnToAngle(route.getInterceptVec().getTheta()));
 
-    addSequential(new ZeroDrive());
-    addSequential(new DriveStraightForDistance(route.getInterceptVec().getR(), VELOCITY));
-    
-    addSequential(new TurnToAngle(route.getNormalVec().getTheta()));
+      addSequential(new ZeroDrive());
+      addSequential(new DriveStraightForDistance(route.getInterceptVec().getR(), VELOCITY));
+      
+      addSequential(new TurnToAngle(route.getNormalVec().getTheta()));
 
-    addSequential(new ZeroDrive());
-    addSequential(new DriveStraightForDistance(route.getNormalVec().getR(), VELOCITY));
-    addSequential(new ReleaseHatch());
+      addSequential(new ZeroDrive());
+      addSequential(new DriveStraightForDistance(route.getNormalVec().getR(), VELOCITY));
+      addSequential(new ReleaseHatch());
 
-    addSequential(new ZeroDrive());
-    addSequential(new DriveStraightForDistance(-route.getNormalVec().getR(), VELOCITY));
-    // TODO possible recursion? ^^^^
+      addSequential(new ZeroDrive());
+      addSequential(new DriveStraightForDistance(-route.getNormalVec().getR(), VELOCITY));
+      // TODO possible recursion? ^^^^
+    }
 
     // addSequential(new Command2());
     // these will run in order.
