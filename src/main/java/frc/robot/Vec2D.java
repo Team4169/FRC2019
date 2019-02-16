@@ -45,7 +45,7 @@ public class Vec2D {
      * @return The sum
      */
     public Vec2D add(Vec2D a) {
-        return new Vec2D(this.xCoord + a.getXCoord(), this.yCoord + a.getYCoord());
+        return new Vec2D(this.xCoord + a.xCoord, this.yCoord + a.yCoord);
     }
 
     /**
@@ -54,7 +54,7 @@ public class Vec2D {
      * @return The difference
      */
     public Vec2D subtract(Vec2D s) {
-        return new Vec2D(this.xCoord - s.getXCoord(), this.yCoord - s.getYCoord());
+        return new Vec2D(this.xCoord - s.xCoord, this.yCoord - s.yCoord);
     } 
 
      /**
@@ -82,9 +82,9 @@ public class Vec2D {
         return Math.hypot(this.xCoord, this.yCoord);
     }
 
-    //returns the angle of the vector (in radians)
+    //returns the angle of the vector (in degrees)
     public double getTheta() {
-        return Math.atan2(this.yCoord, this.xCoord) * 180 / Math.PI;
+        return Math.toDegrees(Math.atan2(this.yCoord, this.xCoord));
     }
 
     /**

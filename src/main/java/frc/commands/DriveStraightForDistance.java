@@ -70,21 +70,26 @@ public class DriveStraightForDistance extends Command {
 
     RouteToTarget route = Robot.getCurrentRoute();
 
-    switch (Robot.getState()) {
-    case eIntercept:
-      distance = route.getInterceptVec().getR();
-      break;
-    case eNormal:
-      distance = route.getNormalVec().getR();
-      break;
-    case eBack:
-      distance = -route.getNormalVec().getR();
-      end();
-      break;
-    case eDone:
+    if (route != null) {
+      switch (Robot.getState()) {
+      case eIntercept:
+        distance = route.getInterceptVec().getR();
+        break;
+      case eNormal:
+        distance = route.getNormalVec().getR();
+        break;
+      case eBack:
+        distance = -route.getNormalVec().getR();
+        end();
+        break;
+      case eDone:
+        distance = 0;
+        end();
+        break;
+      }
+    } else {
       distance = 0;
       end();
-      break;
     }
     finished = (velocity <= 0 || velocity > DriveTrain.maxVelocity);
 

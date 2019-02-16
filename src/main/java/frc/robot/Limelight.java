@@ -10,11 +10,11 @@ import edu.wpi.first.networktables.NetworkTableInstance;
  */
 public class Limelight {
 	private static NetworkTableInstance table = null;
-	public static final double targetHeight = 27.5;
+	public static final double targetHeight = 19d + 25d/2d + 5.25/2d;
 	public static final int H_FOV = 54;
 	public static final int V_FOV = 41;
 	public static final double HEIGHT = 10.5;
-	public static final double ANGLE_FROM_HORIZONTAL = 70d;
+	public static final double ANGLE_FROM_HORIZONTAL = 20d; // view angle not mounting angle, in deg
 
 	/**
 	 * Light modes for Limelight.

@@ -32,8 +32,8 @@ public class Robot extends TimedRobot {
   public static final Climber kClimber = new Climber();
   public static final OI m_oi = new OI();
   public static final Limelight ll = new Limelight();
-  static RouteToTarget curRoute = null;
 
+  static RouteToTarget curRoute = null;
   static AutoHatchState curState = AutoHatchState.eIntercept;
   
   public enum AutoHatchState {

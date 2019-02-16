@@ -24,22 +24,25 @@ public class TurnToAngle extends Command {
 
   public TurnToAngle() {
     RouteToTarget route = Robot.getCurrentRoute();
-
-    switch (Robot.getState()) {
-    case eIntercept:
-      degrees = route.getInterceptVec().getTheta();
-      break;
-    case eNormal:
-      degrees = route.getNormalVec().getTheta();
-      break;
-    case eBack:
-      degrees = route.getNormalVec().getTheta();
+    if (route != null) {
+      switch (Robot.getState()) {
+      case eIntercept:
+        degrees = route.getInterceptVec().getTheta();
+        break;
+      case eNormal:
+        degrees = route.getNormalVec().getTheta();
+        break;
+      case eBack:
+        degrees = route.getNormalVec().getTheta();
+        end();
+        break;
+      case eDone:
+        degrees = route.getNormalVec().getTheta();
+        end();
+        break;
+      }
+    } else {
       end();
-      break;
-    case eDone:
-      degrees = route.getNormalVec().getTheta();
-      end();
-      break;
     }
   }
 

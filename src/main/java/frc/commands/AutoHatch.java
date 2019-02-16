@@ -8,6 +8,7 @@
 package frc.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.robot.RouteToTarget;
 import frc.robot.Robot.AutoHatchState;
 
 public class AutoHatch extends CommandGroup {
@@ -15,7 +16,7 @@ public class AutoHatch extends CommandGroup {
   public static final double VELOCITY = 12;
 
   public AutoHatch() {
-    addSequential(new CheckRoute());
+    addSequential(new FindTarget());
 
     addSequential(new setAutoState(AutoHatchState.eIntercept));
     addSequential(new ZeroSensors());
@@ -38,20 +39,22 @@ public class AutoHatch extends CommandGroup {
     addSequential(new DriveStraightForDistance(VELOCITY));
 
     addSequential(new setAutoState(AutoHatchState.eDone));
+  }
 
-    // addSequential(new Command2());
-    // these will run in order.
+  public AutoHatch(RouteToTarget route) {
+    addSequential(new ZeroSensors());
+    addSequential(new TurnToAngle(route.getInterceptVec().getTheta()));
 
-    // To run multiple commands at the same time,
-    // use addParallel()
-    // e.g. addParallel(new Command1());
-    // addSequential(new Command2());
-    // Command1 and Command2 will run in parallel.
+    addSequential(new ZeroDrive());
+    addSequential(new DriveStraightForDistance(route.getInterceptVec().getR(), VELOCITY));
+    
+    addSequential(new TurnToAngle(route.getNormalVec().getTheta()));
 
-    // A command group will require all of the subsystems that each member
-    // would require.
-    // e.g. if Command1 requires chassis, and Command2 requires arm,
-    // a CommandGroup containing them would require both the chassis and the
-    // arm.
+    addSequential(new ZeroDrive());
+    addSequential(new DriveStraightForDistance(route.getNormalVec().getR(), VELOCITY));
+    addSequential(new ReleaseHatch());
+
+    addSequential(new ZeroDrive());
+    addSequential(new DriveStraightForDistance(-route.getNormalVec().getR(), VELOCITY));
   }
 }

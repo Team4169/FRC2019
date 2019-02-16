@@ -84,7 +84,7 @@ public class TargetCalc{
          System.out.println("targetDistance:" + targetDistance);
 
         /* (robot angle + X angle) and distance give us the target vector */
-        Vec2D targetVector = Vec2D.makePolar(targetDistance, robotVec.getTheta() + centralXAngle);
+        Vec2D targetVector = Vec2D.makePolar(targetDistance, robotVec.getTheta() - centralXAngle);
         return targetVector;
     }
     /**
