@@ -32,6 +32,22 @@ public class Robot extends TimedRobot {
   public static final Climber kClimber = new Climber();
   public static final OI m_oi = new OI();
   public static final Limelight ll = new Limelight();
+  static RouteToTarget curRoute = null;
+
+  static AutoHatchState curState = AutoHatchState.eIntercept;
+  
+  public enum AutoHatchState {
+		eIntercept, eNormal, eBack, eDone
+  }
+  
+  public static void setAutoState(AutoHatchState state) {
+    curState = state;
+    System.out.println("Setting auto state to " + state.toString());
+  }
+
+  public static AutoHatchState getState() {
+    return curState;
+  }
 
   /**
    * This function is run when the robot is first started up and should be
@@ -135,13 +151,17 @@ public class Robot extends TimedRobot {
   }
 
   public static RouteToTarget getCurrentRoute() {
+    return curRoute;
+  }
+
+  public static void setRoute() {
     if (ll.isTarget()) {
       TargetCalc calc = new TargetCalc(Limelight.HEIGHT, Limelight.ANGLE_FROM_HORIZONTAL);
       Vec2D robotVec = new Vec2D(0, 1); // TODO
       Vec2D targNorm = new Vec2D(0, -1); // TODO
-      return calc.getRouteToTarget(Robot.ll.getTx(), Robot.ll.getTy(), robotVec, targNorm, Limelight.targetHeight, 12);
+      curRoute = calc.getRouteToTarget(Robot.ll.getTx(), Robot.ll.getTy(), robotVec, targNorm, Limelight.targetHeight, 12);
     } else {
-      return null;
+      curRoute = null;
     }
   }
 }

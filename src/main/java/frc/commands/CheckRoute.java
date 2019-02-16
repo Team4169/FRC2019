@@ -9,62 +9,33 @@ package frc.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.robot.RouteToTarget;
 
-public class TurnToAngle extends Command {
-
-  double degrees; //placeholder value that will be updated in the future
-  
-  public TurnToAngle(double angle) {
+public class CheckRoute extends Command {
+  public CheckRoute() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    requires(Robot.kDriveTrain);
-    degrees = angle;
-  }
-
-  public TurnToAngle() {
-    RouteToTarget route = Robot.getCurrentRoute();
-
-    switch (Robot.getState()) {
-    case eIntercept:
-      degrees = route.getInterceptVec().getTheta();
-      break;
-    case eNormal:
-      degrees = route.getNormalVec().getTheta();
-      break;
-    case eBack:
-      degrees = route.getNormalVec().getTheta();
-      end();
-      break;
-    case eDone:
-      degrees = route.getNormalVec().getTheta();
-      end();
-      break;
-    }
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.kDriveTrain.turnToAngle(degrees);
+    Robot.setRoute();
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return Robot.kDriveTrain.isTurnToAngleFinished();
+    return true;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.kDriveTrain.disableTurnController();
   }
 
   // Called when another command which requires one or more of the same

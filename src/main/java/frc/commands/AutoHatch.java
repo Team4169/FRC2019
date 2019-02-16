@@ -8,33 +8,36 @@
 package frc.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.robot.Robot;
-import frc.robot.RouteToTarget;
+import frc.robot.Robot.AutoHatchState;
 
 public class AutoHatch extends CommandGroup {
 
   public static final double VELOCITY = 12;
 
   public AutoHatch() {
-    RouteToTarget route = Robot.getCurrentRoute();
+    addSequential(new CheckRoute());
 
-    if (route != null) {
-      addSequential(new ZeroSensors());
-      addSequential(new TurnToAngle(route.getInterceptVec().getTheta()));
+    addSequential(new setAutoState(AutoHatchState.eIntercept));
+    addSequential(new ZeroSensors());
+    addSequential(new TurnToAngle());
 
-      addSequential(new ZeroDrive());
-      addSequential(new DriveStraightForDistance(route.getInterceptVec().getR(), VELOCITY));
-      
-      addSequential(new TurnToAngle(route.getNormalVec().getTheta()));
+    addSequential(new ZeroDrive());
+    addSequential(new DriveStraightForDistance(VELOCITY));
+    
+    addSequential(new setAutoState(AutoHatchState.eNormal));
 
-      addSequential(new ZeroDrive());
-      addSequential(new DriveStraightForDistance(route.getNormalVec().getR(), VELOCITY));
-      addSequential(new ReleaseHatch());
+    addSequential(new TurnToAngle());
 
-      addSequential(new ZeroDrive());
-      addSequential(new DriveStraightForDistance(-route.getNormalVec().getR(), VELOCITY));
-      // TODO possible recursion? ^^^^
-    }
+    addSequential(new ZeroDrive());
+    addSequential(new DriveStraightForDistance(VELOCITY));
+    addSequential(new ReleaseHatch());
+
+    addSequential(new setAutoState(AutoHatchState.eBack));
+
+    addSequential(new ZeroDrive());
+    addSequential(new DriveStraightForDistance(VELOCITY));
+
+    addSequential(new setAutoState(AutoHatchState.eDone));
 
     // addSequential(new Command2());
     // these will run in order.

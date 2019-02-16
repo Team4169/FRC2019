@@ -14,7 +14,7 @@ public class Limelight {
 	public static final int H_FOV = 54;
 	public static final int V_FOV = 41;
 	public static final double HEIGHT = 10.5;
-	public static final double ANGLE_FROM_HORIZONTAL = 0d;
+	public static final double ANGLE_FROM_HORIZONTAL = 70d;
 
 	/**
 	 * Light modes for Limelight.

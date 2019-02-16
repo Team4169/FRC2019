@@ -426,8 +426,6 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		return curTime;
 	}
 
-	
-
   	public void setSlowMode(boolean b) {
     	slowMode = b;
 	}
