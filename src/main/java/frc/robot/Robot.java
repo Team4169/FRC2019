@@ -154,7 +154,7 @@ public class Robot extends TimedRobot {
   }
 
   public static void setRoute() {
-    if (ll.isTarget() && ll.getTy() > ) {
+    if (ll.isTarget() && ll.getTy() > -12) { // TODO
       TargetCalc calc = new TargetCalc(ll);
       Vec2D robotVec = new Vec2D(0, 1); // TODO
       Vec2D targNorm = new Vec2D(0, -1); // TODO
