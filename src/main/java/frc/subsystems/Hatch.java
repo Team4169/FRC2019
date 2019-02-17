@@ -7,6 +7,8 @@
 
 package frc.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -31,10 +33,14 @@ public class Hatch extends Subsystem {
 	public static final double TURNING_ANGLE = 70d;
 	public static final int ENCODER_THRESHOLD = 20;
 
+	public static final int MAX_COUNTS = (int) Math.floor(GEARBOX_RATIO * ((double) COUNTS_PER_REVOLUTION) * TURNING_ANGLE / 360d);
+	/* measure this angle and make sure it is less than the actual angle */
+	public static final int APPROX_START_POS = MAX_COUNTS / 2;
+
 	int kTimeoutMs = 30;
 
-  static final WPI_TalonSRX armMotor = new WPI_TalonSRX(RobotMap.ARMMOTOR);
-	static final Spark extensionMotor = new Spark(RobotMap.EXTENSION);
+  final WPI_TalonSRX armMotor;
+	final Spark extensionMotor;
 
 	boolean normalSwitchMode;
 	DigitalInput extensionLimitSwitch;
@@ -42,6 +48,20 @@ public class Hatch extends Subsystem {
 	public Hatch() {
 		extensionLimitSwitch = new DigitalInput(RobotMap.LIMIT_SWITCH_PORT);
 		normalSwitchMode = extensionLimitSwitch.get();
+		armMotor = new WPI_TalonSRX(RobotMap.ARMMOTOR);
+		extensionMotor = new Spark(RobotMap.EXTENSION);
+
+		armMotor.configFactoryDefault();
+
+		armMotor.setInverted(false);
+		armMotor.set(ControlMode.PercentOutput, 0.0);
+		armMotor.setNeutralMode(NeutralMode.Brake);
+
+		armMotor.setSensorPhase(true);
+
+		// This assumes the robot starts with the hatch staged
+		armMotor.setSelectedSensorPosition(APPROX_START_POS);
+
 	}
 
 	@Override
@@ -71,8 +91,7 @@ public class Hatch extends Subsystem {
 	}
 
 	public boolean isReleased() {
-		return armMotor.getSelectedSensorPosition() >=
-				Math.floor(GEARBOX_RATIO * COUNTS_PER_REVOLUTION * TURNING_ANGLE / 360d) - ENCODER_THRESHOLD;
+		return armMotor.getSelectedSensorPosition() >= MAX_COUNTS - ENCODER_THRESHOLD;
 	}
 
 	public boolean getLimitSwitch() {
@@ -81,5 +100,9 @@ public class Hatch extends Subsystem {
 
 	public void zeroSensors() {
 		armMotor.getSensorCollection().setQuadraturePosition(0, kTimeoutMs);
+	}
+
+	public void stopExtend() {
+		extensionMotor.stopMotor();
 	}
 }

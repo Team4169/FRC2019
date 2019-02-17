@@ -34,8 +34,9 @@ public class Vec2D {
         return new Vec2D(x, y);
     }
 
+    // inches and degrees
     public static Vec2D makePolar(double r, double theta) {
-        return new Vec2D(r * Math.cos(theta), r * Math.sin(theta));
+        return new Vec2D(r * Math.cos(theta), r * Math.sin(Math.toRadians(theta)));
     }
 
 

@@ -22,20 +22,17 @@ public class AutoHatch extends CommandGroup {
     addSequential(new ZeroSensors());
     addSequential(new TurnToAngle());
 
-    addSequential(new ZeroDrive());
     addSequential(new DriveStraightForDistance(VELOCITY));
     
     addSequential(new setAutoState(AutoHatchState.eNormal));
 
     addSequential(new TurnToAngle());
 
-    addSequential(new ZeroDrive());
     addSequential(new DriveStraightForDistance(VELOCITY));
     addSequential(new ReleaseHatch());
 
     addSequential(new setAutoState(AutoHatchState.eBack));
 
-    addSequential(new ZeroDrive());
     addSequential(new DriveStraightForDistance(VELOCITY));
 
     addSequential(new setAutoState(AutoHatchState.eDone));
@@ -45,16 +42,13 @@ public class AutoHatch extends CommandGroup {
     addSequential(new ZeroSensors());
     addSequential(new TurnToAngle(route.getInterceptVec().getTheta()));
 
-    addSequential(new ZeroDrive());
     addSequential(new DriveStraightForDistance(route.getInterceptVec().getR(), VELOCITY));
     
     addSequential(new TurnToAngle(route.getNormalVec().getTheta()));
 
-    addSequential(new ZeroDrive());
     addSequential(new DriveStraightForDistance(route.getNormalVec().getR(), VELOCITY));
     addSequential(new ReleaseHatch());
 
-    addSequential(new ZeroDrive());
     addSequential(new DriveStraightForDistance(-route.getNormalVec().getR(), VELOCITY));
   }
 }

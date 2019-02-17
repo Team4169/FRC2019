@@ -135,12 +135,11 @@ public class Robot extends TimedRobot {
     ll.setLedMode(Limelight.LightMode.eOn);
     // System.out.println("tx: " + ll.getTx() + ", ty: " + ll.getTy());
 
-    TargetCalc targetCalc = new TargetCalc(Limelight.HEIGHT, Limelight.ANGLE_FROM_HORIZONTAL);
+    TargetCalc targetCalc = new TargetCalc(ll);
     Vec2D robotVec = Vec2D.makePolar(1, 90);
     Vec2D normalVec = Vec2D.makePolar(1, 270);
     double normalDist = 12;
-    RouteToTarget route = targetCalc.getRouteToTarget(ll.getTx(), ll.getTy(),
-        robotVec, normalVec, Limelight.targetHeight, normalDist);
+    RouteToTarget route = targetCalc.getRouteToTarget(robotVec, normalVec, normalDist);
     
     if (m_oi.getController(0).getAButtonPressed()) {
       System.out.println("tx: " + ll.getTx() + ", ty: " + ll.getTy());
@@ -155,11 +154,12 @@ public class Robot extends TimedRobot {
   }
 
   public static void setRoute() {
-    if (ll.isTarget()) {
-      TargetCalc calc = new TargetCalc(Limelight.HEIGHT, Limelight.ANGLE_FROM_HORIZONTAL);
+    if (ll.isTarget() && ll.getTy() > ) {
+      TargetCalc calc = new TargetCalc(ll);
       Vec2D robotVec = new Vec2D(0, 1); // TODO
       Vec2D targNorm = new Vec2D(0, -1); // TODO
-      curRoute = calc.getRouteToTarget(Robot.ll.getTx(), Robot.ll.getTy(), robotVec, targNorm, Limelight.targetHeight, 12);
+      double normalDist = 12.0; // TODO
+      curRoute = calc.getRouteToTarget(robotVec, targNorm, normalDist);
     } else {
       curRoute = null;
     }

@@ -89,7 +89,8 @@ public class Limelight {
 	}
 	
 	public double getDist() {
-		return (targetHeight-HEIGHT)/Math.tan(getTy() + ANGLE_FROM_HORIZONTAL);
+		// TODO might divide by zero
+		return (targetHeight-HEIGHT)/Math.tan(Math.toRadians(getTy() + ANGLE_FROM_HORIZONTAL));
 	}
 	/**
 	 * Sets LED mode of Limelight.

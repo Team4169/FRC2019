@@ -130,6 +130,7 @@ public class DriveStraightForDistance extends Command {
       end();
     } else {
       Robot.kDriveTrain.driveStraightFirstCall();
+      Robot.kDriveTrain.zeroDriveEncoders();
     }
   }
 

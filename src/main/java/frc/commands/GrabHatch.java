@@ -13,20 +13,9 @@ import frc.robot.Robot;
 
 public class GrabHatch extends Command {
   
-  Double startTime = null;
-  double interval;
-
   public GrabHatch() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    requires(Robot.kHatch);
-  }
-
-  public GrabHatch(double seconds) {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
-    startTime = Timer.getFPGATimestamp();
-    interval = seconds;
     requires(Robot.kHatch);
   }
 
@@ -44,11 +33,7 @@ public class GrabHatch extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if (startTime == null) {
-      return Robot.kHatch.isGrabbed();
-    } else {
-      return Timer.getFPGATimestamp() > startTime + interval;
-    }
+    return Robot.kHatch.isGrabbed();
   }
 
   // Called once after isFinished returns true

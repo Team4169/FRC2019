@@ -13,19 +13,16 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.commands.DriveWithController;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 
@@ -36,12 +33,12 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
 
-	private static final VictorSPX leftFront = new VictorSPX(RobotMap.LEFT_FRONT);
-	private static final VictorSPX rightFront = new VictorSPX(RobotMap.RIGHT_FRONT);
-	private static final WPI_TalonSRX leftBack = new WPI_TalonSRX(RobotMap.LEFT_BACK);
-	private static final WPI_TalonSRX rightBack = new WPI_TalonSRX(RobotMap.RIGHT_BACK);
+	private final VictorSPX leftFront;
+	private final VictorSPX rightFront;
+	private final WPI_TalonSRX leftBack;
+	private final WPI_TalonSRX rightBack;
 
-	DifferentialDrive drive = new DifferentialDrive(leftBack, rightBack); 
+	DifferentialDrive drive; 
 
 	AHRS ahrs;
 
@@ -63,7 +60,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 
 	double _targetAngle = 0;
 
-	public static final int kEncoderUnitsPerRevolution = 4096;
+	public static final int kEncoderUnitsPerRevolution = 4096; // TODO check this
 	public final static int kTimeoutMs = 30;
 
 	/* The following PID Controller coefficients will need to be tuned */
@@ -79,7 +76,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
     static final double kD = 0.1;
     static final double kF = 0.00;
     
-	static final double kToleranceDegrees = 2.0f; 
+	static final double kToleranceDegrees = 2.0; 
 	static final double kToleranceSpeed = 200;   
 
 	static double kTargetAngleDegrees;
@@ -140,6 +137,15 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	}
 
 	public DriveTrain() {
+		rightBack = new WPI_TalonSRX(RobotMap.RIGHT_BACK);
+		leftFront = new VictorSPX(RobotMap.LEFT_FRONT);
+		rightFront = new VictorSPX(RobotMap.RIGHT_FRONT);
+		leftBack = new WPI_TalonSRX(RobotMap.LEFT_BACK);
+
+		drive = new DifferentialDrive(leftBack, rightBack);
+
+		drive.setDeadband(DEAD_ZONE);
+
 		try {
 			velocityPerStep = voltageToVelocity(maxVoltage) / accelSteps;
 		} catch(Exception e) {
@@ -158,35 +164,11 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 			System.out.println("Voltage to power failed");
 		}
 
-		rightBack.configFactoryDefault();
-		rightFront.configFactoryDefault();
-		leftBack.configFactoryDefault();
-		leftFront.configFactoryDefault();
-
-		rightFront.set(ControlMode.PercentOutput, 0);
-		rightBack.set(ControlMode.PercentOutput, 0);
-		leftFront.set(ControlMode.PercentOutput, 0);
-		leftBack.set(ControlMode.PercentOutput, 0);
-		
-		/* Set Neutral Mode */
-		leftBack.setInverted(false);
-        rightBack.setInverted(false);
-        rightFront.setInverted(true);
-		leftFront.setInverted(false);
-		
-		leftFront.follow(leftBack);
-		rightFront.follow(rightBack);
-
-        leftBack.setNeutralMode(NeutralMode.Brake);
-        rightBack.setNeutralMode(NeutralMode.Brake);
-        rightFront.setNeutralMode(NeutralMode.Brake);
-        leftFront.setNeutralMode(NeutralMode.Brake);
-	
-		leftBack.setSensorPhase(true);
-		rightBack.setSensorPhase(false);
+		configureMotors();
 
 		drive.setExpiration(0.1);
 
+		// TODO never reset robot yaw angle
 
 		try {
 			/* Communicate w/navX-MXP via the MXP SPI Bus.                                     */
@@ -207,7 +189,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
         /* Add the PID Controller to the Test-mode dashboard, allowing manual  */
         /* tuning of the Turn Controller's P, I and D coefficients.            */
         /* Typically, only the P value needs to be modified.                   */
-        LiveWindow.addActuator("DriveSystem", "RotateController", turnController);
+        turnController.setName("DriveSystem", "RotateController");
 	}
 
 	public void zeroSensors() {
@@ -231,16 +213,8 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		leftBack.getSensorCollection().setQuadraturePosition(0, kTimeoutMs);
 		rightBack.getSensorCollection().setQuadraturePosition(0, kTimeoutMs);
 	}
-	
-  	/** Checks if the triggers are not being used at all, returns the current to use for driving */
-  	public static double deadZone(double current) {
-		if (Math.abs(current) < DEAD_ZONE) return 0;
-		
-    	return (current - DEAD_ZONE * (current > 0d ? 1d : -1d)) / (1d - DEAD_ZONE);
-	}
   
 	public void turnToAngle(double degrees) {
-		drive.setSafetyEnabled(true);
 		kTargetAngleDegrees = degrees;
 		if (!turnController.isEnabled()) {
 			turnController.setSetpoint(degrees);
@@ -253,25 +227,14 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	}
 
 	public void arcadeDrive() {
-		drive.setSafetyEnabled(true);
 
 		double leftTrigger = Robot.m_oi.getController(1).getTriggerAxis(Hand.kLeft);
 		double rightTrigger = Robot.m_oi.getController(1).getTriggerAxis(Hand.kRight);
 
-		double forward = 1 * Robot.m_oi.getController(1).getY(Hand.kLeft);
+		double forward = -Robot.m_oi.getController(1).getY(Hand.kLeft);
 		double turn = rightTrigger - leftTrigger;
 
-		forward = deadZone(forward);
-		turn = deadZone(turn);
-
-		rightFront.follow(rightBack);
-		leftFront.follow(leftBack);
-
-		rightBack.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
-		leftBack.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
-
-		SmartDashboard.putNumber("LeftEncoder: ", leftBack.getSelectedSensorPosition());
-		SmartDashboard.putNumber("RightEncoder: ", rightBack.getSelectedSensorPosition());
+		drive.arcadeDrive(forward, turn);
   	}
 	
 	public void findTarget() {;
@@ -283,27 +246,25 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	}
 
 	public void driveStraight() {
-		if(!turnController.isEnabled()) {
-			// Acquire current yaw angle, using this as the target angle.
-			turnController.setSetpoint(ahrs.getYaw());
-			rotateToAngleRate = 0; // This value will be updated in the pidWrite() method.
-			turnController.enable();
-		}
-		if(drive.isSafetyEnabled()) drive.setSafetyEnabled(false);
 		double magnitude = -Robot.m_oi.getController(1).getY(Hand.kLeft);
-		double leftStickValue = magnitude + rotateToAngleRate;
+
+		double leftStickValue = magnitude + rotateToAngleRate; // TODO check this if PID doesn't work
 		double rightStickValue = magnitude - rotateToAngleRate;
+
+		if (leftStickValue > 1.0) {
+			rightStickValue -= leftStickValue - 1.0;
+			leftStickValue = 1.0;
+		}
+
+		if (rightStickValue < 0.0) {
+			leftStickValue += -rightStickValue;
+			rightStickValue = 0.0;
+		}
+
 		drive.tankDrive(leftStickValue,  rightStickValue);
 	}
 
 	public void driveStraight(double magnitude) {
-		if(!turnController.isEnabled()) {
-			// Acquire current yaw angle, using this as the target angle.
-			turnController.setSetpoint(ahrs.getYaw());
-			rotateToAngleRate = 0; // This value will be updated in the pidWrite() method.
-			turnController.enable();
-		}
-		if(drive.isSafetyEnabled()) drive.setSafetyEnabled(false);
 		double leftStickValue = magnitude + rotateToAngleRate;
 		double rightStickValue = magnitude - rotateToAngleRate;
 		drive.tankDrive(leftStickValue,  rightStickValue);
@@ -317,8 +278,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		double angleDifference = Math.abs(ahrs.getYaw() - kTargetAngleDegrees);
 		double totalSpeed = Math.abs(leftBack.getSelectedSensorVelocity()) + Math.abs(rightBack.getSelectedSensorVelocity());
 
-		if(angleDifference < kToleranceDegrees && totalSpeed < kToleranceSpeed) return true;
-		else return false;
+		return angleDifference < kToleranceDegrees && totalSpeed < kToleranceSpeed;
 	}
   
   	public void stop() {		
@@ -436,14 +396,22 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	  
 	public void driveStraightFirstCall() {
 		System.out.println("This is Drive Straight");
+
+		// Acquire current yaw angle, using this as the target angle.
+		turnController.setSetpoint(ahrs.getYaw());
+		rotateToAngleRate = 0; // This value will be updated in the pidWrite() method.
+		turnController.enable();
+		drive.setSafetyEnabled(false);
 	}
 
 	public void arcadeDriveFirstCall() {
 		System.out.println("This is Arcade Drive.\n");
+		drive.setSafetyEnabled(true);
 	}
 
 	public void tankDriveFirstCall() {
 		System.out.println("This is Tank Drive");
+		drive.setSafetyEnabled(true);
 	}
 
 	public void printAngle() {
@@ -453,6 +421,35 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	@Override
 	public void pidWrite(double output) {
 		rotateToAngleRate = output;
+	}
+
+	public void configureMotors() {
+		rightBack.configFactoryDefault();
+		rightFront.configFactoryDefault();
+		leftBack.configFactoryDefault();
+		leftFront.configFactoryDefault();
+
+		rightFront.set(ControlMode.PercentOutput, 0);
+		rightBack.set(ControlMode.PercentOutput, 0);
+		leftFront.set(ControlMode.PercentOutput, 0);
+		leftBack.set(ControlMode.PercentOutput, 0);
+		
+		/* Set Neutral Mode */
+		leftBack.setInverted(false);
+        rightBack.setInverted(true);
+        rightFront.setInverted(true);
+		leftFront.setInverted(false);
+		
+		leftFront.follow(leftBack);
+		rightFront.follow(rightBack);
+
+        leftBack.setNeutralMode(NeutralMode.Brake);
+        rightBack.setNeutralMode(NeutralMode.Brake);
+        rightFront.setNeutralMode(NeutralMode.Brake);
+        leftFront.setNeutralMode(NeutralMode.Brake);
+	
+		leftBack.setSensorPhase(true);
+		rightBack.setSensorPhase(false);
 	}
 }
 
