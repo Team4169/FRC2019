@@ -5,20 +5,21 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.commands;
+package frc.commands.commandgroups;
 
-import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.ConditionalCommand;
+import edu.wpi.first.wpilibj.command.PrintCommand;
+import frc.robot.Robot;
 
-public class ExtendAndZero extends CommandGroup {
-  /**
-   * Add your docs here.
-   */
+public class DriveToTarget extends ConditionalCommand {
 
-  public static final double TIME_TO_GRAB = 0.1;
-  
-  public ExtendAndZero() {
-    addParallel(new Extend());
-    addSequential(new GrabHatch(), TIME_TO_GRAB);
-    addSequential(new ZeroSensors());
+  public DriveToTarget() {
+    super(new AutoHatch(Robot.getCurrentRoute()), new PrintCommand("Route not found"));
   }
+
+  @Override
+  protected boolean condition() {
+    return (Robot.getCurrentRoute() != null);
+  }
+
 }

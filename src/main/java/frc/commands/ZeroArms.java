@@ -10,9 +10,8 @@ package frc.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class ZeroSensors extends Command {
-  public ZeroSensors() {
-    
+public class ZeroArms extends Command {
+  public ZeroArms() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -25,14 +24,13 @@ public class ZeroSensors extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.kDriveTrain.zeroSensors();
     Robot.kHatch.zeroSensors();
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return true;
+    return false;
   }
 
   // Called once after isFinished returns true

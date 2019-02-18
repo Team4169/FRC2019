@@ -5,18 +5,17 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.commands;
+package frc.commands.commandgroups;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.robot.Robot;
 import frc.robot.RouteToTarget;
 
-public class RouteAndHatch extends CommandGroup {
-  /**
-   * Add your docs here.
-   */
-  public RouteAndHatch() {
-    RouteToTarget route = Robot.getCurrentRoute();
-    if (route != null) addSequential(new AutoHatch(route));
+public class AutoHatch extends CommandGroup {
+
+  public static final double VELOCITY = 12;
+
+  public AutoHatch(RouteToTarget route) {
+    addSequential(new DriveVector(route.getInterceptVec(), VELOCITY));
+    addSequential(new DriveVector(route.getNormalVec(), VELOCITY));
   }
 }

@@ -9,7 +9,6 @@ package frc.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.robot.RouteToTarget;
 
 public class TurnToAngle extends Command {
 
@@ -20,30 +19,6 @@ public class TurnToAngle extends Command {
     // eg. requires(chassis);
     requires(Robot.kDriveTrain);
     degrees = angle;
-  }
-
-  public TurnToAngle() {
-    RouteToTarget route = Robot.getCurrentRoute();
-    if (route != null) {
-      switch (Robot.getState()) {
-      case eIntercept:
-        degrees = route.getInterceptVec().getTheta();
-        break;
-      case eNormal:
-        degrees = route.getNormalVec().getTheta();
-        break;
-      case eBack:
-        degrees = route.getNormalVec().getTheta();
-        end();
-        break;
-      case eDone:
-        degrees = route.getNormalVec().getTheta();
-        end();
-        break;
-      }
-    } else {
-      end();
-    }
   }
 
   // Called just before this Command runs the first time
@@ -68,11 +43,13 @@ public class TurnToAngle extends Command {
   @Override
   protected void end() {
     Robot.kDriveTrain.disableTurnController();
+    Robot.kDriveTrain.stop();
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    end();
   }
 }

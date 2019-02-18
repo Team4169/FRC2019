@@ -7,44 +7,44 @@
 
 package frc.commands;
 
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class setAutoState extends Command {
-
-  Robot.AutoHatchState state;
-
-  public setAutoState(Robot.AutoHatchState state) {
+public class Rumble extends Command {
+  public Rumble() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    this.state = state;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    Robot.m_oi.getController(1).setRumble(RumbleType.kLeftRumble, 1.0);
+    Robot.m_oi.getController(1).setRumble(RumbleType.kRightRumble, 1.0);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.setAutoState(state);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return true;
+    return false;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    Robot.m_oi.getController(1).setRumble(RumbleType.kLeftRumble, 0.0);
+    Robot.m_oi.getController(1).setRumble(RumbleType.kRightRumble, 0.0);
   }
-
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    end();
   }
 }

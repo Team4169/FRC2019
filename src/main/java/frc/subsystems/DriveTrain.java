@@ -155,13 +155,13 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		try {
 			powerPerStep = voltageToPower(kV * velocityPerStep);
 		} catch(Exception e) {
-			System.out.println("Voltage to power failed");
+			System.out.println("Power per step failed");
 		}
 
 		try {
-			voltageToPower(startVoltage);
+			startPower = voltageToPower(startVoltage);
 		} catch(Exception e) {
-			System.out.println("Voltage to power failed");
+			System.out.println("start voltage failed");
 		}
 
 		configureMotors();
@@ -192,14 +192,14 @@ public class DriveTrain extends Subsystem implements PIDOutput {
         turnController.setName("DriveSystem", "RotateController");
 	}
 
-	public void zeroSensors() {
-		if(drive.isSafetyEnabled()) drive.setSafetyEnabled(false);
-		ahrs.resetDisplacement();
-		ahrs.zeroYaw();
-		leftBack.getSensorCollection().setQuadraturePosition(0,  kTimeoutMs);
-		rightBack.getSensorCollection().setQuadraturePosition(0,  kTimeoutMs);
-		System.out.println("[Quadrature Encoders] and AHRS sensors are zeroed.\n");		
-	}
+	// public void zeroSensors() {
+	// 	if(drive.isSafetyEnabled()) drive.setSafetyEnabled(false);
+	// 	ahrs.resetDisplacement();
+	// 	ahrs.zeroYaw();
+	// 	leftBack.getSensorCollection().setQuadraturePosition(0,  kTimeoutMs);
+	// 	rightBack.getSensorCollection().setQuadraturePosition(0,  kTimeoutMs);
+	// 	System.out.println("[Quadrature Encoders] and AHRS sensors are zeroed.\n");		
+	// }
 
 	public void zeroGyro() {
 		ahrs.zeroYaw();
@@ -267,6 +267,17 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	public void driveStraight(double magnitude) {
 		double leftStickValue = magnitude + rotateToAngleRate;
 		double rightStickValue = magnitude - rotateToAngleRate;
+
+		if (leftStickValue > 1.0) {
+			rightStickValue -= leftStickValue - 1.0;
+			leftStickValue = 1.0;
+		}
+
+		if (rightStickValue < 0.0) {
+			leftStickValue += -rightStickValue;
+			rightStickValue = 0.0;
+		}
+
 		drive.tankDrive(leftStickValue,  rightStickValue);
 	}
 
@@ -286,7 +297,6 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		rightBack.set(ControlMode.PercentOutput, 0);
 		leftFront.set(ControlMode.PercentOutput, 0);
 		leftBack.set(ControlMode.PercentOutput, 0);
-		
 	 }
 	 
 	 public double powerToVoltage(double power) throws Exception {

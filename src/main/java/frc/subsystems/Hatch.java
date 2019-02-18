@@ -39,7 +39,7 @@ public class Hatch extends Subsystem {
 
 	int kTimeoutMs = 30;
 
-  final WPI_TalonSRX armMotor;
+	final WPI_TalonSRX armMotor;
 	final Spark extensionMotor;
 
 	boolean normalSwitchMode;
@@ -65,9 +65,9 @@ public class Hatch extends Subsystem {
 	}
 
 	@Override
-  public void initDefaultCommand() {
-    // Set the default command for a subsystem here.
-    // setDefaultCommand(new MySpecialCommand());
+	public void initDefaultCommand() {
+		// Set the default command for a subsystem here.
+		// setDefaultCommand(new MySpecialCommand());
 	}
 
 	public void grab() {
@@ -99,7 +99,7 @@ public class Hatch extends Subsystem {
 	}
 
 	public void zeroSensors() {
-		armMotor.getSensorCollection().setQuadraturePosition(0, kTimeoutMs);
+		armMotor.setSelectedSensorPosition(0);
 	}
 
 	public void stopExtend() {

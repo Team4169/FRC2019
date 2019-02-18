@@ -8,11 +8,12 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.subsystems.DriveTrain;
 import frc.subsystems.Hatch;
+import frc.commands.commandgroups.InitialCommand;
 import frc.subsystems.Climber;
 
 /**
@@ -23,31 +24,15 @@ import frc.subsystems.Climber;
  * project.
  */
 public class Robot extends TimedRobot {
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
-  private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
   public static final DriveTrain kDriveTrain = new DriveTrain();
   public static final Hatch kHatch = new Hatch();
   public static final Climber kClimber = new Climber();
   public static final OI m_oi = new OI();
   public static final Limelight ll = new Limelight();
+  Command autoCommand;
 
-  static RouteToTarget curRoute = null;
-  static AutoHatchState curState = AutoHatchState.eIntercept;
-  
-  public enum AutoHatchState {
-		eIntercept, eNormal, eBack, eDone
-  }
-  
-  public static void setAutoState(AutoHatchState state) {
-    curState = state;
-    System.out.println("Setting auto state to " + state.toString());
-  }
-
-  public static AutoHatchState getState() {
-    return curState;
-  }
+  static RouteToTarget curRoute;
+  public static final int cameraYThreshold = 15;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -59,11 +44,6 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("kD", 4.0);
 
     SmartDashboard.putData("Drive Train", kDriveTrain);
-    
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
-
   }
 
   /**
@@ -97,9 +77,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
+    autoCommand = new InitialCommand();
+    autoCommand.start();
   }
 
   /**
@@ -107,15 +86,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
-    }
+    
   }
 
 
@@ -141,7 +112,7 @@ public class Robot extends TimedRobot {
     double normalDist = 12;
     RouteToTarget route = targetCalc.getRouteToTarget(robotVec, normalVec, normalDist);
     
-    if (m_oi.getController(0).getAButtonPressed()) {
+    if (m_oi.getController(1).getAButtonPressed()) {
       System.out.println("tx: " + ll.getTx() + ", ty: " + ll.getTy());
       System.out.println("Target Vector: <" + route.getTargetDirectVec().getXCoord() + ", " + route.getNormalVec() + ">");
       System.out.println("Intecept Vector: <" + route.getInterceptVec().getXCoord() + ", " + route.getInterceptVec() + ">");
@@ -150,11 +121,7 @@ public class Robot extends TimedRobot {
   }
 
   public static RouteToTarget getCurrentRoute() {
-    return curRoute;
-  }
-
-  public static void setRoute() {
-    if (ll.isTarget() && ll.getTy() > -12) { // TODO
+    if (ll.isTarget() && ll.getTy() > -cameraYThreshold) { // TODO
       TargetCalc calc = new TargetCalc(ll);
       Vec2D robotVec = new Vec2D(0, 1); // TODO
       Vec2D targNorm = new Vec2D(0, -1); // TODO
@@ -163,5 +130,7 @@ public class Robot extends TimedRobot {
     } else {
       curRoute = null;
     }
+
+    return curRoute;
   }
 }

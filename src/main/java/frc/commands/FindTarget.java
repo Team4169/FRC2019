@@ -34,7 +34,6 @@ public class FindTarget extends Command {
   protected void end() {
     Robot.kDriveTrain.stop();
     Robot.ll.setCameraMode(CameraMode.eDriver);
-    Robot.setRoute(); // TODO check if work
   }
 
   // Called when another command which requires one or more of the same
