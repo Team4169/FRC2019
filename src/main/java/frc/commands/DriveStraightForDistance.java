@@ -109,10 +109,9 @@ public class DriveStraightForDistance extends Command {
     }
 
     double dist = Robot.kDriveTrain.getCurrentDistance();
-    double ctime = Robot.kDriveTrain.getCurrentTime();
-    Robot.kDriveTrain.driveStraightStep(motorPower);
+    Robot.kDriveTrain.driveStraight(motorPower);
 
-    System.out.println("exec state " + runState.toString() + " setting power to " + motorPower + " at dist " + dist + " at time " + ctime);
+    System.out.println("exec state " + runState.toString() + " setting power to " + motorPower + " at dist " + dist);
   }
 
   

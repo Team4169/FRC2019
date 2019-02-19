@@ -60,7 +60,8 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 
 	double _targetAngle = 0;
 
-	public static final int kEncoderUnitsPerRevolution = 4096; // TODO check this
+	public static final double WHEEL_DIAMETER = 6.0;
+	public static final int kEncoderUnitsPerRevolution = 1440; // TODO check this
 	public final static int kTimeoutMs = 30;
 
 	/* The following PID Controller coefficients will need to be tuned */
@@ -123,10 +124,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	// Motor power required to start the robot i.e. overcome friction
 	public static double startPower;
 
-
-	public static double curDistance = 0.0;
-	public static double curPower = 0.0;
-	public static double curTime = 0.0;      // shouldn't really be here but convenient
+	double curPower = 0.0;
 
 	@Override
   	public void initDefaultCommand() {
@@ -175,7 +173,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 			/* Alternatively:  I2C.Port.kMXP, SerialPort.Port.kMXP or SerialPort.Port.kUSB     */
 			/* See http://navx-mxp.kauailabs.com/guidance/selecting-an-interface/ for details. */
 			ahrs = new AHRS(SPI.Port.kMXP); 
-		} catch (RuntimeException ex ) {
+		} catch (RuntimeException ex) {
 			DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
 		}
 
@@ -278,6 +276,8 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 			rightStickValue = 0.0;
 		}
 
+		curPower = magnitude;
+
 		drive.tankDrive(leftStickValue,  rightStickValue);
 	}
 
@@ -362,42 +362,13 @@ public class DriveTrain extends Subsystem implements PIDOutput {
     	double root = (1.0 + Math.sqrt(1.0 - (4.0*c))) / 2.0;
 		return Math.floor(root);
 	}
-	// This is the end of the RobotModel
-
-	public void driveStraightStep(double power) {
-		/*
-		Drive straight ahead for one 'step'
-		power: Motor power, from 0.0 to 1.0
-		*/
-		curPower = power;
-		double vel;
-		try {
-			vel = powerToVelocity(power);
-		} catch(Exception e) {
-			vel = 0.0;
-			System.out.println("Power to velocity failed");
-		}
-		double dist = vel * secPerStep;
-		curDistance = curDistance + dist;
-		curTime = curTime + secPerStep;
-		
-		driveStraight(power);
-	}
-
-	public void resetCurrentDistance() {
-		curDistance = 0.0;
-	}
-
-	public double getCurrentDistance() {
-		return curDistance;
-	}
 
 	public double getCurrentPower() {
 		return curPower;
 	}
 
-	public double getCurrentTime(){
-		return curTime;
+	public double getCurrentDistance() {
+		return ((double) kEncoderUnitsPerRevolution) * WHEEL_DIAMETER * Math.PI * (((double) leftBack.getSelectedSensorPosition()) + ((double) rightBack.getSelectedSensorPosition())) / 2.0;
 	}
 
   	public void setSlowMode(boolean b) {

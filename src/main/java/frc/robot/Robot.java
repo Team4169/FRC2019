@@ -36,7 +36,8 @@ public class Robot extends TimedRobot {
   public static final Vec2D[] TARG_VECS = new Vec2D[] {
     Vec2D.makeCart(-1, 0), Vec2D.makeCart(0, -1), Vec2D.makeCart(1, 0), Vec2D.makeCart(0, 1)
   };
-  public static final double targBoundary = 30;
+  public static final double targBoundary = 30.0; // between 0 and 45
+  public static final double NORMAL_DIST = 12.0;
   
   /**
    * This function is run when the robot is first started up and should be
@@ -107,21 +108,23 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
-    ll.setLedMode(Limelight.LightMode.eOn);
-    // System.out.println("tx: " + ll.getTx() + ", ty: " + ll.getTy());
+    // ll.setLedMode(Limelight.LightMode.eOn);
+    // // System.out.println("tx: " + ll.getTx() + ", ty: " + ll.getTy());
 
-    TargetCalc targetCalc = new TargetCalc(ll);
-    Vec2D robotVec = Vec2D.makePolar(1, 90);
-    Vec2D normalVec = Vec2D.makePolar(1, 270);
-    double normalDist = 12;
-    RouteToTarget route = targetCalc.getRouteToTarget(robotVec, normalVec, normalDist);
+    // TargetCalc targetCalc = new TargetCalc(ll);
+    // Vec2D robotVec = Vec2D.makePolar(1, 90);
+    // Vec2D normalVec = Vec2D.makePolar(1, 270);
+    // double normalDist = 12;
+    // RouteToTarget route = targetCalc.getRouteToTarget(robotVec, normalVec, normalDist);
     
-    if (m_oi.getController(1).getAButtonPressed()) {
-      System.out.println("tx: " + ll.getTx() + ", ty: " + ll.getTy());
-      System.out.println("Target Vector: <" + route.getTargetDirectVec().getXCoord() + ", " + route.getNormalVec() + ">");
-      System.out.println("Intecept Vector: <" + route.getInterceptVec().getXCoord() + ", " + route.getInterceptVec() + ">");
-      System.out.println("Normal Vector: <" + route.getNormalVec().getXCoord() + ", " + route.getNormalVec().getYCoord() + ">");
-    }
+    // if (m_oi.getController(1).getAButtonPressed()) {
+    //   System.out.println("tx: " + ll.getTx() + ", ty: " + ll.getTy());
+    //   System.out.println("Target Vector: <" + route.getTargetDirectVec().getXCoord() + ", " + route.getNormalVec() + ">");
+    //   System.out.println("Intecept Vector: <" + route.getInterceptVec().getXCoord() + ", " + route.getInterceptVec() + ">");
+    //   System.out.println("Normal Vector: <" + route.getNormalVec().getXCoord() + ", " + route.getNormalVec().getYCoord() + ">");
+    // }
+
+    System.out.println(kDriveTrain.getCurrentDistance());
   }
 
   public static RouteToTarget getCurrentRoute() {
@@ -132,7 +135,7 @@ public class Robot extends TimedRobot {
     if (ll.isTarget() && ll.getTy() > -cameraYThreshold) { // TODO
       TargetCalc calc = new TargetCalc(ll);
       Vec2D robotVec = getCurrentRobotVec();
-      Vec2D targNorm;
+      Vec2D targNorm = null;
 
       if (robotVec.getTheta() > -targBoundary && robotVec.getTheta() < targBoundary) {
         targNorm = TARG_VECS[0];
@@ -143,8 +146,12 @@ public class Robot extends TimedRobot {
       } else if (robotVec.getTheta() > 270.0 - targBoundary && robotVec.getTheta() < 270.0 + targBoundary) {
         targNorm = TARG_VECS[3];
       }
-      double normalDist = 12.0; // TODO
-      curRoute = calc.getRouteToTarget(robotVec, targNorm, normalDist);
+
+      if (targNorm != null) {
+        curRoute = calc.getRouteToTarget(robotVec, targNorm, NORMAL_DIST);
+      } else {
+        curRoute = null;
+      }
     } else {
       curRoute = null;
     }
