@@ -12,7 +12,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import frc.robot.RobotMap;
-
+// import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
@@ -25,8 +25,10 @@ public class Climber extends Subsystem {
   WPI_TalonSRX climber1 = new WPI_TalonSRX(RobotMap.CLIMBER1);
   WPI_TalonSRX climber2 = new WPI_TalonSRX(RobotMap.CLIMBER2);
 
+  //SpeedControllerGroup climber = new SpeedControllerGroup(climber1, climber2);
+
   private static final double GEARBOX_RATIO = 100.0/1.0;
-  private static final int COUNTS_PER_REVOLUTION = 4096;
+  private static final int COUNTS_PER_REVOLUTION = 12;
   private static final double TURNING_ANGLE = 132.0;
   private static final double ENCODER_THRESHOLD = 200.0;
   //This is a placeholder value that will have to be calculated later. We want the motor to rotate 132 degrees.
@@ -41,6 +43,9 @@ public class Climber extends Subsystem {
   public Climber() {
     climber1.configFactoryDefault();
     climber2.configFactoryDefault();
+
+    climber1.setInverted(false);
+    climber2.setInverted(false);
 
     climber1.set(ControlMode.PercentOutput, 0);
     climber2.set(ControlMode.PercentOutput, 0);
@@ -58,7 +63,7 @@ public class Climber extends Subsystem {
     climber1.set(0.5);
   }
 
-  public boolean done() {
+  public boolean done() { // TODO
     return climber1.getSelectedSensorPosition() >= TOTAL_CLICKS - ENCODER_THRESHOLD;
   }
 

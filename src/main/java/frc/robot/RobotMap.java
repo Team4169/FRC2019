@@ -21,7 +21,7 @@ public class RobotMap {
 			
 			// hatch motors
 			ARMMOTOR = 4,
-			EXTENSION = 5,
+			EXTENSION = 0,
 
       		// hatch limit switch
     		LIMIT_SWITCH_PORT = 0,

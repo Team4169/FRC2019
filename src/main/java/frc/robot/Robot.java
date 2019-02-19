@@ -8,6 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -49,6 +50,8 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("kD", 4.0);
 
     SmartDashboard.putData("Drive Train", kDriveTrain);
+
+    kHatch.zeroSensors();
   }
 
   /**
@@ -101,6 +104,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     Scheduler.getInstance().run();
+    System.out.println("Arm motor encoder: " + kHatch.getEncoderValue());
   }
 
   /**
@@ -125,6 +129,16 @@ public class Robot extends TimedRobot {
     // }
 
     System.out.println(kDriveTrain.getCurrentDistance());
+    m_oi.getController(1).setRumble(RumbleType.kLeftRumble, 1.0);
+    m_oi.getController(1).setRumble(RumbleType.kRightRumble, 1.0);
+  }
+
+  @Override
+  public void disabledInit() {
+    m_oi.getController(1).setRumble(RumbleType.kLeftRumble, 0.0);
+    m_oi.getController(1).setRumble(RumbleType.kRightRumble, 0.0);
+
+    Scheduler.getInstance().removeAll();
   }
 
   public static RouteToTarget getCurrentRoute() {

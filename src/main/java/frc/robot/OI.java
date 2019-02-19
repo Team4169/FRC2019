@@ -9,10 +9,14 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import frc.commands.Climb;
 import frc.commands.DriveStraight;
 import frc.commands.DriveStraightForDistance;
 import frc.commands.commandgroups.DriveVector;
 import frc.commands.DriveWithController;
+import frc.commands.Extend;
+import frc.commands.GrabHatch;
+import frc.commands.ReleaseHatch;
 import frc.commands.SlowMode;
 
 
@@ -39,6 +43,10 @@ public class OI {
   private final JoystickButton B_BUTTON2;
   private final JoystickButton A_BUTTON2;
 
+  private final JoystickButton LEFT_BUMPER1;
+  private final JoystickButton RIGHT_BUMPER1;
+
+
   public OI() {
     controller1 = new XboxController(RobotMap.CONTROLLER_PORT1);
     controller2 = new XboxController(RobotMap.CONTROLLER_PORT2);
@@ -49,21 +57,28 @@ public class OI {
 		X_BUTTON1 = new JoystickButton(controller1, RobotMap.X_ID);
 		B_BUTTON1 = new JoystickButton(controller1, RobotMap.B_ID);
     A_BUTTON1 = new JoystickButton(controller1, RobotMap.A_ID);
+    RIGHT_BUMPER1 = new JoystickButton(controller1, RobotMap.RB_ID);
+    LEFT_BUMPER1 = new JoystickButton(controller1, RobotMap.LB_ID);
+
     
 		BACK_BUTTON2 = new JoystickButton(controller2, RobotMap.BACK_ID);
 		Y_BUTTON2 = new JoystickButton(controller2, RobotMap.Y_ID);
 		X_BUTTON2 = new JoystickButton(controller2, RobotMap.X_ID);
 		B_BUTTON2 = new JoystickButton(controller2, RobotMap.B_ID);
-		A_BUTTON2 = new JoystickButton(controller2, RobotMap.A_ID);
-
+    A_BUTTON2 = new JoystickButton(controller2, RobotMap.A_ID);
+    
     Y_BUTTON1.whenPressed(new SlowMode(false));
     X_BUTTON1.whenPressed(new SlowMode(true));
-    B_BUTTON1.whenPressed(new DriveStraight());
+    //B_BUTTON1.whenPressed(new DriveStraight());
+    B_BUTTON1.whenPressed(new Extend());
+    RIGHT_BUMPER1.whenPressed(new GrabHatch());
+    LEFT_BUMPER1.whenPressed(new ReleaseHatch());
     A_BUTTON1.whenPressed(new DriveWithController()); // Interrupts other commands.
+    START_BUTTON1.whenPressed(new Climb());
 
     // testing
-    BACK_BUTTON1.whenPressed(new DriveStraightForDistance(1.0, 12.0));
-    START_BUTTON1.whenPressed(new DriveVector(Vec2D.makeCart(12.0, 12.0), 12.0));
+    // BACK_BUTTON1.whenPressed(new DriveStraightForDistance(1.0, 12.0));
+    // START_BUTTON1.whenPressed(new DriveVector(Vec2D.makeCart(12.0, 12.0), 12.0));
   }
 
   public XboxController getController(int port) {

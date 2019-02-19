@@ -25,13 +25,13 @@ public class Hatch extends Subsystem {
 	
 	// 20:1 gearbox, 12 counts per revolution, 70 degrees
 
-	public static final double ARM_SPEED = 0.15;
-	public static final double EXTENSION_SPEED = 0.15;
+	public static final double ARM_SPEED = 0.05;
+	public static final double EXTENSION_SPEED = 0.3;
 	public static final double INTERVAL = 1d;
 	public static final double GEARBOX_RATIO = 20d/1d;
 	public static final int COUNTS_PER_REVOLUTION = 12;
 	public static final double TURNING_ANGLE = 70d;
-	public static final int ENCODER_THRESHOLD = 20;
+	public static final int ENCODER_THRESHOLD = 7;
 
 	public static final int MAX_COUNTS = (int) Math.floor(GEARBOX_RATIO * ((double) COUNTS_PER_REVOLUTION) * TURNING_ANGLE / 360d);
 	/* measure this angle and make sure it is less than the actual angle */
@@ -53,11 +53,11 @@ public class Hatch extends Subsystem {
 
 		armMotor.configFactoryDefault();
 
-		armMotor.setInverted(false);
+		armMotor.setInverted(true);
 		armMotor.set(ControlMode.PercentOutput, 0.0);
 		armMotor.setNeutralMode(NeutralMode.Brake);
 
-		armMotor.setSensorPhase(true);
+		armMotor.setSensorPhase(false);
 
 		// This assumes the robot starts with the hatch staged
 		armMotor.setSelectedSensorPosition(APPROX_START_POS);
@@ -104,5 +104,9 @@ public class Hatch extends Subsystem {
 
 	public void stopExtend() {
 		extensionMotor.stopMotor();
+	}
+
+	public int getEncoderValue() {
+		return armMotor.getSelectedSensorPosition();
 	}
 }

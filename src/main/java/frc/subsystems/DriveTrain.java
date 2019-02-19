@@ -421,8 +421,8 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		
 		/* Set Neutral Mode */
 		leftBack.setInverted(false);
-        rightBack.setInverted(true);
-        rightFront.setInverted(true);
+        rightBack.setInverted(false);
+        rightFront.setInverted(false);
 		leftFront.setInverted(false);
 		
 		leftFront.follow(leftBack);
