@@ -121,6 +121,10 @@ public class Robot extends TimedRobot {
   }
 
   public static RouteToTarget getCurrentRoute() {
+    return curRoute;
+  }
+
+  public static void checkRoute() {
     if (ll.isTarget() && ll.getTy() > -cameraYThreshold) { // TODO
       TargetCalc calc = new TargetCalc(ll);
       Vec2D robotVec = new Vec2D(0, 1); // TODO
@@ -130,7 +134,5 @@ public class Robot extends TimedRobot {
     } else {
       curRoute = null;
     }
-
-    return curRoute;
   }
 }
