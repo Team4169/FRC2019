@@ -20,6 +20,7 @@ public class Rumble extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    
     Robot.m_oi.getController(1).setRumble(RumbleType.kLeftRumble, 1.0);
     Robot.m_oi.getController(1).setRumble(RumbleType.kRightRumble, 1.0);
   }
@@ -32,7 +33,7 @@ public class Rumble extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return isTimedOut();
   }
 
   // Called once after isFinished returns true
