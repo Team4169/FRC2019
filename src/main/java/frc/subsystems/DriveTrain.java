@@ -291,6 +291,10 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 
 		return angleDifference < kToleranceDegrees && totalSpeed < kToleranceSpeed;
 	}
+
+	public double getYaw() {
+		return ahrs.getYaw();
+	}
   
   	public void stop() {		
 		rightFront.set(ControlMode.PercentOutput, 0);

@@ -32,8 +32,12 @@ public class Robot extends TimedRobot {
   Command autoCommand;
 
   static RouteToTarget curRoute;
-  public static final int cameraYThreshold = 15;
-
+  public static final int cameraYThreshold = 17;
+  public static final Vec2D[] TARG_VECS = new Vec2D[] {
+    Vec2D.makeCart(-1, 0), Vec2D.makeCart(0, -1), Vec2D.makeCart(1, 0), Vec2D.makeCart(0, 1)
+  };
+  public static final double targBoundary = 30;
+  
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
@@ -123,8 +127,18 @@ public class Robot extends TimedRobot {
   public static RouteToTarget getCurrentRoute() {
     if (ll.isTarget() && ll.getTy() > -cameraYThreshold) { // TODO
       TargetCalc calc = new TargetCalc(ll);
-      Vec2D robotVec = new Vec2D(0, 1); // TODO
-      Vec2D targNorm = new Vec2D(0, -1); // TODO
+      Vec2D robotVec = getCurrentRobotVec();
+      Vec2D targNorm;
+
+      if (robotVec.getTheta() > -targBoundary && robotVec.getTheta() < targBoundary) {
+        targNorm = TARG_VECS[0];
+      } else if (robotVec.getTheta() > 90.0 - targBoundary && robotVec.getTheta() < 90.0 + targBoundary) {
+        targNorm = TARG_VECS[1];
+      } else if (robotVec.getTheta() > 180.0 - targBoundary && robotVec.getTheta() < 180.0 + targBoundary) {
+        targNorm = TARG_VECS[2];
+      } else if (robotVec.getTheta() > 270.0 - targBoundary && robotVec.getTheta() < 270.0 + targBoundary) {
+        targNorm = TARG_VECS[3];
+      }
       double normalDist = 12.0; // TODO
       curRoute = calc.getRouteToTarget(robotVec, targNorm, normalDist);
     } else {
@@ -132,5 +146,9 @@ public class Robot extends TimedRobot {
     }
 
     return curRoute;
+  }
+
+  public static Vec2D getCurrentRobotVec() {
+    return Vec2D.makePolar(1, kDriveTrain.getYaw());
   }
 }

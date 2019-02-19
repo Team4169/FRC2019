@@ -5,10 +5,11 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.commands.commandgroups;
+package frc.commands;
 
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
 import edu.wpi.first.wpilibj.command.PrintCommand;
+import frc.commands.commandgroups.AutoHatch;
 import frc.robot.Robot;
 
 public class DriveToTarget extends ConditionalCommand {
