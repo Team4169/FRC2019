@@ -226,6 +226,8 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		double forward = -Robot.m_oi.getController(1).getY(Hand.kLeft);
 		double turn = rightTrigger - leftTrigger;
 
+		System.out.println("Left encoder: " + leftBack.getSelectedSensorPosition() + "Right encoder: " rightBack.getSelectedSensorPosition());
+
 		drive.arcadeDrive(forward, turn);
   	}
 	
