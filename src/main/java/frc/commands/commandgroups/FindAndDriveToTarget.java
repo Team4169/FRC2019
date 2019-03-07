@@ -8,7 +8,7 @@
 package frc.commands.commandgroups;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.commands.DriveToTarget;
+import frc.commands.commandgroups.DriveToTarget;
 import frc.commands.FindTarget;
 
 public class FindAndDriveToTarget extends CommandGroup {

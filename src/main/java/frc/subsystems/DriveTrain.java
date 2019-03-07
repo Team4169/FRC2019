@@ -235,7 +235,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		drive.arcadeDrive(forward, turn);
   	}
 	
-	public void findTarget() {;
+	public void findTarget() {
 		rightFront.follow(rightBack);
 		leftFront.follow(leftBack);
 

@@ -22,7 +22,6 @@ public class GrabHatch extends Command {
   @Override
   protected void initialize() {
     //setTimeout(10.0); // TODO
-    System.out.println("memes");
   }
 
   // Called repeatedly when this Command is scheduled to run

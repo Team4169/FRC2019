@@ -34,6 +34,8 @@ public class Climber extends Subsystem {
   //This is a placeholder value that will have to be calculated later. We want the motor to rotate 132 degrees.
   private static final double TOTAL_CLICKS = GEARBOX_RATIO * ((double) COUNTS_PER_REVOLUTION) * TURNING_ANGLE / 360d;
 
+  private static final double CLIMB_SPEED = 0.5;
+
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
@@ -60,7 +62,11 @@ public class Climber extends Subsystem {
   // here. Call these from Commands.
 
   public void climb() {
-    climber1.set(0.5);
+    climber1.set(CLIMB_SPEED);
+  }
+
+  public void unclimb() {
+    climber1.set(-CLIMB_SPEED);
   }
 
   public boolean done() { // TODO

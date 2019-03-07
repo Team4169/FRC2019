@@ -10,14 +10,12 @@ package frc.robot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.commands.Climb;
-import frc.commands.DriveStraight;
-import frc.commands.DriveStraightForDistance;
-import frc.commands.commandgroups.DriveVector;
 import frc.commands.DriveWithController;
 import frc.commands.Extend;
 import frc.commands.GrabHatch;
 import frc.commands.ReleaseHatch;
 import frc.commands.SlowMode;
+import frc.commands.Unclimb;
 
 
 /**
@@ -37,11 +35,11 @@ public class OI {
   private final JoystickButton A_BUTTON1;
   private final JoystickButton START_BUTTON1;
 
-  private final JoystickButton BACK_BUTTON2;
-  private final JoystickButton Y_BUTTON2;
-  private final JoystickButton X_BUTTON2;
-  private final JoystickButton B_BUTTON2;
-  private final JoystickButton A_BUTTON2;
+  // private final JoystickButton BACK_BUTTON2;
+  // private final JoystickButton Y_BUTTON2;
+  // private final JoystickButton X_BUTTON2;
+  // private final JoystickButton B_BUTTON2;
+  // private final JoystickButton A_BUTTON2;
 
   private final JoystickButton LEFT_BUMPER1;
   private final JoystickButton RIGHT_BUMPER1;
@@ -61,11 +59,11 @@ public class OI {
     LEFT_BUMPER1 = new JoystickButton(controller1, RobotMap.LB_ID);
 
     
-		BACK_BUTTON2 = new JoystickButton(controller2, RobotMap.BACK_ID);
-		Y_BUTTON2 = new JoystickButton(controller2, RobotMap.Y_ID);
-		X_BUTTON2 = new JoystickButton(controller2, RobotMap.X_ID);
-		B_BUTTON2 = new JoystickButton(controller2, RobotMap.B_ID);
-    A_BUTTON2 = new JoystickButton(controller2, RobotMap.A_ID);
+		// BACK_BUTTON2 = new JoystickButton(controller2, RobotMap.BACK_ID);
+		// Y_BUTTON2 = new JoystickButton(controller2, RobotMap.Y_ID);
+		// X_BUTTON2 = new JoystickButton(controller2, RobotMap.X_ID);
+		// B_BUTTON2 = new JoystickButton(controller2, RobotMap.B_ID);
+    // A_BUTTON2 = new JoystickButton(controller2, RobotMap.A_ID);
     
     Y_BUTTON1.whenPressed(new SlowMode(false));
     X_BUTTON1.whenPressed(new SlowMode(true));
@@ -75,6 +73,7 @@ public class OI {
     LEFT_BUMPER1.whenPressed(new ReleaseHatch());
     A_BUTTON1.whenPressed(new DriveWithController()); // Interrupts other commands.
     START_BUTTON1.whenPressed(new Climb());
+    BACK_BUTTON1.whenPressed(new Unclimb());
 
     // testing
     // BACK_BUTTON1.whenPressed(new DriveStraightForDistance(1.0, 12.0));
