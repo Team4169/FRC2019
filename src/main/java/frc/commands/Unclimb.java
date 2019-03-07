@@ -31,7 +31,7 @@ public class Unclimb extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return !Robot.m_oi.getController(1).getBackButton();
+    return false;
   }
 
   // Called once after isFinished returns true

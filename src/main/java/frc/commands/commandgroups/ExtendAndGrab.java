@@ -16,7 +16,7 @@ public class ExtendAndGrab extends CommandGroup {
    * Add your docs here.
    */
 
-  public static final double TIME_TO_GRAB = 0.1;
+  public static final double TIME_TO_GRAB = 0.5;
   
   public ExtendAndGrab() {
     addParallel(new Extend());

@@ -72,8 +72,8 @@ public class OI {
     RIGHT_BUMPER1.whenPressed(new GrabHatch());
     LEFT_BUMPER1.whenPressed(new ReleaseHatch());
     A_BUTTON1.whenPressed(new DriveWithController()); // Interrupts other commands.
-    START_BUTTON1.whenPressed(new Climb());
-    BACK_BUTTON1.whenPressed(new Unclimb());
+    START_BUTTON1.whileHeld(new Climb());
+    BACK_BUTTON1.whileHeld(new Unclimb());
 
     // testing
     // BACK_BUTTON1.whenPressed(new DriveStraightForDistance(1.0, 12.0));

@@ -30,7 +30,7 @@ public class Climber extends Subsystem {
   private static final double GEARBOX_RATIO = 100.0/1.0;
   private static final int COUNTS_PER_REVOLUTION = 12;
   private static final double TURNING_ANGLE = 132.0;
-  private static final double ENCODER_THRESHOLD = 200.0;
+  private static final double ENCODER_THRESHOLD = 100.0;
   //This is a placeholder value that will have to be calculated later. We want the motor to rotate 132 degrees.
   private static final double TOTAL_CLICKS = GEARBOX_RATIO * ((double) COUNTS_PER_REVOLUTION) * TURNING_ANGLE / 360d;
 
@@ -69,7 +69,7 @@ public class Climber extends Subsystem {
     climber1.set(-CLIMB_SPEED);
   }
 
-  public boolean done() { // TODO
+  public boolean done() {
     return climber1.getSelectedSensorPosition() >= TOTAL_CLICKS - ENCODER_THRESHOLD;
   }
 

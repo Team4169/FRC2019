@@ -166,8 +166,6 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 
 		drive.setExpiration(0.1);
 
-		// TODO never reset robot yaw angle
-
 		try {
 			/* Communicate w/navX-MXP via the MXP SPI Bus.                                     */
 			/* Alternatively:  I2C.Port.kMXP, SerialPort.Port.kMXP or SerialPort.Port.kUSB     */
@@ -198,10 +196,6 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	// 	rightBack.getSensorCollection().setQuadraturePosition(0,  kTimeoutMs);
 	// 	System.out.println("[Quadrature Encoders] and AHRS sensors are zeroed.\n");		
 	// }
-
-	public void zeroGyro() {
-		ahrs.zeroYaw();
-	}
 
 	public void zeroAccelerometer() {
 		ahrs.resetDisplacement();
