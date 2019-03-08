@@ -8,14 +8,14 @@
 package frc.commands.commandgroups;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.robot.RouteToTarget;
-
+import frc.robot.Robot;
+s
 public class AutoHatch extends CommandGroup {
 
   public static final double VELOCITY = 12;
 
-  public AutoHatch(RouteToTarget route) {
-    addSequential(new DriveVector(route.getInterceptVec(), VELOCITY));
-    addSequential(new DriveVector(route.getNormalVec(), VELOCITY));
+  public AutoHatch() {
+    addSequential(new DriveVector(Robot.AutoStep.kIntercept, VELOCITY));
+    addSequential(new DriveVector(Robot.AutoStep.kApproach, VELOCITY));
   }
 }

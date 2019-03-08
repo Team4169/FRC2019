@@ -13,6 +13,7 @@ import frc.robot.Robot;
 public class TurnToAngle extends Command {
 
   double degrees; //placeholder value that will be updated in the future
+  Robot.AutoStep step = null;
   
   public TurnToAngle(double angle) {
     // Use requires() here to declare subsystem dependencies
@@ -21,10 +22,26 @@ public class TurnToAngle extends Command {
     degrees = angle;
   }
 
+  public TurnToAngle(Robot.AutoStep a) {
+    requires(Robot.kDriveTrain);
+    step = a;
+    degrees = 180.0; // should be reset later in initialize
+  }
+
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-
+    if (step != null) {
+      switch(step) {
+        case kApproach:
+          degrees = Robot.getCurrentRoute().getNormalVec().getTheta();
+          break;
+        default:
+        case kIntercept:
+          degrees = Robot.getCurrentRoute().getInterceptVec().getTheta();
+          break;
+      }
+    }
   }
 
   // Called repeatedly when this Command is scheduled to run

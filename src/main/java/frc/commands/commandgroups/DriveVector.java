@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.commands.DriveStraightForDistance;
 import frc.commands.TurnToAngle;
 import frc.commands.ZeroDrive;
-import frc.robot.Vec2D;
+import frc.robot.Robot;
 
 public class DriveVector extends CommandGroup {
   /**
@@ -19,10 +19,10 @@ public class DriveVector extends CommandGroup {
    */
 
   /** Turns to the angle of a vector and then drives the magnitude of the vector */
-  public DriveVector(Vec2D vector, double velocity) {
-    addSequential(new TurnToAngle(vector.getTheta()));
+  public DriveVector(Robot.AutoStep a, double velocity) {
+    addSequential(new TurnToAngle(a));
 
     addSequential(new ZeroDrive());
-    addSequential(new DriveStraightForDistance(vector.getR(), velocity));
+    addSequential(new DriveStraightForDistance(a, velocity));
   }
 }

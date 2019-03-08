@@ -39,6 +39,10 @@ public class Robot extends TimedRobot {
   };
   public static final double targBoundary = 30.0; // between 0 and 45
   public static final double NORMAL_DIST = 12.0;
+
+  public enum AutoStep {
+    kIntercept, kApproach
+  }
   
   /**
    * This function is run when the robot is first started up and should be

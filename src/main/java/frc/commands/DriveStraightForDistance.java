@@ -14,6 +14,10 @@ import frc.subsystems.DriveTrain;
 public class DriveStraightForDistance extends Command {
 
   double distance;
+
+  // only for auto step
+  double velocity;
+
   boolean finished;
   int accelSteps;
   int runSteps, nSteps, nAccelSteps, nRunSteps, nDecelSteps;
@@ -26,45 +30,40 @@ public class DriveStraightForDistance extends Command {
 
   RunState runState;
 
+  // for auto:
+  Robot.AutoStep step = null;
+
   public DriveStraightForDistance(double distance, double velocity) {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
     requires(Robot.kDriveTrain);
-    this.distance = distance;
-    finished = (velocity <= 0 || velocity > DriveTrain.maxVelocity);
+    setup(distance, velocity);
+    this.velocity = 0; // if the program breaks ("I probably wrote it wrong" - Stu)
+  }
 
-    // assume trapezoid
-    accelSteps = (int) Math.ceil(velocity / DriveTrain.velocityPerStep);
-
-    double accelDistance = Robot.kDriveTrain.calculateAccelDistance(accelSteps, DriveTrain.velocityPerStep, DriveTrain.secPerStep);
-
-    if (2d * accelDistance < distance) {
-      triangularAccel = false;
-    } else {
-      triangularAccel = true;
-      
-      accelDistance = Math.floor(distance / 2d);
-      accelSteps = (int) Robot.kDriveTrain.calculateAccelSteps(accelDistance, DriveTrain.velocityPerStep, DriveTrain.secPerStep);
-      accelDistance = Robot.kDriveTrain.calculateAccelDistance(accelSteps, DriveTrain.velocityPerStep, DriveTrain.secPerStep);
-    }
-
-    double runVelocity = accelSteps * DriveTrain.velocityPerStep;
-    double runDistance = distance - (2 * accelDistance);
-    double runTime = runDistance / runVelocity;
-    runSteps = (int) Math.floor(runTime / DriveTrain.secPerStep);
-    System.out.println("Triangular acceleration: " + Boolean.toString(triangularAccel));
-    System.out.println("rdist " + runDistance + " rtime " + runTime + " rsteps " + runSteps);
-    System.out.println("accSteps " + accelSteps + " accDist " + accelDistance);
-    nSteps = 0;
-    nAccelSteps = 0;
-    nRunSteps = 0;
-    nDecelSteps = 0;
-    runState = RunState.eAccel;
+  public DriveStraightForDistance(Robot.AutoStep a, double vel) {
+    requires(Robot.kDriveTrain);
+    step = a;
+    velocity = vel;
+    this.distance = 0; // if the program breaks ("I probably wrote it wrong" - Stu)
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    if (step != null) {
+      double dist;
+      switch(step) {
+      case kIntercept:
+        dist = Robot.getCurrentRoute().getInterceptVec().getR();
+        break;
+      default:
+      case kApproach:
+        dist = Robot.getCurrentRoute().getNormalVec().getR();
+        break;
+      }
+
+      setup(dist, velocity);
+    }
+
     if (finished) {
       System.out.println("Drive straight for distance failed - velocity not legitimate");
       end();
@@ -132,5 +131,38 @@ public class DriveStraightForDistance extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+  }
+
+  public void setup(double distance, double velocity) {
+    this.distance = distance;
+    finished = (velocity <= 0 || velocity > DriveTrain.maxVelocity);
+
+    // assume trapezoid
+    accelSteps = (int) Math.ceil(velocity / DriveTrain.velocityPerStep);
+
+    double accelDistance = Robot.kDriveTrain.calculateAccelDistance(accelSteps, DriveTrain.velocityPerStep, DriveTrain.secPerStep);
+
+    if (2d * accelDistance < distance) {
+      triangularAccel = false;
+    } else {
+      triangularAccel = true;
+      
+      accelDistance = Math.floor(distance / 2d);
+      accelSteps = (int) Robot.kDriveTrain.calculateAccelSteps(accelDistance, DriveTrain.velocityPerStep, DriveTrain.secPerStep);
+      accelDistance = Robot.kDriveTrain.calculateAccelDistance(accelSteps, DriveTrain.velocityPerStep, DriveTrain.secPerStep);
+    }
+
+    double runVelocity = accelSteps * DriveTrain.velocityPerStep;
+    double runDistance = distance - (2 * accelDistance);
+    double runTime = runDistance / runVelocity;
+    runSteps = (int) Math.floor(runTime / DriveTrain.secPerStep);
+    System.out.println("Triangular acceleration: " + Boolean.toString(triangularAccel));
+    System.out.println("rdist " + runDistance + " rtime " + runTime + " rsteps " + runSteps);
+    System.out.println("accSteps " + accelSteps + " accDist " + accelDistance);
+    nSteps = 0;
+    nAccelSteps = 0;
+    nRunSteps = 0;
+    nDecelSteps = 0;
+    runState = RunState.eAccel;
   }
 }
