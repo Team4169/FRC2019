@@ -38,6 +38,7 @@ public class GrabHatch extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    System.out.println("GrabHatch Finished");
     Robot.kHatch.stop();
   }
 

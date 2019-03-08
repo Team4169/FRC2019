@@ -38,6 +38,7 @@ public class ReleaseHatch extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    System.out.println("ReleaseHatch Finished");
     Robot.kHatch.stop();
   }
 

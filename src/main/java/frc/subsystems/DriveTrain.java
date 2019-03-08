@@ -44,7 +44,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 
 	PIDController turnController;
 
-	public static final double DEAD_ZONE = 0.2;
+	public static final double DEAD_ZONE = 0.1;
 
 	// slows down the robot so that the robot is not too fast
 	public static final double JOYSTICK_CONSTANT = 1;
@@ -226,7 +226,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		double forward = -Robot.m_oi.getController(1).getY(Hand.kLeft);
 		double turn = rightTrigger - leftTrigger;
 
-		System.out.println("Left encoder: " + leftBack.getSelectedSensorPosition() + "Right encoder: " + rightBack.getSelectedSensorPosition());
+		System.out.println("Left encoder: " + leftBack.getSensorCollection().getQuadraturePosition() + " Right encoder: " + rightBack.getSelectedSensorPosition());
 
 		drive.arcadeDrive(forward, turn);
   	}
