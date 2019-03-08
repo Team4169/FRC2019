@@ -9,7 +9,7 @@ package frc.commands.commandgroups;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.Robot;
-s
+
 public class AutoHatch extends CommandGroup {
 
   public static final double VELOCITY = 12;
