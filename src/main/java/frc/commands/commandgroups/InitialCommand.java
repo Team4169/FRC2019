@@ -9,12 +9,14 @@ package frc.commands.commandgroups;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.commands.ZeroArms;
+import frc.commands.ZeroDrive;
 
 public class InitialCommand extends CommandGroup {
   /**
    * Add your docs here.
    */
   public InitialCommand() {
+    addSequential(new ZeroDrive());
     addSequential(new ExtendAndGrab());
     addSequential(new ZeroArms());
   }

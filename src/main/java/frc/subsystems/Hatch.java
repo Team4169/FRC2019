@@ -25,7 +25,7 @@ public class Hatch extends Subsystem {
 	
 	// 20:1 gearbox, 12 counts per revolution, 70 degrees
 
-	public static final double ARM_SPEED = 0.1;
+	public static final double ARM_SPEED = 0.125;
 	public static final double EXTENSION_SPEED = 0.3;
 	public static final double INTERVAL = 1d;
 	public static final double GEARBOX_RATIO = 20d/1d;
@@ -72,6 +72,7 @@ public class Hatch extends Subsystem {
 
 	public void grab() {
 		armMotor.set(ARM_SPEED);
+		System.out.println("arm encoder: " + armMotor.getSelectedSensorPosition());
 	}
 
 	public void release() {

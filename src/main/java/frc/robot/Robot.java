@@ -54,8 +54,6 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("kD", 4.0);
 
     SmartDashboard.putData("Drive Train", kDriveTrain);
-
-    kHatch.zeroSensors();
   }
 
   /**
@@ -67,7 +65,7 @@ public class Robot extends TimedRobot {
    * LiveWindow and SmartDashboard integrated updating.
    */
 
-@Override
+  @Override
 	public void teleopInit(){
 	
 	}

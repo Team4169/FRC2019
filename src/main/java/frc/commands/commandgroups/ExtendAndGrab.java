@@ -16,10 +16,10 @@ public class ExtendAndGrab extends CommandGroup {
    * Add your docs here.
    */
 
-  public static final double TIME_TO_GRAB = 1.0;
+  public static final double TIME_TO_GRAB = 0.05;
   
   public ExtendAndGrab() {
     addSequential(new Extend());
-    addSequential(new GrabHatch());
+    addSequential(new GrabHatch(), TIME_TO_GRAB);
   }
 }
