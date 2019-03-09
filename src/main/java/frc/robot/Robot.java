@@ -150,11 +150,12 @@ public class Robot extends TimedRobot {
   }
 
   public static void checkRoute() {
-    if (ll.isTarget() && ll.getTy() > -cameraYThreshold) { // TODO
+    if (ll.isTarget() && ll.getTy() > -cameraYThreshold) { // TODO threshold
       TargetCalc calc = new TargetCalc(ll);
       Vec2D robotVec = getCurrentRobotVec();
       Vec2D targNorm = null;
 
+      // TODO check if this makes sense:
       if (robotVec.getTheta() > -targBoundary && robotVec.getTheta() < targBoundary) {
         targNorm = TARG_VECS[0];
       } else if (robotVec.getTheta() > 90.0 - targBoundary && robotVec.getTheta() < 90.0 + targBoundary) {

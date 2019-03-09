@@ -61,7 +61,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	double _targetAngle = 0;
 
 	public static final double WHEEL_DIAMETER = 6.0;
-	public static final int kEncoderUnitsPerRevolution = 1440; // TODO check this
+	public static final int kEncoderUnitsPerRevolution = 1440; // TODO check this (not correct, actually ~2800 or something dumb)
 	public final static int kTimeoutMs = 30;
 
 	/* The following PID Controller coefficients will need to be tuned */
@@ -359,7 +359,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		return Math.floor(root);
 	}
 
-	// TODO check
+	// TODO check if percent is correct
 	public double getCurrentPower() {
 		return leftBack.getMotorOutputPercent();
 	}
