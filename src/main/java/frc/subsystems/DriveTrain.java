@@ -207,7 +207,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	}
   
 	public void turnToAngle(double degrees) {
-		kTargetAngleDegrees = degrees;
+		kTargetAngleDegrees = Robot.fieldToYawAngle(degrees);
 		if (!turnController.isEnabled()) {
 			turnController.setSetpoint(degrees);
 			rotateToAngleRate = 0; // This value will be updated in the pidWrite() method.
@@ -359,8 +359,9 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		return Math.floor(root);
 	}
 
+	// TODO check
 	public double getCurrentPower() {
-		return curPower;
+		return leftBack.getMotorOutputPercent();
 	}
 
 	public double getCurrentDistance() {

@@ -176,6 +176,44 @@ public class Robot extends TimedRobot {
   }
 
   public static Vec2D getCurrentRobotVec() {
-    return Vec2D.makePolar(1, kDriveTrain.getYaw());
+    return Vec2D.makePolar(1, yawToFieldAngle(kDriveTrain.getYaw()));
+  }
+
+  /**
+   * Convert robot yaw from the compass (in degrees, 0 meaning pointing along the Y axis
+   * field-relative) to a field relative angle in degrees (0 meaning pointing along the X axis)
+   * Result will be in the range -180..180
+   * @param yaw Yaw in degrees, -180..180
+   * @return Field angle in degrees
+   */
+  public static double yawToFieldAngle(double yaw) {
+    double fieldAngle = 90.0 - yaw;
+
+    if (fieldAngle > 180.0) {
+      fieldAngle -= 360.0;
+    } else if (fieldAngle < -180.0) {
+      fieldAngle += 360.0;
+    }
+
+    return fieldAngle;
+  }
+
+  /**
+   * Convert robot yaw from the field relative angle in degrees (0 meaning pointing along the X axis)
+   * to a compass (in degrees, 0 meaning pointing along the Y axis field-relative)
+   * Result will be in the range -180..180
+   * @param field Field angle in degrees -180..180
+   * @return Yaw in degrees
+   */
+  public static double fieldToYawAngle(double field) {
+    double yaw = 90.0 - field;
+
+    if (yaw > 180.0) {
+      yaw -= 360.0;
+    } else if (yaw < -180.0) {
+      yaw += 360.0;
+    }
+
+    return yaw;
   }
 }
