@@ -10,13 +10,10 @@ package frc.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class SlowMode extends Command {
-  boolean active;
-
-  public SlowMode(boolean b) {
+public class ZeroArmsReleased extends Command {
+  public ZeroArmsReleased() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    active = b;
   }
 
   // Called just before this Command runs the first time
@@ -27,8 +24,7 @@ public class SlowMode extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    System.out.println("slow mode set to " + active);
-    Robot.kDriveTrain.setSlowMode(active);
+    Robot.kHatch.zeroArmReleased();
   }
 
   // Make this return true when this Command no longer needs to run execute()

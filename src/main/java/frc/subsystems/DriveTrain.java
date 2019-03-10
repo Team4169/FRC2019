@@ -44,7 +44,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 
 	PIDController turnController;
 
-	public static final double DEAD_ZONE = 0.1;
+	public static final double DEAD_ZONE = 0.05;
 
 	// slows down the robot so that the robot is not too fast
 	public static final double JOYSTICK_CONSTANT = 1;
@@ -53,7 +53,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	// these slow down the robot for precision driving
 	boolean slowMode = false;
 	public static final double SLOW_MODE_JOYSTICK = 0.7;
-	public static final double SLOW_MODE_TRIGGERS = 0.8;
+	public static final double SLOW_MODE_TRIGGERS = 0.6;
 
 	// speed at which the robot turns during findTarget
 	double TURN_CONSTANT = 0.3;
@@ -140,8 +140,10 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		rightFront = new VictorSPX(RobotMap.RIGHT_FRONT);
 		leftBack = new WPI_TalonSRX(RobotMap.LEFT_BACK);
 
-		drive = new DifferentialDrive(leftBack, rightBack);
+		configureMotors();
 
+		drive = new DifferentialDrive(leftBack, rightBack);
+		drive.setSafetyEnabled(false);
 		drive.setDeadband(DEAD_ZONE);
 
 		try {
@@ -161,10 +163,6 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		} catch(Exception e) {
 			System.out.println("start voltage failed");
 		}
-
-		configureMotors();
-
-		drive.setExpiration(0.1);
 
 		try {
 			/* Communicate w/navX-MXP via the MXP SPI Bus.                                     */
@@ -220,14 +218,22 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 
 	public void arcadeDrive() {
 
-		double leftTrigger = Robot.m_oi.getController(1).getTriggerAxis(Hand.kLeft);
-		double rightTrigger = Robot.m_oi.getController(1).getTriggerAxis(Hand.kRight);
+		double leftTrigger = Robot.m_oi.getController().getTriggerAxis(Hand.kLeft);
+		double rightTrigger = Robot.m_oi.getController().getTriggerAxis(Hand.kRight);
 
-		double forward = -Robot.m_oi.getController(1).getY(Hand.kLeft);
+		double forward = -Robot.m_oi.getController().getY(Hand.kLeft);
 		double turn = rightTrigger - leftTrigger;
 
+		if (slowMode) {
+			forward *= SLOW_MODE_JOYSTICK;
+			turn *= SLOW_MODE_TRIGGERS;
+		}
 		// System.out.println("Left encoder: " + leftBack.getSensorCollection().getQuadraturePosition() + " Right encoder: " + rightBack.getSelectedSensorPosition());
 
+		// System.out.println("left back: " + leftBack.getMotorOutputPercent() +
+		// 		" right back: " + rightBack.getMotorOutputVoltage() +
+		// 		" left front: " + leftFront.getMotorOutputVoltage() +
+		// 		" right front: " + rightFront.getMotorOutputVoltage());
 		drive.arcadeDrive(forward, turn);
   	}
 	
@@ -240,7 +246,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	}
 
 	public void driveStraight() {
-		double magnitude = -Robot.m_oi.getController(1).getY(Hand.kLeft);
+		double magnitude = -Robot.m_oi.getController().getY(Hand.kLeft);
 
 		double leftStickValue = magnitude + rotateToAngleRate; // TODO check this if PID doesn't work
 		double rightStickValue = magnitude - rotateToAngleRate;
@@ -256,6 +262,13 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		}
 
 		drive.tankDrive(leftStickValue,  rightStickValue);
+	}
+
+	public void tankDrive() {
+		double left = -Robot.m_oi.getController().getY(Hand.kLeft);
+		double right = -Robot.m_oi.getController().getY(Hand.kRight);
+
+		drive.tankDrive(left, right);
 	}
 
 	public void driveStraight(double magnitude) {
@@ -393,7 +406,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 
 	public void tankDriveFirstCall() {
 		System.out.println("This is Tank Drive");
-		drive.setSafetyEnabled(true);
+		drive.setSafetyEnabled(false);
 	}
 
 	public void printAngle() {
@@ -432,6 +445,9 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	
 		leftBack.setSensorPhase(true);
 		rightBack.setSensorPhase(false);
+
+		leftBack.setSafetyEnabled(true);
+		rightBack.setSafetyEnabled(true);
 	}
 }
 

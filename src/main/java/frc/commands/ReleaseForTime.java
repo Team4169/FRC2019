@@ -10,41 +10,51 @@ package frc.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class SlowMode extends Command {
-  boolean active;
+public class ReleaseForTime extends Command {
 
-  public SlowMode(boolean b) {
+  double time;
+
+  public ReleaseForTime(double seconds) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    active = b;
+    requires(Robot.kHatch);
+
+    time = seconds;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    try {
+      setTimeout(time);
+    } catch (IllegalArgumentException e) {
+      System.out.println(e.toString());
+      setTimeout(0);
+    }
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    System.out.println("slow mode set to " + active);
-    Robot.kDriveTrain.setSlowMode(active);
+    Robot.kHatch.release();
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return true;
+    return isTimedOut();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    Robot.kHatch.stop();
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    end();
   }
 }

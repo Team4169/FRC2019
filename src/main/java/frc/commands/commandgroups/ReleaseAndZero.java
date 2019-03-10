@@ -8,20 +8,18 @@
 package frc.commands.commandgroups;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.commands.Rumble;
-import frc.commands.WaitForButtonPress;
-import frc.robot.Robot;
-import frc.robot.RobotMap;
+import frc.commands.ReleaseForTime;
+import frc.commands.ZeroArmsReleased;
 
-public class RumbleAndWait extends CommandGroup {
+public class ReleaseAndZero extends CommandGroup {
   /**
    * Add your docs here.
    */
 
-  public static final double RUMBLE_TIME = 0.5;
-
-  public RumbleAndWait() {
-    addParallel(new Rumble(RUMBLE_TIME));
-    addParallel(new WaitForButtonPress(Robot.m_oi.getController(), RobotMap.RIGHT_JOY_ID));
+	static final double TIME_FOR_RELEASE = 0.5;
+	
+  public ReleaseAndZero() {
+    addSequential(new ReleaseForTime(TIME_FOR_RELEASE));
+    addSequential(new ZeroArmsReleased());
   }
 }

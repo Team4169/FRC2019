@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.subsystems.DriveTrain;
 import frc.subsystems.Hatch;
+import frc.commands.Rumble;
+// import frc.commands.commandgroups.FindAndDriveToTarget;
 import frc.commands.commandgroups.InitialCommand;
 import frc.subsystems.Climber;
 
@@ -31,6 +33,9 @@ public class Robot extends TimedRobot {
   public static final OI m_oi = new OI();
   public static final Limelight ll = new Limelight();
   Command autoCommand;
+
+  boolean firstRumble = false;
+  static final Command rumbleCommand = new Rumble(1.0);
 
   static RouteToTarget curRoute;
   public static final int cameraYThreshold = 17;
@@ -54,6 +59,11 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("kD", 4.0);
 
     SmartDashboard.putData("Drive Train", kDriveTrain);
+
+    ll.setLedMode(Limelight.LightMode.eOff);
+    SmartDashboard.putNumber("climber1", 0);
+    SmartDashboard.putNumber("climber2", 0);
+    firstRumble = true;
   }
 
   /**
@@ -67,7 +77,7 @@ public class Robot extends TimedRobot {
 
   @Override
 	public void teleopInit(){
-	
+    firstRumble = true;
 	}
 
   @Override
@@ -89,6 +99,9 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     autoCommand = new InitialCommand();
     autoCommand.start();
+    ll.setLedMode(Limelight.LightMode.eOff);
+
+    firstRumble = true;
   }
 
   /**
@@ -96,7 +109,15 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
+    checkPOV(); // TODO
     Scheduler.getInstance().run();
+    if (!kHatch.getLimitSwitch()) {
+      if (firstRumble) rumbleCommand.start();
+      firstRumble = false;
+    } else {
+      if (rumbleCommand.isRunning()) rumbleCommand.cancel();
+      firstRumble = true;
+    }
   }
 
 
@@ -105,8 +126,16 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    checkPOV();
     Scheduler.getInstance().run();
-    //System.out.println("Arm motor encoder: " + kHatch.getEncoderValue());
+    System.out.println("Arm motor encoder: " + kHatch.getEncoderValue());
+    if (!kHatch.getLimitSwitch()) {
+      if (firstRumble) rumbleCommand.start();
+      firstRumble = false;
+    } else {
+      if (rumbleCommand.isRunning()) rumbleCommand.cancel();
+      firstRumble = true;
+    }
   }
 
   /**
@@ -118,10 +147,7 @@ public class Robot extends TimedRobot {
     // // System.out.println("tx: " + ll.getTx() + ", ty: " + ll.getTy());
 
     // TargetCalc targetCalc = new TargetCalc(ll);
-    // Vec2D robotVec = Vec2D.makePolar(1, 90);
-    // Vec2D normalVec = Vec2D.makePolar(1, 270);
-    // double normalDist = 12;
-    // RouteToTarget route = targetCalc.getRouteToTarget(robotVec, normalVec, normalDist);
+    // Vec2D robotVec = Vec2D.targetCalc.getRouteToTarget(robotVec, normalVec, normalDist);
     
     // if (m_oi.getController(1).getAButtonPressed()) {
     //   System.out.println("tx: " + ll.getTx() + ", ty: " + ll.getTy());
@@ -131,15 +157,15 @@ public class Robot extends TimedRobot {
     // }
 
     System.out.println(kDriveTrain.getCurrentDistance());
-    m_oi.getController(1).setRumble(RumbleType.kLeftRumble, 1.0);
-    m_oi.getController(1).setRumble(RumbleType.kRightRumble, 1.0);
+    // m_oi.getController().setRumble(RumbleType.kLeftRumble, 1.0);
+    // m_oi.getController().setRumble(RumbleType.kRightRumble, 1.0);
   }
 
   @Override
   public void disabledInit() {
-    m_oi.getController(1).setRumble(RumbleType.kLeftRumble, 0.0);
-    m_oi.getController(1).setRumble(RumbleType.kRightRumble, 0.0);
-
+    m_oi.getController().setRumble(RumbleType.kLeftRumble, 0.0);
+    m_oi.getController().setRumble(RumbleType.kRightRumble, 0.0);
+    ll.setLedMode(Limelight.LightMode.eOff);
     Scheduler.getInstance().removeAll();
   }
 
@@ -214,5 +240,12 @@ public class Robot extends TimedRobot {
     }
 
     return yaw;
+  }
+
+  public void checkPOV() {
+    if (m_oi.getController().getPOV() == 270) {
+      //new FindAndDriveToTarget().start();
+      System.out.println("NANANANANANANANANANANANANNANANANANANANANANA");
+    }
   }
 }

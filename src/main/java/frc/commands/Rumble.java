@@ -12,17 +12,22 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
 public class Rumble extends Command {
-  public Rumble() {
+
+  double time;
+
+  public Rumble(double seconds) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
+
+    time = seconds;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    
-    Robot.m_oi.getController(1).setRumble(RumbleType.kLeftRumble, 1.0);
-    Robot.m_oi.getController(1).setRumble(RumbleType.kRightRumble, 1.0);
+    setTimeout(time);
+    Robot.m_oi.getController().setRumble(RumbleType.kLeftRumble, 1.0);
+    Robot.m_oi.getController().setRumble(RumbleType.kRightRumble, 1.0);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -39,8 +44,8 @@ public class Rumble extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.m_oi.getController(1).setRumble(RumbleType.kLeftRumble, 0.0);
-    Robot.m_oi.getController(1).setRumble(RumbleType.kRightRumble, 0.0);
+    Robot.m_oi.getController().setRumble(RumbleType.kLeftRumble, 0.0);
+    Robot.m_oi.getController().setRumble(RumbleType.kRightRumble, 0.0);
   }
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run

@@ -14,6 +14,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import frc.robot.RobotMap;
 // import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Add your docs here.
@@ -63,6 +64,8 @@ public class Climber extends Subsystem {
 
   public void climb() {
     climber1.set(CLIMB_SPEED);
+    SmartDashboard.putNumber("climber1", climber1.getOutputCurrent());
+    SmartDashboard.putNumber("climber2", climber2.getOutputCurrent());
   }
 
   public void unclimb() {
