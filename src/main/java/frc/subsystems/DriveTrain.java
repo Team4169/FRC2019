@@ -7,7 +7,6 @@
 
 package frc.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -33,8 +32,8 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
 
-	private final VictorSPX leftFront;
-	private final VictorSPX rightFront;
+	private final WPI_TalonSRX leftFront;
+	private final WPI_TalonSRX rightFront;
 	private final WPI_TalonSRX leftBack;
 	private final WPI_TalonSRX rightBack;
 
@@ -136,8 +135,8 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 
 	public DriveTrain() {
 		rightBack = new WPI_TalonSRX(RobotMap.RIGHT_BACK);
-		leftFront = new VictorSPX(RobotMap.LEFT_FRONT);
-		rightFront = new VictorSPX(RobotMap.RIGHT_FRONT);
+		leftFront = new WPI_TalonSRX(RobotMap.LEFT_FRONT);
+		rightFront = new WPI_TalonSRX(RobotMap.RIGHT_FRONT);
 		leftBack = new WPI_TalonSRX(RobotMap.LEFT_BACK);
 
 		configureMotors();
