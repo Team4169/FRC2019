@@ -450,5 +450,30 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		leftFront.setSafetyEnabled(false);
 		rightFront.setSafetyEnabled(false);
 	}
+
+	/** Returns the total accumulated yaw angle (Z Axis, in degrees) reported by the sensor. */
+	public double getAngle() {
+		return ahrs.getAngle();
+	}
+
+	/** Count of left encoder clicks by the left back talon */
+	public double getLeftDistance() {
+		return leftBack.getSensorCollection().getQuadraturePosition();
+	}
+
+	/** Velocity of left side drive train in encoder clicks / 100 ms */
+	public double getLeftRate() {
+		return leftBack.getSensorCollection().getQuadratureVelocity();
+	}
+
+	/** Count of right encoder clicks by the right back talon */
+	public double getRightDistance() {
+		return rightBack.getSensorCollection().getQuadraturePosition();
+	}
+
+	/** Velocity of right side drive train in encoder clicks / 100 ms */
+	public double getRightRate() {
+		return rightBack.getSensorCollection().getQuadratureVelocity();
+	}
 }
 

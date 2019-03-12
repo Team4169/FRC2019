@@ -32,6 +32,8 @@ public class Robot extends TimedRobot {
   //public static final Climber kClimber = new Climber();
   public static final OI m_oi = new OI();
   public static final Limelight ll = new Limelight();
+  public static final Instr kInstr = new Instr();
+
   Command autoCommand;
 
   boolean firstRumble = false;
@@ -82,6 +84,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+    kInstr.periodic();
   }
 
   /**

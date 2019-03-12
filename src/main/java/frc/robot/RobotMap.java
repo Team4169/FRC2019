@@ -18,6 +18,11 @@ public class RobotMap {
 			RIGHT_FRONT = 1, //pdp 1
 			LEFT_BACK = 3, //pdp 2
 			RIGHT_BACK = 2, //pdp 3
+
+			PDP_LF = 0,
+			PDP_RF = 1,
+			PDP_LB = 2,
+			PDP_RB = 3,
 			
 			// hatch motors
 			ARMMOTOR = 7,
