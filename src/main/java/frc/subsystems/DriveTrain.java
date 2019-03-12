@@ -429,10 +429,10 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		leftBack.set(ControlMode.PercentOutput, 0);
 		
 		/* Set Neutral Mode */
-		leftBack.setInverted(false);
-        rightBack.setInverted(false);
-        rightFront.setInverted(false);
-		leftFront.setInverted(false);
+		//leftBack.setInverted(false);
+        //rightBack.setInverted(false);
+        //rightFront.setInverted(true);
+		//leftFront.setInverted(false);
 		
 		leftFront.follow(leftBack);
 		rightFront.follow(rightBack);
@@ -445,8 +445,10 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		leftBack.setSensorPhase(true);
 		rightBack.setSensorPhase(false);
 
-		leftBack.setSafetyEnabled(true);
-		rightBack.setSafetyEnabled(true);
+		leftBack.setSafetyEnabled(false);
+		rightBack.setSafetyEnabled(false);
+		leftFront.setSafetyEnabled(false);
+		rightFront.setSafetyEnabled(false);
 	}
 }
 

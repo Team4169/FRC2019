@@ -14,13 +14,13 @@ public class RobotMap {
     // motor controllers
 	public static final int
 			// drive train
-			LEFT_FRONT = 8,
-			RIGHT_FRONT = 7,
-			LEFT_BACK = 3,
-			RIGHT_BACK = 1,
+			LEFT_FRONT = 4, //pdp 0
+			RIGHT_FRONT = 1, //pdp 1
+			LEFT_BACK = 3, //pdp 2
+			RIGHT_BACK = 2, //pdp 3
 			
 			// hatch motors
-			ARMMOTOR = 4,
+			ARMMOTOR = 7,
 			EXTENSION = 0,
 
       		// hatch limit switch

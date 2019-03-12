@@ -17,7 +17,7 @@ import frc.subsystems.Hatch;
 import frc.commands.Rumble;
 // import frc.commands.commandgroups.FindAndDriveToTarget;
 import frc.commands.commandgroups.InitialCommand;
-import frc.subsystems.Climber;
+// import frc.subsystems.Climber;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -29,7 +29,7 @@ import frc.subsystems.Climber;
 public class Robot extends TimedRobot {
   public static final DriveTrain kDriveTrain = new DriveTrain();
   public static final Hatch kHatch = new Hatch();
-  public static final Climber kClimber = new Climber();
+  //public static final Climber kClimber = new Climber();
   public static final OI m_oi = new OI();
   public static final Limelight ll = new Limelight();
   Command autoCommand;
@@ -110,7 +110,12 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     checkPOV(); // TODO
-    Scheduler.getInstance().run();
+    try {
+      Scheduler.getInstance().run();
+    } catch (Exception e) {
+      System.out.println(e.toString());
+    }
+
     if (!kHatch.getLimitSwitch()) {
       if (firstRumble) rumbleCommand.start();
       firstRumble = false;

@@ -7,7 +7,6 @@
 
 package frc.commands;
 
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
@@ -33,9 +32,7 @@ public class GrabHatch extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return isTimedOut() ||
-        (Robot.kHatch.isGrabbed() && !Robot.m_oi.getController().getBumper(Hand.kRight)) ||
-        Robot.kHatch.isPastHatch();
+    return isTimedOut() || Robot.kHatch.isGrabbed();
     
   }
 
