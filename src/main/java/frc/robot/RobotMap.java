@@ -15,14 +15,14 @@ public class RobotMap {
 	public static final int
 			// drive train
 			LEFT_FRONT = 4, //pdp 0
-			RIGHT_FRONT = 1, //pdp 1
+			RIGHT_FRONT = 1, //pdp 3
 			LEFT_BACK = 3, //pdp 2
-			RIGHT_BACK = 2, //pdp 3
+			RIGHT_BACK = 2, //pdp 1
 
 			PDP_LF = 0,
-			PDP_RF = 1,
+			PDP_RF = 3,
 			PDP_LB = 2,
-			PDP_RB = 3,
+			PDP_RB = 1,
 			
 			// hatch motors
 			ARMMOTOR = 7,

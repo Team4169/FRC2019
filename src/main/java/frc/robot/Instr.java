@@ -66,6 +66,7 @@ public class Instr {
             SmartDashboard.putNumber("RightFront I", pdp.getCurrent(RobotMap.PDP_RF));
             SmartDashboard.putNumber("Voltage", pdp.getVoltage());
             SmartDashboard.putBoolean("Brownout", RobotController.isBrownedOut());
+            // SmartDashboard.putBoolean("Limit switch", Robot.kHatch.getLimitSwitchReal()); //true is not pressed; normally closed
         } catch (Exception ex) {
             System.err.println("Instr caught exception " + ex);
         }

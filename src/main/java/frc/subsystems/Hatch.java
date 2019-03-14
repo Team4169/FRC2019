@@ -42,7 +42,8 @@ public class Hatch extends Subsystem {
 	final WPI_TalonSRX armMotor;
 	final Spark extensionMotor;
 
-	boolean normalSwitchMode;
+	boolean normalSwitchMode = true; // normally open
+
 	DigitalInput extensionLimitSwitch;
 
 	public Hatch() {
@@ -62,6 +63,7 @@ public class Hatch extends Subsystem {
 		// This assumes the robot starts with the hatch staged
 		armMotor.getSensorCollection().setQuadraturePosition(APPROX_START_POS, kTimeoutMs);
 		armMotor.overrideLimitSwitchesEnable(false);
+
 	}
 
 	@Override
@@ -102,6 +104,10 @@ public class Hatch extends Subsystem {
 		return extensionLimitSwitch.get() != normalSwitchMode;
 	}
 
+	// public boolean getLimitSwitch() {
+	// 	return extensionLimitSwitch.get();
+	// }
+
 	public void zeroSensors() {
 		armMotor.setSelectedSensorPosition(0);
 	}
@@ -118,4 +124,6 @@ public class Hatch extends Subsystem {
 		armMotor.setSelectedSensorPosition(MAX_COUNTS);
 
 	}
+
+
 }

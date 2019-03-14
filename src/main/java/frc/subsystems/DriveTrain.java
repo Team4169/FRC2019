@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
 /**
  * Add your docs here.
@@ -36,6 +37,9 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	private final WPI_TalonSRX rightFront;
 	private final WPI_TalonSRX leftBack;
 	private final WPI_TalonSRX rightBack;
+
+	public final SpeedControllerGroup left;
+	public final SpeedControllerGroup right;
 
 	DifferentialDrive drive; 
 
@@ -139,9 +143,12 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		rightFront = new WPI_TalonSRX(RobotMap.RIGHT_FRONT);
 		leftBack = new WPI_TalonSRX(RobotMap.LEFT_BACK);
 
+		left = new SpeedControllerGroup(leftFront, leftBack);
+		right = new SpeedControllerGroup(rightFront, rightBack);
+
 		configureMotors();
 
-		drive = new DifferentialDrive(leftBack, rightBack);
+		drive = new DifferentialDrive(left, right);
 		drive.setSafetyEnabled(false);
 		drive.setDeadband(DEAD_ZONE);
 
@@ -434,8 +441,8 @@ public class DriveTrain extends Subsystem implements PIDOutput {
         //rightFront.setInverted(true);
 		//leftFront.setInverted(false);
 		
-		leftFront.follow(leftBack);
-		rightFront.follow(rightBack);
+		// leftFront.follow(leftBack);
+		// rightFront.follow(rightBack);
 
         leftBack.setNeutralMode(NeutralMode.Brake);
         rightBack.setNeutralMode(NeutralMode.Brake);
